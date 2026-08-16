@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rising Unemployment & Skill Gap in India – UPSC Mains Answer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Roboto',sans-serif;
+            background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);
+            padding:30px;
+            max-width:900px;
+            margin:0 auto;
+            background-attachment:fixed;
+        }
+        .container{
+            background:#fff;
+            border-radius:15px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.15);
+            overflow:hidden;
+        }
+        .header{
+            background:linear-gradient(135deg,#0f4c81 0%,#2a5298 100%);
+            color:#fff;
+            padding:30px;
+            text-align:center;
+            position:relative;
+        }
+        .header h1{
+            font-size:2.1em;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+        .header .subtitle{
+            font-size:1.05em;
+            font-weight:300;
+        }
+        .header::after{
+            content:'';
+            position:absolute;
+            left:0;right:0;bottom:0;
+            height:4px;
+            background:linear-gradient(90deg,#dc143c,#ff8c00,#228b22);
+        }
+        .content{padding:40px;}
+        .quote-box{
+            background:linear-gradient(135deg,#fff8dc,#ffedcc);
+            border:3px solid #ff8c00;
+            border-radius:15px;
+            padding:22px;
+            margin:25px 0 30px;
+            text-align:center;
+            position:relative;
+            box-shadow:0 10px 30px rgba(255,140,0,0.25);
+        }
+        .quote-box::before{
+            content:'"';
+            position:absolute;
+            font-size:5em;
+            left:15px;top:-10px;
+            color:#ff8c00;
+            opacity:0.3;
+            font-family:serif;
+        }
+        .quote-text{
+            font-size:1.25em;
+            font-style:italic;
+            color:#0f4c81;
+            margin-bottom:10px;
+        }
+        .quote-author{
+            color:#dc143c;
+            font-weight:600;
+        }
+        .section-title{
+            background:linear-gradient(135deg,#dc143c,#b22222);
+            color:#fff;
+            padding:12px 22px;
+            margin:-10px -40px 25px;
+            font-size:1.35em;
+            font-weight:700;
+            position:relative;
+        }
+        .section-title::before{
+            content:'';
+            position:absolute;
+            left:20px;top:50%;
+            transform:translateY(-50%);
+            width:4px;height:26px;
+            background:#228b22;
+        }
+        .intro, .conclusion{
+            text-align:justify;
+            font-size:1.02em;
+            line-height:1.8;
+            margin-bottom:25px;
+        }
+        .subsection-title{
+            color:#dc143c;
+            font-size:1.15em;
+            font-weight:600;
+            margin:18px 0 8px;
+            padding-left:18px;
+            position:relative;
+        }
+        .subsection-title::before{
+            content:'→';
+            position:absolute;
+            left:0;
+            color:#ff8c00;
+            font-weight:bold;
+        }
+        ul{list-style:none;padding-left:0;}
+        li{
+            margin:9px 0;
+            padding:8px 12px;
+            background:#f8f9fa;
+            border-left:4px solid #0f4c81;
+            border-radius:5px;
+            font-size:0.98em;
+        }
+        .highlight{
+            background:linear-gradient(120deg,#a8edea 0%,#fed6e3 100%);
+            padding:1px 4px;
+            border-radius:3px;
+            font-weight:500;
+        }
+        .data-point{color:#dc143c;font-weight:600;}
+        .flowchart{
+            background:linear-gradient(135deg,#e8f4f8,#d5f4e6);
+            border:3px solid #0f4c81;
+            border-radius:12px;
+            padding:22px;
+            margin:28px 0;
+            text-align:center;
+            font-family:monospace;
+            font-size:0.85em;
+        }
+        .flow-row{display:flex;justify-content:space-around;flex-wrap:wrap;}
+        .flow-box{
+            background:linear-gradient(135deg,#0f4c81,#2a5298);
+            color:#fff;
+            padding:10px;
+            border-radius:8px;
+            margin:6px;
+            min-width:140px;
+            font-weight:600;
+        }
+        .flow-arrow{font-size:1.4em;color:#dc143c;margin:4px 0;}
+        .impacts-box{
+            background:linear-gradient(135deg,#ffeaa7,#fab1a0);
+            border:3px solid #fdcb6e;
+            border-radius:12px;
+            padding:20px;
+            margin:25px 0;
+        }
+        .impact-item{
+            background:rgba(255,255,255,0.9);
+            border-radius:8px;
+            border-left:5px solid #dc143c;
+            padding:10px 12px;
+            margin:8px 0;
+            display:flex;
+        }
+        .impact-icon{margin-right:10px;font-size:1.3em;}
+        .way-forward{
+            background:linear-gradient(135deg,#a8e6cf,#88d8a3);
+            border:3px solid #20b2aa;
+            border-radius:12px;
+            padding:20px;
+            margin:25px 0;
+        }
+        .wf-block{
+            background:#fff;
+            border-radius:8px;
+            border-left:6px solid #ff8c00;
+            padding:14px 14px 6px;
+            margin:10px 0;
+        }
+        .wf-title{
+            color:#0f4c81;
+            font-weight:700;
+            border-bottom:2px solid #ff8c00;
+            padding-bottom:6px;
+            margin-bottom:6px;
+            font-size:1.02em;
+        }
+        .conclusion-box{
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            color:#fff;
+            border-radius:12px;
+            padding:22px;
+            margin:30px 0 10px;
+            font-size:1.02em;
+            line-height:1.8;
+            text-align:justify;
+        }
+        .conclusion-box .highlight{
+            background:rgba(255,255,255,0.25);
+            color:#fff8dc;
+        }
+        .footer-note{
+            text-align:center;
+            font-size:0.9em;
+            color:#7f8c8d;
+            margin:10px 0 20px;
+        }
+        @media print{
+            body{background:#fff;padding:10px;}
+            .container{box-shadow:none;}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Rising Unemployment and Skill Gap in India</h1>
+        <div class="subtitle">UPSC Mains Answer Writing | Under 400 Words</div>
+    </div>
+
+    <div class="content">
+        <!-- Quotation -->
+        <div class="quote-box">
+            <div class="quote-text">
+                "Unemployment is not just the absence of jobs, but the absence of capabilities to access them."
+            </div>
+            <div class="quote-author">— Adapted from Amartya Sen’s capability perspective</div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <div class="section-title">INTRODUCTION</div>
+        <p class="intro">
+            India’s demographic dividend is precariously transforming into a <span class="highlight">demographic dilemma</span> as rising <span class="highlight">unemployment</span> coexists with a widening <span class="highlight">skill gap</span>. 
+            Despite being one of the fastest-growing major economies, labour market indicators reveal persistent <span class="highlight">youth unemployment</span>, low <span class="highlight">female labour force participation</span>, and alarming <span class="highlight">employability deficits</span>. 
+            Surveys show that while the unemployment rate hovers around single digits, <span class="data-point">over 40–45% of graduates are deemed unemployable</span> due to skill mismatches, automation, and structural shifts in the economy. 
+            In this backdrop, the unemployment–skill gap nexus demands a multidimensional analysis across structural, educational, technological, social, and policy axes.
+        </p>
+
+        <!-- CORE DIMENSIONS -->
+        <div class="section-title">CORE DIMENSIONS</div>
+
+        <div class="subsection-title">1. QUANTITATIVE UNEMPLOYMENT TRENDS</div>
+        <ul>
+            <li>Periodic surveys indicate fluctuating unemployment, with <span class="data-point">youth (15–29 years)</span> facing rates nearly <span class="data-point">2–3 times</span> the overall average.</li>
+            <li>Urban unemployment higher than rural, but rural underemployment and disguised unemployment remain pervasive.</li>
+            <li>Educated unemployment rising, especially among <span class="highlight">graduates and postgraduates</span>.</li>
+        </ul>
+
+        <div class="subsection-title">2. NATURE OF THE SKILL GAP</div>
+        <ul>
+            <li>Industry reports suggest only about <span class="data-point">45–50% of engineering and general graduates</span> are readily employable.</li>
+            <li>Curriculum obsolescence, rote learning, and weak <span class="highlight">industry–academia linkages</span> fuel mismatch.</li>
+            <li>Shortage of <span class="highlight">digital, cognitive, and soft skills</span> in a rapidly formalising and digitising economy.</li>
+        </ul>
+
+        <div class="subsection-title">3. STRUCTURAL & SECTORAL FACTORS</div>
+        <ul>
+            <li>Jobless or job-lite growth in manufacturing; limited absorption in labour-intensive sectors.</li>
+            <li>Over-dependence on low-productivity agriculture; <span class="highlight">informal sector</span> dominates employment landscape.</li>
+            <li>Regional disparities: advanced states attract high-skill jobs; lagging states export surplus labour.</li>
+        </ul>
+
+        <div class="subsection-title">4. TECHNOLOGICAL & GLOBAL DYNAMICS</div>
+        <ul>
+            <li>Automation and AI displacing low-skill routine jobs while creating demand for <span class="highlight">high-skill roles</span>.</li>
+            <li>Global value chains reward specialised skills; India’s workforce often stuck at low-skill segments.</li>
+        </ul>
+
+        <div class="subsection-title">5. SOCIAL & GENDER DIMENSIONS</div>
+        <ul>
+            <li>Low and declining <span class="highlight">female labour force participation</span> despite rising education levels.</li>
+            <li>Social norms, safety concerns, and care responsibilities constrain women’s labour market entry.</li>
+            <li>Caste, region, and class still mediate access to quality skilling and jobs.</li>
+        </ul>
+
+        <!-- FLOWCHART -->
+        <div class="section-title">UNEMPLOYMENT–SKILL GAP FLOW</div>
+        <div class="flowchart">
+            <div class="flow-box">STRUCTURAL JOB DEFICIT</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-row">
+                <div class="flow-box" style="background:linear-gradient(135deg,#dc143c,#b22222);">
+                    POOR EDUCATION<br>QUALITY
+                </div>
+                <div class="flow-box" style="background:linear-gradient(135deg,#ff8c00,#ff7f50);">
+                    SKILL MISMATCH
+                </div>
+                <div class="flow-box" style="background:linear-gradient(135deg,#228b22,#32cd32);">
+                    TECHNOLOGICAL<br>DISRUPTION
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box">RISING UNEMPLOYMENT & UNDEREMPLOYMENT</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box">INCOME INSECURITY • SOCIAL ALIENATION • WASTED DEMOGRAPHIC DIVIDEND</div>
+        </div>
+
+        <!-- IMPACTS -->
+        <div class="section-title">IMPACTS</div>
+        <div class="impacts-box">
+            <div class="impact-item">
+                <div class="impact-icon">💸</div>
+                <div><strong>Economic:</strong> Depressed consumption, lower productivity, and erosion of potential <span class="highlight">GDP growth</span>.</div>
+            </div>
+            <div class="impact-item">
+                <div class="impact-icon">🧠</div>
+                <div><strong>Social–Psychological:</strong> Frustration, mental health issues, and vulnerability to populism and extremism among youth.</div>
+            </div>
+            <div class="impact-item">
+                <div class="impact-icon">⚖️</div>
+                <div><strong>Equity:</strong> Widening inequality as high-skill workers reap disproportionate gains.</div>
+            </div>
+        </div>
+
+        <!-- WAY FORWARD -->
+        <div class="section-title">WAY FORWARD</div>
+        <div class="way-forward">
+            <div class="wf-block">
+                <div class="wf-title">Immediate Measures</div>
+                <ul>
+                    <li>Accelerate <span class="highlight">apprenticeships, internships</span>, and on-the-job training for youth.</li>
+                    <li>Targeted employment schemes in labour-intensive sectors (construction, textiles, care economy).</li>
+                </ul>
+            </div>
+            <div class="wf-block">
+                <div class="wf-title">Medium-Term Reforms</div>
+                <ul>
+                    <li>Deep <span class="highlight">industry–academia collaboration</span> to redesign curricula and align with market needs.</li>
+                    <li>Strengthen <span class="highlight">Skill India, PMKVY</span> with outcome-based monitoring and recognition of prior learning.</li>
+                    <li>Urban and rural skill hubs linked to local industrial clusters.</li>
+                </ul>
+            </div>
+            <div class="wf-block">
+                <div class="wf-title">Long-Term Structural Transformation</div>
+                <ul>
+                    <li>Shift towards <span class="highlight">high-value manufacturing and services</span> to create quality jobs.</li>
+                    <li>Universal access to foundational literacy, numeracy, and digital skills.</li>
+                    <li>Gender-sensitive labour policies to bring more women into the workforce.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CONCLUSION -->
+        <div class="section-title">CONCLUSION</div>
+        <div class="conclusion-box">
+            India’s unemployment and skill gap crisis symbolises a paradox of <span class="highlight">jobs without skills</span> and <span class="highlight">skills without jobs</span>. 
+            Converting the demographic dividend into a genuine asset requires synchronised action on <span class="highlight">education quality, skilling ecosystems, industrial policy, and labour reforms</span>. 
+            A calibrated strategy that couples demand-side job creation with supply-side skill enhancement can transform the present challenge into an opportunity for <span class="highlight">inclusive, sustainable, and employment-rich growth</span>.
+        </div>
+
+        <div class="footer-note"><strong>Word Count: ~380 words</strong> | Designed for UPSC Mains practice</div>
+    </div>
+</div>
+</body>
+</html>

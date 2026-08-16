@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Mains: India's Healthcare System - Critical Evaluation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            background: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f4c81 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc143c, #ff8c00, #228b22);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .quote-box {
+            background: linear-gradient(135deg, #fff8dc, #ffedcc);
+            border: 3px solid #ff8c00;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255,140,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-box::before {
+            content: '"';
+            font-size: 6em;
+            color: #ff8c00;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-family: serif;
+            opacity: 0.3;
+        }
+        
+        .quote-text {
+            font-size: 1.3em;
+            font-style: italic;
+            color: #0f4c81;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        
+        .quote-author {
+            color: #dc143c;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #dc143c, #b22222);
+            color: white;
+            padding: 15px 25px;
+            margin: -40px -40px 30px -40px;
+            font-size: 1.4em;
+            font-weight: 700;
+            position: relative;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 30px;
+            background: #228b22;
+        }
+        
+        .subsection-title {
+            color: #dc143c;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .subsection-title::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        li {
+            margin: 12px 0;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #0f4c81;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        li:hover {
+            background: #e3f2fd;
+            border-left-color: #0f4c81;
+            transform: translateX(5px);
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .data-point {
+            font-weight: 600;
+            color: #dc143c;
+        }
+        
+        .flowchart {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d5f4e6 100%);
+            border: 3px solid #0f4c81;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.85em;
+            box-shadow: 0 10px 40px rgba(15,76,129,0.15);
+        }
+        
+        .flowchart-box {
+            background: linear-gradient(135deg, #0f4c81, #2a5298);
+            color: white;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 400px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flowchart-arrow {
+            font-size: 1.5em;
+            color: #dc143c;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        
+        .impacts-box {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            border: 3px solid #fdcb6e;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .impact-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            border-left: 5px solid #dc143c;
+        }
+        
+        .impact-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            color: #dc143c;
+            margin-top: 2px;
+        }
+        
+        .way-forward {
+            background: linear-gradient(135deg, #a8e6cf, #88d8a3);
+            border: 3px solid #20b2aa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .wf-category {
+            background: white;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 6px solid #ff8c00;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .wf-title {
+            color: #0f4c81;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ff8c00;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+            text-align: justify;
+            font-size: 1.05em;
+            line-height: 1.8;
+            box-shadow: 0 15px 40px rgba(102,126,234,0.3);
+        }
+        
+        .conclusion .highlight {
+            background: rgba(255,255,255,0.3);
+            color: #fff8dc;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.95em;
+        }
+        
+        @media print {
+            body { background: white; padding: 20px; }
+            .container { box-shadow: none; }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .content { padding: 25px; }
+            .header h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Critical Evaluation of India's Healthcare System</h1>
+            <div class="subtitle">In Context of Recent Public Health Crises | UPSC Mains Answer Writing</div>
+        </div>
+        
+        <div class="content">
+            <!-- QUOTATION -->
+            <div class="quote-box">
+                <div class="quote-text">
+                    "The greatest wealth of a nation is the health of its people."
+                </div>
+                <div class="quote-author">— Winston Churchill</div>
+            </div>
+            
+            <!-- INTRODUCTION -->
+            <div class="section">
+                <div class="section-title">INTRODUCTION</div>
+                <p style="text-align: justify; font-size: 1.02em; line-height: 1.8;">
+                    India's healthcare system, serving a population exceeding <span class="highlight">1.4 billion</span>, stands at a critical juncture as it grapples with escalating public health challenges. 
+                    The <span class="data-point">COVID-19 pandemic</span> exposed systemic vulnerabilities while emerging threats like <span class="data-point">Monkeypox</span> have underscored the need for robust disease surveillance mechanisms. 
+                    Despite significant infrastructure expansion through initiatives like <span class="highlight">Ayushman Bharat</span> and <span class="highlight">National Health Mission</span>, the system remains characterized by profound urban-rural disparities, inadequate public financing, workforce shortages, and heavy reliance on <span class="highlight">out-of-pocket expenditure</span>. 
+                    This analysis critically evaluates India's healthcare architecture in light of recent crises, identifying structural deficiencies and proposing evidence-based forward pathways for sustainable transformation.
+                </p>
+            </div>
+            
+            <!-- CORE DIMENSIONS -->
+            <div class="section">
+                <div class="section-title">CORE DIMENSIONS</div>
+                
+                <div>
+                    <div class="subsection-title">1. INFRASTRUCTURE LACUNAE</div>
+                    <ul>
+                        <li><strong>Quantitative Expansion Without Quality:</strong> <span class="data-point">1,67,275 Sub-Centres</span>, 26,636 PHCs, 6,155 CHCs (2024) but <span class="data-point">76% bed shortage</span> in key facilities</li>
+                        <li><strong>Urban-Rural Divide:</strong> Healthcare concentrated in metros; rural areas face delayed treatment</li>
+                        <li><strong>Crisis Vulnerability:</strong> COVID-19 exposed ICU deficits; Monkeypox revealed isolation gaps</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <div class="subsection-title">2. FINANCIAL ARCHITECTURE</div>
+                    <ul>
+                        <li><strong>Chronic Underfunding:</strong> Public spending among lowest globally; <span class="data-point">>50% out-of-pocket</span></li>
+                        <li><strong>Catastrophic Burden:</strong> NCDs create financial crises for vulnerable families</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <div class="subsection-title">3. WORKFORCE DEFICIENCIES</div>
+                    <ul>
+                        <li><strong>Critical Shortages:</strong> Low doctor:population ratio; <span class="highlight">ASHA strikes 2024</span></li>
+                        <li><strong>Training Gaps:</strong> Inadequate CME; frontline worker burnout</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <div class="subsection-title">4. DISEASE BURDEN EVOLUTION</div>
+                    <ul>
+                        <li><strong>Dual Burden:</strong> <span class="data-point">52+ crore COVID cases</span>; <span class="data-point">71% NCD deaths</span></li>
+                        <li><strong>Emergency Response:</strong> Vaccine/PPE shortages during crises</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <div class="subsection-title">5. SYSTEMIC FRAGMENTATION</div>
+                    <ul>
+                        <li><strong>Institutional Disconnects:</strong> Public-private divide; state variations</li>
+                        <li><strong>Tech Integration:</strong> AI diagnostics, telemedicine underutilized</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- FLOWCHART -->
+            <div class="section">
+                <div class="section-title">HEALTHCARE CRISIS ECOSYSTEM</div>
+                <div class="flowchart">
+                    <div class="flowchart-box">INDIA'S HEALTHCARE SYSTEM VULNERABILITIES</div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div style="display: flex; justify-content: space-around; margin: 15px 0;">
+                        <div class="flowchart-box" style="background: linear-gradient(135deg, #dc143c, #b22222);">STRUCTURAL<br>DEFICITS</div>
+                        <div class="flowchart-box" style="background: linear-gradient(135deg, #ff8c00, #ff7f50);">FINANCIAL<br>CONSTRAINTS</div>
+                        <div class="flowchart-box" style="background: linear-gradient(135deg, #228b22, #32cd32);">WORKFORCE<br>SHORTAGES</div>
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="flowchart-box" style="background: linear-gradient(135deg, #8b0000, #dc143c);">CRISIS AMPLIFICATION<br>(COVID-19, Monkeypox)</div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="flowchart-box">HIGH MORTALITY<br>ECONOMIC BURDEN</div>
+                </div>
+            </div>
+            
+            <!-- IMPACTS -->
+            <div class="section">
+                <div class="section-title">IMPACTS OF RECENT CRISES</div>
+                <div class="impacts-box">
+                    <div class="impact-item">
+                        <span class="impact-icon">⚠️</span>
+                        <div><strong>Mortality Surge:</strong> 52+ crore COVID cases overwhelmed system</div>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">💸</span>
+                        <div><strong>Economic Crisis:</strong> Out-of-pocket spending deepened poverty</div>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">🏥</span>
+                        <div><strong>Institutional Strain:</strong> Healthcare worker burnout; trust deficit</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- WAY FORWARD -->
+            <div class="section">
+                <div class="section-title">WAY FORWARD</div>
+                <div class="way-forward">
+                    <div class="wf-category">
+                        <div class="wf-title">🔥 IMMEDIATE INTERVENTIONS</div>
+                        <ul>
+                            <li>Real-time disease surveillance with AI diagnostics</li>
+                            <li>Rural posting incentives for healthcare workers</li>
+                            <li>Vaccine/PPE stockpiling capacity</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="wf-category">
+                        <div class="wf-title">📈 MEDIUM-TERM REFORMS</div>
+                        <ul>
+                            <li>Increase health budget to <span class="highlight">4-5% GDP</span></li>
+                            <li>Expand <span class="highlight">PM-JAY</span> universal coverage</li>
+                            <li>Federated surveillance systems</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="wf-category">
+                        <div class="wf-title">🌟 LONG-TERM TRANSFORMATION</div>
+                        <ul>
+                            <li>Prevention-centric primary care model</li>
+                            <li>AI/telemedicine nationwide backbone</li>
+                            <li><span class="highlight">One Health</span> approach integration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CONCLUSION -->
+            <div class="section">
+                <div class="section-title">CONCLUSION</div>
+                <div class="conclusion">
+                    India's healthcare system remains fundamentally vulnerable despite infrastructure gains, as recent crises starkly revealed consequences of <span class="highlight">fragmentation</span>, <span class="highlight">underfunding</span>, and inequities. However, rapid institutional learning demonstrates latent resilience. Transformative change demands <span class="highlight">paradigmatic reorientation</span>: from reactive crisis management to anticipatory, inclusive, technology-enabled systems. This requires sustained political commitment, fiscal enhancement, integrated surveillance, and equitable workforce development—a <span class="highlight">constitutional imperative</span> for India's superpower aspirations.
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0; color: #7f8c8d; font-size: 0.95em;">
+                <strong>Word Count: ~390 words</strong> | Optimized for UPSC Mains Answer Writing
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>UPSC Mains Preparation Material | Generated for Exam Practice | 2026</p>
+        </div>
+    </div>
+</body>
+</html>
