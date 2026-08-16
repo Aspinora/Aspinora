@@ -37,6 +37,6 @@ function openTopic(page){window.location.href=page}
 const menuButton=document.getElementById('menuButton'),menuPanel=document.getElementById('menuPanel');
 menuButton.addEventListener('click',e=>{e.stopPropagation();const open=menuPanel.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});
 document.addEventListener('click',e=>{if(!e.target.closest('.menu-wrap')){menuPanel.classList.remove('open');menuButton.setAttribute('aria-expanded','false')}});
-document.getElementById('homeButton').addEventListener('click',()=>window.location.href='aspirantia-homepage-updated.html');
+document.getElementById('homeButton').addEventListener('click',()=>window.location.href='index.html');
 </script>
 </body></html>
