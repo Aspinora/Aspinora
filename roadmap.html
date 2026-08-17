@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Preparation Roadmap</title>
+  <style>
+    :root {
+      --orange: #ff7800;
+      --orange-dark: #e85d00;
+      --ink: #172033;
+      --muted: #6d7585;
+      --line: #edf0f5;
+      --surface: #ffffff;
+      --soft: #fff7ef;
+      --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%);
+    }
+
+    button { font: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .topbar {
+      height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 7px 10px 7px 3px;
+      border-radius: 14px;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+
+    .brand img {
+      width: 43px;
+      height: 43px;
+      object-fit: contain;
+      border-radius: 50%;
+      box-shadow: 0 5px 14px rgba(255, 120, 0, .2);
+    }
+
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+
+    .menu-wrap { position: relative; }
+
+    .menu-button {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border: 1px solid transparent; border-radius: 14px; color: #505b70;
+      background: transparent; cursor: pointer; transition: all .2s ease;
+    }
+
+    .menu-button:hover, .menu-button[aria-expanded="true"] {
+      color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca;
+    }
+
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+    .menu-panel {
+      position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px;
+      background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow);
+      opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item {
+      width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px;
+      border: 0; border-radius: 12px; background: transparent; color: #394255;
+      text-align: left; cursor: pointer; transition: background .16s ease, color .16s ease;
+    }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px;
+      border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px;
+      font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .roadmap-hero {
+      padding: 46px 6%;
+      border: 1px solid #f8e6d6;
+      border-radius: 30px;
+      background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+    .roadmap-hero h1 { max-width: 660px; margin: 18px 0 14px; font-size: clamp(36px, 4.6vw, 56px); line-height: 1.04; letter-spacing: -2.5px; }
+    .roadmap-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+    .stat { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.9); text-align: center; box-shadow: 0 8px 25px rgba(44, 54, 78, .04); }
+    .stat strong { display: block; font-size: 24px; letter-spacing: -1px; color: var(--orange-dark); }
+    .stat span { font-size: 12.5px; color: var(--muted); font-weight: 650; }
+
+    .section {
+      scroll-margin-top: 20px;
+      margin-top: 20px;
+      padding: 32px 6%;
+      border: 1px solid #f8e6d6;
+      border-radius: 30px;
+      background: linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+    .tab-btn {
+      padding: 11px 22px; border-radius: 12px; border: 1px solid var(--line);
+      background: white; color: #4e586b; cursor: pointer; font-weight: 750; transition: all .2s ease;
+    }
+    .tab-btn:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent;
+      box-shadow: 0 10px 20px rgba(242, 105, 0, .2);
+    }
+
+    .roadmap-track { display: none; }
+    .roadmap-track.active { display: block; }
+
+    .stage-group { margin-top: 34px; }
+    .stage-group:first-child { margin-top: 0; }
+    .stage-group h3 { margin: 0 0 18px; font-size: 19px; letter-spacing: -.4px; }
+
+    .timeline { position: relative; padding-left: 36px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px;
+      background: linear-gradient(180deg, #ffb46b, #ffe3c4);
+    }
+
+    .stage {
+      position: relative; margin-bottom: 16px; padding: 19px 22px;
+      border: 1px solid var(--line); border-radius: 17px; background: rgba(255,255,255,.94);
+      box-shadow: 0 8px 25px rgba(44, 54, 78, .04);
+    }
+    .stage::before {
+      content: attr(data-step); position: absolute; left: -36px; top: 19px; width: 25px; height: 25px;
+      border-radius: 50%; background: linear-gradient(135deg, #ff8c1a, #f06400); color: white;
+      font-size: 12px; font-weight: 800; display: grid; place-items: center;
+      box-shadow: 0 6px 14px rgba(242, 105, 0, .3);
+    }
+    .stage-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .stage h4 { margin: 0; font-size: 16px; letter-spacing: -.3px; }
+    .duration { font-size: 11.5px; font-weight: 750; color: #e56b14; background: #fff0e2; padding: 5px 11px; border-radius: 99px; white-space: nowrap; }
+    .stage p { margin: 9px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+    .stage-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 11px; color: var(--orange-dark); font-weight: 750; font-size: 13px; text-decoration: none; }
+    .stage-link:hover { text-decoration: underline; }
+
+    .footer {
+      margin-top: 20px; padding: 42px 7%; text-align: center;
+      border: 1px solid #f8e6d6; border-radius: 30px;
+      background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+    .footer-support { max-width: 700px; margin: 0 auto; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .footer .primary { margin-top: 22px; }
+    .primary { border: 0; border-radius: 12px; padding: 13px 18px; cursor: pointer; font-weight: 750; transition: all .2s ease; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .footer-contact { margin-top: 30px; font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 26px 0 22px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    .sticky-cta {
+      position: fixed; right: 26px; bottom: 26px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 99px;
+      padding: 15px 22px; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400);
+      box-shadow: 0 14px 30px rgba(242, 105, 0, .3); cursor: pointer; font-weight: 750;
+      opacity: 0; transform: translateY(18px) scale(.96); pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease;
+    }
+    .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+    .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
+
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .roadmap-hero { padding: 32px 24px; }
+      .roadmap-hero h1 { letter-spacing: -1.6px; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .section { padding: 24px 18px; }
+      .timeline { padding-left: 30px; }
+      .stage::before { left: -30px; width: 22px; height: 22px; font-size: 11px; }
+      .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <div class="menu-label">Explore Aspinora</div>
+          <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
+          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+          <button class="menu-item" data-message="Mock tests coming soon."><span class="menu-icon orange">◈</span>Mock tests</button>
+          <button class="menu-item" data-message="Calculators coming soon."><span class="menu-icon blue">▤</span>Calculators</button>
+          <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
+          <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
+          <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="roadmap-hero">
+      <div class="eyebrow">Preparation roadmap</div>
+      <h1>The perfect roadmap to <em>your success.</em></h1>
+      <p class="intro">A stage-by-stage plan for SSC CGL and IB ACIO — from foundation to final interview. Follow it at your own pace, and revisit any stage whenever you need to.</p>
+      <div class="stats-strip">
+        <div class="stat"><strong>2</strong><span>Exam tracks covered</span></div>
+        <div class="stat"><strong>11</strong><span>Preparation stages mapped</span></div>
+        <div class="stat"><strong>100%</strong><span>Free, always</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="tabs" role="tablist" aria-label="Choose exam roadmap">
+        <button class="tab-btn active" data-track="cgl" role="tab" aria-selected="true">SSC CGL</button>
+        <button class="tab-btn" data-track="ib" role="tab" aria-selected="false">IB ACIO</button>
+      </div>
+
+      <div class="roadmap-track active" id="track-cgl">
+        <div class="stage-group">
+          <h3>Tier 1 — Preliminary</h3>
+          <div class="timeline">
+            <div class="stage reveal" data-step="1">
+              <div class="stage-head"><h4>Foundation</h4><span class="duration">Weeks 1–3</span></div>
+              <p>Get familiar with the exam pattern and syllabus, start a daily current affairs habit, and build your basics in Quant and Reasoning.</p>
+            </div>
+            <div class="stage reveal" data-step="2">
+              <div class="stage-head"><h4>Concept Building</h4><span class="duration">Weeks 4–9</span></div>
+              <p>Work through General Intelligence &amp; Reasoning, Quantitative Aptitude, English Language, and General Awareness one topic at a time.</p>
+            </div>
+            <div class="stage reveal" data-step="3">
+              <div class="stage-head"><h4>Practice</h4><span class="duration">Weeks 10–13</span></div>
+              <p>Solve topic-wise question sets and timed drills to build speed and accuracy.</p>
+            </div>
+            <div class="stage reveal" data-step="4">
+              <div class="stage-head"><h4>Revision &amp; Mocks</h4><span class="duration">Weeks 14–16</span></div>
+              <p>Take full-length mock tests, analyse your mistakes, and revise weak areas before the exam.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-group">
+          <h3>Tier 2 — Mains</h3>
+          <div class="timeline">
+            <div class="stage reveal" data-step="1">
+              <div class="stage-head"><h4>Advanced Quant &amp; Reasoning</h4><span class="duration">Weeks 1–3</span></div>
+              <p>Move to higher-difficulty problems and shortcut techniques for Paper I.</p>
+            </div>
+            <div class="stage reveal" data-step="2">
+              <div class="stage-head"><h4>English Language &amp; Comprehension</h4><span class="duration">Weeks 4–5</span></div>
+              <p>Strengthen grammar, vocabulary, and comprehension speed for Paper II.</p>
+            </div>
+            <div class="stage reveal" data-step="3">
+              <div class="stage-head"><h4>Statistics &amp; General Studies</h4><span class="duration">Weeks 6–7</span></div>
+              <p>Cover the optional papers if you're applying for posts that require them.</p>
+            </div>
+            <div class="stage reveal" data-step="4">
+              <div class="stage-head"><h4>Computer Knowledge &amp; Final Mocks</h4><span class="duration">Week 8</span></div>
+              <p>Revise computer basics and take sectional and full-length mocks for Tier 2.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-track" id="track-ib">
+        <div class="stage-group">
+          <h3>Tier 1 — Objective Test</h3>
+          <div class="timeline">
+            <div class="stage reveal" data-step="1">
+              <div class="stage-head"><h4>Foundation</h4><span class="duration">Weeks 1–3</span></div>
+              <p>Understand the IB ACIO pattern, start a daily current affairs habit, and revise your Quant and Reasoning basics.</p>
+            </div>
+            <div class="stage reveal" data-step="2">
+              <div class="stage-head"><h4>Concept Building</h4><span class="duration">Weeks 4–8</span></div>
+              <p>Cover General Awareness, Quantitative Aptitude, Reasoning, English Language, and Computer Awareness.</p>
+            </div>
+            <div class="stage reveal" data-step="3">
+              <div class="stage-head"><h4>Practice</h4><span class="duration">Weeks 9–11</span></div>
+              <p>Practice sectional tests and previous years' papers under timed conditions.</p>
+            </div>
+            <div class="stage reveal" data-step="4">
+              <div class="stage-head"><h4>Revision &amp; Mocks</h4><span class="duration">Week 12</span></div>
+              <p>Take full mocks, log your errors, and do a final revision pass before the exam.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-group">
+          <h3>Tier 2 — Descriptive Paper</h3>
+          <div class="timeline">
+            <div class="stage reveal" data-step="1">
+              <div class="stage-head"><h4>Essay Writing Practice</h4><span class="duration">Weeks 1–3</span></div>
+              <p>Work through Aspinora's essay topics to build structure, clarity, and argument quality.</p>
+              <a class="stage-link" href="ib-acio.html#essays">Explore essay topics →</a>
+            </div>
+            <div class="stage reveal" data-step="2">
+              <div class="stage-head"><h4>Precis &amp; Comprehension</h4><span class="duration">Weeks 4–5</span></div>
+              <p>Practice summarising passages clearly and within word limits.</p>
+            </div>
+            <div class="stage reveal" data-step="3">
+              <div class="stage-head"><h4>Answer Writing</h4><span class="duration">Weeks 6–8</span></div>
+              <p>Practice short and long-form answers across Internal Security, Reforms, Technology, and more.</p>
+              <a class="stage-link" href="ib-acio.html#answers">Explore answer topics →</a>
+            </div>
+            <div class="stage reveal" data-step="4">
+              <div class="stage-head"><h4>Mock Descriptive Tests</h4><span class="duration">Week 9</span></div>
+              <p>Simulate the actual paper under time pressure and review your writing critically.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-group">
+          <h3>Interview — Personality Test</h3>
+          <div class="timeline">
+            <div class="stage reveal" data-step="1">
+              <div class="stage-head"><h4>Current Affairs Deep-dive</h4><span class="duration">Ongoing</span></div>
+              <p>Go beyond headlines — understand the "why" behind major national and security-related events.</p>
+            </div>
+            <div class="stage reveal" data-step="2">
+              <div class="stage-head"><h4>DAF &amp; Personal Profile Prep</h4><span class="duration">Weeks 1–2</span></div>
+              <p>Prepare thoughtful, honest answers around your application form, education, and background.</p>
+            </div>
+            <div class="stage reveal" data-step="3">
+              <div class="stage-head"><h4>Mock Interviews</h4><span class="duration">Weeks 3–4</span></div>
+              <p>Practice with mock panels to get comfortable thinking clearly under pressure.</p>
+            </div>
+            <div class="stage reveal" data-step="4">
+              <div class="stage-head"><h4>Final Confidence Building</h4><span class="duration">Week before</span></div>
+              <p>Revise current affairs, stay calm, and walk in prepared and self-assured.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-use.html">Terms of Use</a>
+        <a href="disclaimer.html">Disclaimer</a>
+        <a href="contact-us.html">Contact Us</a>
+      </nav>
+
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
+
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const statusHolder = { timeout: null };
+
+    function flashMessage(message) {
+      let el = document.getElementById('status');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'status';
+        el.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(statusHolder.timeout);
+      statusHolder.timeout = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+    }
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        flashMessage(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.getElementById('homeButton').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach((b) => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+
+        const track = btn.dataset.track;
+        document.querySelectorAll('.roadmap-track').forEach((t) => t.classList.remove('active'));
+        const activeTrack = document.getElementById('track-' + track);
+        activeTrack.classList.add('active');
+        activeTrack.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    const stickyCta = document.getElementById('stickyCta');
+    const roadmapHero = document.querySelector('.roadmap-hero');
+
+    window.addEventListener('scroll', () => {
+      const heroBottom = roadmapHero.getBoundingClientRect().bottom;
+      stickyCta.classList.toggle('is-visible', heroBottom < 0);
+    });
+
+    stickyCta.addEventListener('click', () => {
+      window.location.href = 'start-learning.html';
+    });
+  </script>
+</body>
+</html>
