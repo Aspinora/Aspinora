@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Learn. Prepare. Achieve.</title>
+  <style>
+    :root {
+      --orange: #ff7800;
+      --orange-dark: #e85d00;
+      --ink: #172033;
+      --muted: #6d7585;
+      --line: #edf0f5;
+      --surface: #ffffff;
+      --soft: #fff7ef;
+      --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%);
+    }
+
+    button { font: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .topbar {
+      height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 7px 10px 7px 3px;
+      border-radius: 14px;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+
+    .brand img {
+      width: 43px;
+      height: 43px;
+      object-fit: contain;
+      border-radius: 50%;
+      box-shadow: 0 5px 14px rgba(255, 120, 0, .2);
+    }
+
+    .brand-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+    }
+
+    .brand-name span { color: var(--orange); }
+
+    .menu-wrap { position: relative; }
+
+    .menu-button {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      color: #505b70;
+      background: transparent;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .menu-button:hover, .menu-button[aria-expanded="true"] {
+      color: var(--orange-dark);
+      background: #fff0e3;
+      border-color: #ffe2ca;
+    }
+
+    .dots { display: flex; gap: 4px; }
+    .dots i {
+      width: 4px; height: 4px; border-radius: 50%; background: currentColor;
+    }
+
+    .menu-panel {
+      position: absolute;
+      top: 53px;
+      right: 0;
+      z-index: 10;
+      width: 245px;
+      padding: 10px;
+      background: white;
+      border: 1px solid #f0e9e2;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(-8px) scale(.97);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 10px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: #394255;
+      text-align: left;
+      cursor: pointer;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+
+    .hero {
+      min-height: 505px;
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      align-items: center;
+      gap: 46px;
+      padding: 44px 5.5%;
+      overflow: hidden;
+      border: 1px solid #f8e6d6;
+      border-radius: 30px;
+      background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 99px;
+      color: #e56b14;
+      background: #fff0e2;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+    h1 { max-width: 520px; margin: 18px 0 16px; font-size: clamp(38px, 5vw, 67px); line-height: .98; letter-spacing: -3px; }
+    h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 505px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .primary, .secondary {
+      border: 0; border-radius: 12px; padding: 13px 18px; cursor: pointer; font-weight: 750; transition: all .2s ease;
+    }
+    .primary { color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .secondary { color: #4e586b; border: 1px solid #e8ebf0; background: white; }
+    .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+
+    .visual { position: relative; min-height: 355px; display: grid; place-items: center; }
+    .visual::before, .visual::after { content: ""; position: absolute; border-radius: 50%; border: 1px dashed #ffd7b1; }
+    .visual::before { width: 315px; height: 315px; }
+    .visual::after { width: 245px; height: 245px; border-color: #ffe7d1; }
+    .orbit { position: absolute; width: 345px; height: 345px; animation: spin 22s linear infinite; }
+    .orbit span { position: absolute; padding: 9px 12px; border-radius: 10px; color: #667084; background: white; box-shadow: 0 8px 20px rgba(47, 56, 79, .1); font-size: 12px; font-weight: 750; }
+    .orbit span:nth-child(1) { top: 20px; right: 16px; }
+    .orbit span:nth-child(2) { bottom: 35px; left: 3px; }
+    .orbit span:nth-child(3) { bottom: 4px; right: 52px; }
+    .mascot { position: relative; z-index: 1; width: 190px; height: 190px; display: grid; place-items: center; border-radius: 54% 46% 48% 52%; background: linear-gradient(145deg, #ff9a32, #f26800); box-shadow: 0 22px 35px rgba(238, 108, 8, .25); transform: rotate(-5deg); }
+    .mascot::before { content: ""; position: absolute; inset: 22px; border: 2px solid rgba(255,255,255,.28); border-radius: 50%; }
+    .mascot .book { position: absolute; bottom: 35px; width: 74px; height: 43px; background: white; border-radius: 5px 12px 5px 3px; transform: rotate(5deg); }
+    .mascot .book::after { content: ""; position: absolute; left: 50%; top: 0; height: 100%; border-left: 3px solid #f78b28; }
+    .mascot .person { position: absolute; top: 39px; width: 22px; height: 22px; border-radius: 50%; background: white; }
+    .mascot .person::before, .mascot .person::after { content: ""; position: absolute; top: 25px; width: 20px; height: 75px; background: white; clip-path: polygon(50% 0, 100% 100%, 73% 100%, 50% 50%, 27% 100%, 0 100%); }
+    .mascot .person::before { right: 14px; transform: rotate(33deg); }
+    .mascot .person::after { left: 14px; transform: rotate(-33deg); }
+
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+    .feature { padding: 21px; border: 1px solid var(--line); border-radius: 19px; background: rgba(255,255,255,.88); box-shadow: 0 8px 25px rgba(44, 54, 78, .04); }
+    .feature-icon { width: 38px; height: 38px; display: grid; place-items: center; margin-bottom: 15px; border-radius: 11px; font-size: 18px; }
+    .feature h3 { margin: 0 0 7px; font-size: 16px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .status { min-height: 22px; margin-top: 16px; color: #e56b14; font-size: 13px; font-weight: 650; }
+
+    .footer {
+      margin-top: 20px;
+      padding: 42px 7%;
+      text-align: center;
+      border: 1px solid #f8e6d6;
+      border-radius: 30px;
+      background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+    .footer-support { max-width: 700px; margin: 0 auto; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .footer .primary { margin-top: 22px; }
+    .footer-contact { margin-top: 30px; font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 26px 0 22px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    .features.reveal-group .feature:nth-child(1) { transition-delay: 0s; }
+    .features.reveal-group .feature:nth-child(2) { transition-delay: .1s; }
+    .features.reveal-group .feature:nth-child(3) { transition-delay: .2s; }
+
+    .sticky-cta {
+      position: fixed;
+      right: 26px;
+      bottom: 26px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 99px;
+      padding: 15px 22px;
+      color: white;
+      background: linear-gradient(135deg, #ff8c1a, #f06400);
+      box-shadow: 0 14px 30px rgba(242, 105, 0, .3);
+      cursor: pointer;
+      font-weight: 750;
+      opacity: 0;
+      transform: translateY(18px) scale(.96);
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease;
+    }
+    .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+    .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .hero { grid-template-columns: 1fr; gap: 4px; padding: 32px 24px 20px; }
+      h1 { letter-spacing: -2px; }
+      .visual { min-height: 300px; transform: scale(.85); margin: -20px 0 -35px; }
+      .features { grid-template-columns: 1fr; }
+      .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <div class="menu-label">Explore Aspinora</div>
+          <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
+          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <div class="eyebrow">Your preparation, elevated</div>
+        <h1>Build your future, <em>one goal</em> at a time.</h1>
+        <p class="intro">A focused space for ambitious learners to plan smarter, learn consistently, and move closer to their dream career.</p>
+        <div class="actions">
+          <button class="primary" id="startLearningButton">Start learning&nbsp; →</button>
+          <button class="secondary" id="viewRoadmapButton">View roadmap</button>
+        </div>
+        <div class="status" id="status" aria-live="polite"></div>
+      </div>
+
+      <div class="visual" aria-label="Illustration representing learning and achievement">
+        <div class="orbit" aria-hidden="true"><span>Consistency</span><span>Focus</span><span>Progress</span></div>
+        <div class="mascot" aria-hidden="true"><div class="person"></div><div class="book"></div></div>
+      </div>
+    </section>
+
+    <section class="features reveal-group" aria-label="Aspinora features">
+      <article class="feature reveal"><div class="feature-icon orange">◎</div><h3>Plan with purpose</h3><p>Turn big ambitions into clear, achievable daily steps.</p></article>
+      <article class="feature reveal"><div class="feature-icon blue">↗</div><h3>Track your progress</h3><p>See your momentum grow and stay accountable to your goals.</p></article>
+      <article class="feature reveal"><div class="feature-icon purple">✎</div><h3>Learn with clarity</h3><p>Organise your notes, practice, and insights in one place.</p></article>
+    </section>
+
+    <footer class="footer reveal">
+      <p class="footer-support">Aspinora is completely free and accessible to all. If you find our resources useful and would like to support the continued development and maintenance of the platform, you can make a voluntary contribution. Every contribution, regardless of size, helps us keep learning resources freely available to everyone.</p>
+      <button class="primary" id="donateButton" data-message="Contribution page coming soon.">Make a Voluntary Contribution&nbsp; →</button>
+
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-use.html">Terms of Use</a>
+        <a href="disclaimer.html">Disclaimer</a>
+        <a href="contact-us.html">Contact Us</a>
+      </nav>
+
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
+
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const status = document.getElementById('status');
+
+    function setStatus(message) {
+      status.textContent = message;
+      window.setTimeout(() => { status.textContent = ''; }, 2800);
+    }
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        setStatus(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.getElementById('startLearningButton').addEventListener('click', () => {
+      window.location.href = 'start-learning.html';
+    });
+
+    document.getElementById('viewRoadmapButton').addEventListener('click', () => {
+      window.location.href = 'roadmap.html';
+    });
+
+    document.getElementById('homeButton').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setStatus('Welcome back to Aspinora.');
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    const stickyCta = document.getElementById('stickyCta');
+    const heroSection = document.querySelector('.hero');
+
+    window.addEventListener('scroll', () => {
+      const heroBottom = heroSection.getBoundingClientRect().bottom;
+      stickyCta.classList.toggle('is-visible', heroBottom < 0);
+    });
+
+    stickyCta.addEventListener('click', () => {
+      window.location.href = 'start-learning.html';
+    });
+  </script>
+</body>
+</html>
