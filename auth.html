@@ -368,6 +368,12 @@
     document.getElementById('toSignup').addEventListener('click', () => switchPanel('signup'));
     document.getElementById('toLogin').addEventListener('click', () => switchPanel('login'));
 
+    // Deep-link support: auth.html#signup or auth.html#login opens directly to that tab
+    const initialHash = window.location.hash.replace('#', '');
+    if (initialHash === 'signup' || initialHash === 'login') {
+      switchPanel(initialHash);
+    }
+
     // Forgot password panel toggle
     const mainAuth = document.getElementById('mainAuth');
     const resetPanel = document.getElementById('resetPanel');

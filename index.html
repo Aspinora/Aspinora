@@ -170,13 +170,21 @@
     }
     .eyebrow::before { content: "✦"; font-size: 13px; }
 
-    .hero-top-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .hero-login {
-      display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 99px;
-      border: 1px solid var(--line); background: white; color: #4e586b; font-size: 12.5px; font-weight: 750;
-      text-decoration: none; transition: all .2s ease; white-space: nowrap;
+    .hero { position: relative; }
+
+    .hero-auth-row { position: absolute; top: 26px; right: 32px; z-index: 3; display: flex; gap: 10px; }
+    .hero-login-btn {
+      border: 0; border-radius: 12px; padding: 12px 22px; cursor: pointer; font-weight: 750;
+      color: white; background: linear-gradient(135deg, #ff8c1a, #f06400);
+      box-shadow: 0 10px 20px rgba(242, 105, 0, .2); text-decoration: none;
+      transition: all .2s ease;
     }
-    .hero-login:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; transform: translateY(-1px); }
+    .hero-login-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .hero-signup-btn {
+      border: 1.5px solid var(--orange); border-radius: 12px; padding: 12px 20px; cursor: pointer; font-weight: 750;
+      color: var(--orange-dark); background: transparent; text-decoration: none; transition: all .2s ease;
+    }
+    .hero-signup-btn:hover { background: #fff3e5; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 120, 0, .15); }
     h1 { max-width: 520px; margin: 18px 0 16px; font-size: clamp(38px, 5vw, 67px); line-height: .98; letter-spacing: -3px; }
     h1 em { color: var(--orange); font-style: normal; }
     .intro { max-width: 505px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
@@ -349,6 +357,8 @@
       .hero { grid-template-columns: 1fr; gap: 4px; padding: 32px 24px 20px; }
       h1 { letter-spacing: -2px; }
       .visual { min-height: 300px; transform: scale(.85); margin: -20px 0 -35px; }
+      .actions { flex-direction: column; align-items: stretch; }
+      .actions .primary, .actions .secondary { width: 100%; justify-content: center; text-align: center; }
       .features { grid-template-columns: 1fr; }
       .ecosystem { padding: 24px 18px; }
       .ecosystem-grid { grid-template-columns: repeat(2, 1fr); }
@@ -384,11 +394,12 @@
     </header>
 
     <section class="hero">
+      <div class="hero-auth-row">
+        <a class="hero-signup-btn" href="auth.html#signup">Sign up</a>
+        <a class="hero-login-btn" href="auth.html#login">Login</a>
+      </div>
       <div class="copy">
-        <div class="hero-top-row">
-          <div class="eyebrow">Your preparation, elevated</div>
-          <a class="hero-login" href="auth.html">Log in / Sign up →</a>
-        </div>
+        <div class="eyebrow">Your preparation, elevated</div>
         <h1>Build your future, <em>one goal</em> at a time.</h1>
         <p class="intro">A focused space for ambitious learners to plan smarter, learn consistently, and move closer to their dream career.</p>
         <div class="actions">
