@@ -73,9 +73,6 @@
     .brand-name span { color: var(--orange); }
 
     .menu-wrap { position: relative; }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .auth-button { border: 1px solid var(--line); background: white; color: #4e586b; font-weight: 750; font-size: 13.5px; padding: 10px 16px; border-radius: 12px; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
-    .auth-button:hover { border-color: #ffcc9e; color: var(--orange-dark, #e85d00); background: #fffaf5; transform: translateY(-1px); }
 
 
     .menu-button {
@@ -172,6 +169,14 @@
       text-transform: uppercase;
     }
     .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .hero-top-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .hero-login {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 99px;
+      border: 1px solid var(--line); background: white; color: #4e586b; font-size: 12.5px; font-weight: 750;
+      text-decoration: none; transition: all .2s ease; white-space: nowrap;
+    }
+    .hero-login:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; transform: translateY(-1px); }
     h1 { max-width: 520px; margin: 18px 0 16px; font-size: clamp(38px, 5vw, 67px); line-height: .98; letter-spacing: -3px; }
     h1 em { color: var(--orange); font-style: normal; }
     .intro { max-width: 505px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
@@ -359,7 +364,7 @@
         <span class="brand-name">Aspi<span>nora</span></span>
       </button>
 
-      <div class="topbar-right"><button class="auth-button" id="authButton">Login</button><div class="menu-wrap">
+      <div class="menu-wrap">
         <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
@@ -376,11 +381,14 @@
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
         </nav>
       </div>
-    </div></header>
+    </header>
 
     <section class="hero">
       <div class="copy">
-        <div class="eyebrow">Your preparation, elevated</div>
+        <div class="hero-top-row">
+          <div class="eyebrow">Your preparation, elevated</div>
+          <a class="hero-login" href="auth.html">Log in / Sign up →</a>
+        </div>
         <h1>Build your future, <em>one goal</em> at a time.</h1>
         <p class="intro">A focused space for ambitious learners to plan smarter, learn consistently, and move closer to their dream career.</p>
         <div class="actions">
@@ -507,10 +515,6 @@
 
     document.getElementById('homeButton').addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    document.getElementById('authButton').addEventListener('click', () => {
-      window.location.href = 'auth.html';
-    });
       setStatus('Welcome back to Aspinora.');
     });
 
