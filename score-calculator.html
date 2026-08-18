@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Exam Score Calculator</title>
+  <style>
+    :root {
+      --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
+      --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+      --red: #e5484d; --gray: #d8dee8; --blue: #367dd7; --green: #239363;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
+    button { font: inherit; }
+    input { font: inherit; }
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+
+    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px; transition: background .2s ease, transform .2s ease; }
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+    .menu-wrap { position: relative; }
+    .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+    .menu-panel { position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px; background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow); opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .page-hero { padding: 46px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .page-hero h1 { max-width: 680px; margin: 18px 0 14px; font-size: clamp(34px, 4.6vw, 54px); line-height: 1.05; letter-spacing: -2.2px; }
+    .page-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 34px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.6px; }
+    .section .lead { max-width: 700px; margin: 0 0 20px; color: var(--muted); font-size: 14.5px; line-height: 1.7; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 13px; font-weight: 750; color: #394255; }
+    .field .hint { font-size: 11.5px; color: #a0a6b2; font-weight: 600; }
+    .field input {
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px;
+      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+
+    .form-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+    .primary, .secondary { border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; font-weight: 750; transition: all .2s ease; }
+    .primary { color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .secondary { color: #4e586b; border: 1px solid #e8ebf0; background: white; }
+    .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+
+    .error-msg {
+      display: none; margin-top: 16px; padding: 12px 16px; border-radius: 12px;
+      background: #fff0f0; border: 1px solid #ffd6d6; color: #c0323a; font-size: 13.5px; font-weight: 650;
+    }
+    .error-msg.show { display: block; }
+
+    .results-wrap { display: none; }
+    .results-wrap.show { display: block; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .stat-card { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); text-align: center; }
+    .stat-card .icon { font-size: 20px; margin-bottom: 8px; }
+    .stat-card strong { display: block; font-size: 26px; letter-spacing: -1px; color: var(--ink); }
+    .stat-card span { font-size: 12px; color: var(--muted); font-weight: 650; }
+    .stat-card.positive strong { color: var(--orange-dark); }
+    .stat-card.negative strong { color: var(--red); }
+    .stat-card.final strong { color: var(--green); }
+
+    .progress-list { margin-top: 4px; display: grid; gap: 14px; }
+    .progress-item { padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(44, 54, 78, .04); }
+    .progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+    .progress-head h4 { margin: 0; font-size: 14px; }
+    .progress-head .pct { font-size: 13.5px; font-weight: 800; color: var(--orange-dark); }
+    .progress-track { height: 9px; border-radius: 99px; background: #f2f0ee; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width 1s cubic-bezier(.22,.9,.3,1); }
+
+    .visual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+
+    .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
+    .donut { width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#d8dee8 0 100%); transition: background 1s ease; position: relative; flex-shrink: 0; }
+    .donut::after { content: ""; position: absolute; inset: 26px; border-radius: 50%; background: #fffaf5; }
+    .legend { display: grid; gap: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #394255; }
+    .legend-item .swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+    .legend-item strong { color: var(--ink); }
+
+    .gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .gauge-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
+    .gauge-track { fill: none; stroke: #ffe7d1; stroke-width: 14; }
+    .gauge-fill { fill: none; stroke: url(#gaugeGradient); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 534; stroke-dashoffset: 534; transition: stroke-dashoffset 1.3s cubic-bezier(.22,.9,.25,1); }
+    .gauge-center { margin-top: -138px; text-align: center; }
+    .gauge-center strong { display: block; font-size: 32px; letter-spacing: -1.3px; color: var(--ink); }
+    .gauge-center strong.negative { color: var(--red); }
+    .gauge-center span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+
+    .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .footer-contact { font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    .sticky-cta { position: fixed; right: 26px; bottom: 26px; z-index: 50; display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 99px; padding: 15px 22px; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 14px 30px rgba(242, 105, 0, .3); cursor: pointer; font-weight: 750; opacity: 0; transform: translateY(18px) scale(.96); pointer-events: none; transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease; }
+    .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+    .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
+
+    @media (max-width: 900px) {
+      .visual-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .page-hero { padding: 32px 24px; }
+      .page-hero h1 { letter-spacing: -1.6px; }
+      .section { padding: 24px 18px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <div class="menu-label">Explore Aspinora</div>
+          <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
+          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+          <button class="menu-item" data-message="Mock tests coming soon."><span class="menu-icon orange">◈</span>Mock tests</button>
+          <a class="menu-item" href="score-calculator.html"><span class="menu-icon blue">▤</span>Calculators</a>
+          <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
+          <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
+          <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="page-hero">
+      <div class="eyebrow">Score calculator</div>
+      <h1>Know your exact score, <em>before the results do.</em></h1>
+      <p class="intro">Enter your exam details and get an instant breakdown of your score, accuracy, and how negative marking affected your final result.</p>
+    </section>
+
+    <section class="section">
+      <h2>Enter your exam details</h2>
+      <p class="lead">Fill in all five fields, then hit calculate.</p>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="totalQuestions">Total Questions</label>
+          <input type="number" id="totalQuestions" min="0" placeholder="e.g. 100" inputmode="numeric" />
+          <span class="hint">Total number of questions in the exam</span>
+        </div>
+        <div class="field">
+          <label for="attempted">Questions Attempted</label>
+          <input type="number" id="attempted" min="0" placeholder="e.g. 85" inputmode="numeric" />
+          <span class="hint">How many you actually answered</span>
+        </div>
+        <div class="field">
+          <label for="wrong">Wrong Answers</label>
+          <input type="number" id="wrong" min="0" placeholder="e.g. 12" inputmode="numeric" />
+          <span class="hint">Out of the ones you attempted</span>
+        </div>
+        <div class="field">
+          <label for="marksPerQ">Marks per Question</label>
+          <input type="number" id="marksPerQ" min="0" step="0.25" placeholder="e.g. 2" inputmode="decimal" />
+          <span class="hint">Marks awarded for each correct answer</span>
+        </div>
+        <div class="field">
+          <label for="negMarking">Negative Marking per Wrong Answer</label>
+          <input type="number" id="negMarking" min="0" step="0.25" placeholder="e.g. 0.5" inputmode="decimal" />
+          <span class="hint">Marks deducted for each wrong answer</span>
+        </div>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <div class="form-actions">
+        <button class="primary" id="calculateButton">Calculate my score&nbsp; →</button>
+        <button class="secondary" id="resetButton">Reset</button>
+      </div>
+    </section>
+
+    <div class="results-wrap" id="resultsWrap">
+      <section class="section">
+        <h2>Your results</h2>
+        <p class="lead">Here's exactly what happened with your attempt.</p>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="icon">✅</div><strong id="rCorrect">0</strong><span>Correct answers</span></div>
+          <div class="stat-card"><div class="icon">❌</div><strong id="rWrong">0</strong><span>Wrong answers</span></div>
+          <div class="stat-card"><div class="icon">⭕</div><strong id="rUnattempted">0</strong><span>Unattempted</span></div>
+          <div class="stat-card positive"><div class="icon">📊</div><strong id="rMarksBefore">0</strong><span>Marks before negative</span></div>
+          <div class="stat-card negative"><div class="icon">➖</div><strong id="rNegative">0</strong><span>Negative marks</span></div>
+          <div class="stat-card final"><div class="icon">🏆</div><strong id="rFinal">0</strong><span>Final score</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Visual breakdown</h2>
+        <p class="lead">How your attempt and your score break down at a glance.</p>
+        <div class="visual-grid">
+          <div class="donut-wrap">
+            <div class="donut" id="donutChart"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="lCorrect">0</strong></div>
+              <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="lWrong">0</strong></div>
+              <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="lUnattempted">0</strong></div>
+            </div>
+          </div>
+
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" id="gaugeSvg" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff8c1a" />
+                  <stop offset="100%" stop-color="#f06400" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-track" cx="100" cy="100" r="85" />
+              <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="85" />
+            </svg>
+            <div class="gauge-center">
+              <strong id="gaugePct">0%</strong>
+              <span>Overall score</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Rate analysis</h2>
+        <p class="lead">A closer look at how you performed relative to the full exam.</p>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="progress-head"><h4>Attempt Rate</h4><span class="pct" id="pAttempt">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="fAttempt"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-head"><h4>Accuracy Rate (of attempted)</h4><span class="pct" id="pAccuracy">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="fAccuracy"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-head"><h4>Incorrect Rate (of attempted)</h4><span class="pct" id="pIncorrect">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="fIncorrect"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-head"><h4>Overall Percentage (of max marks)</h4><span class="pct" id="pOverall">0%</span></div>
+            <div class="progress-track"><div class="progress-fill" id="fOverall"></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="legal.html#privacy-policy">Privacy Policy</a>
+        <a href="legal.html#terms-of-use">Terms of Use</a>
+        <a href="legal.html#disclaimer">Disclaimer</a>
+        <a href="legal.html#contact-us">Contact Us</a>
+      </nav>
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
+
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const statusHolder = { timeout: null };
+
+    function flashMessage(message) {
+      let el = document.getElementById('status');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'status';
+        el.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(statusHolder.timeout);
+      statusHolder.timeout = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+    }
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        flashMessage(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.getElementById('homeButton').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    const errorMsg = document.getElementById('errorMsg');
+    const resultsWrap = document.getElementById('resultsWrap');
+
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.classList.add('show');
+      resultsWrap.classList.remove('show');
+    }
+
+    function clearError() {
+      errorMsg.classList.remove('show');
+      errorMsg.textContent = '';
+    }
+
+    function fmt(num) {
+      return Number.isInteger(num) ? String(num) : num.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function calculate() {
+      const total = parseFloat(document.getElementById('totalQuestions').value);
+      const attempted = parseFloat(document.getElementById('attempted').value);
+      const wrong = parseFloat(document.getElementById('wrong').value);
+      const marksPerQ = parseFloat(document.getElementById('marksPerQ').value);
+      const negMarking = parseFloat(document.getElementById('negMarking').value);
+
+      if ([total, attempted, wrong, marksPerQ, negMarking].some((v) => isNaN(v))) {
+        showError('Please fill in all five fields with valid numbers.');
+        return;
+      }
+      if (total <= 0) { showError('Total Questions must be greater than 0.'); return; }
+      if (attempted < 0 || attempted > total) { showError('Questions Attempted must be between 0 and Total Questions.'); return; }
+      if (wrong < 0 || wrong > attempted) { showError('Wrong Answers cannot exceed Questions Attempted.'); return; }
+      if (marksPerQ < 0 || negMarking < 0) { showError('Marks and negative marking cannot be negative.'); return; }
+
+      clearError();
+
+      const correct = attempted - wrong;
+      const unattempted = total - attempted;
+      const marksBefore = correct * marksPerQ;
+      const negativeMarks = wrong * negMarking;
+      const finalScore = marksBefore - negativeMarks;
+      const maxPossible = total * marksPerQ;
+
+      const attemptRate = (attempted / total) * 100;
+      const accuracyRate = attempted > 0 ? (correct / attempted) * 100 : 0;
+      const incorrectRate = attempted > 0 ? (wrong / attempted) * 100 : 0;
+      const overallPct = maxPossible > 0 ? (finalScore / maxPossible) * 100 : 0;
+
+      document.getElementById('rCorrect').textContent = fmt(correct);
+      document.getElementById('rWrong').textContent = fmt(wrong);
+      document.getElementById('rUnattempted').textContent = fmt(unattempted);
+      document.getElementById('rMarksBefore').textContent = fmt(marksBefore);
+      document.getElementById('rNegative').textContent = '-' + fmt(negativeMarks);
+      document.getElementById('rFinal').textContent = fmt(finalScore) + ' / ' + fmt(maxPossible);
+
+      document.getElementById('lCorrect').textContent = fmt(correct);
+      document.getElementById('lWrong').textContent = fmt(wrong);
+      document.getElementById('lUnattempted').textContent = fmt(unattempted);
+
+      const correctPct = (correct / total) * 100;
+      const wrongPct = (wrong / total) * 100;
+      const donut = document.getElementById('donutChart');
+      donut.style.background = `conic-gradient(#f16d00 0 ${correctPct}%, #e5484d ${correctPct}% ${correctPct + wrongPct}%, #d8dee8 ${correctPct + wrongPct}% 100%)`;
+
+      const clampedPct = Math.max(0, Math.min(100, overallPct));
+      const circumference = 534;
+      const offset = circumference - (circumference * clampedPct) / 100;
+      const gaugeFill = document.getElementById('gaugeFill');
+      requestAnimationFrame(() => { gaugeFill.style.strokeDashoffset = offset; });
+
+      const gaugePctEl = document.getElementById('gaugePct');
+      gaugePctEl.textContent = fmt(overallPct) + '%';
+      gaugePctEl.classList.toggle('negative', overallPct < 0);
+
+      document.getElementById('pAttempt').textContent = fmt(attemptRate) + '%';
+      document.getElementById('pAccuracy').textContent = fmt(accuracyRate) + '%';
+      document.getElementById('pIncorrect').textContent = fmt(incorrectRate) + '%';
+      document.getElementById('pOverall').textContent = fmt(overallPct) + '%';
+
+      const fills = {
+        fAttempt: attemptRate, fAccuracy: accuracyRate, fIncorrect: incorrectRate, fOverall: clampedPct
+      };
+      requestAnimationFrame(() => {
+        Object.keys(fills).forEach((id) => {
+          document.getElementById(id).style.width = Math.max(0, Math.min(100, fills[id])) + '%';
+        });
+      });
+
+      resultsWrap.classList.add('show');
+      resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetForm() {
+      ['totalQuestions', 'attempted', 'wrong', 'marksPerQ', 'negMarking'].forEach((id) => {
+        document.getElementById(id).value = '';
+      });
+      clearError();
+      resultsWrap.classList.remove('show');
+      document.getElementById('gaugeFill').style.strokeDashoffset = 534;
+      document.querySelectorAll('.progress-fill').forEach((el) => { el.style.width = '0%'; });
+      document.getElementById('donutChart').style.background = 'conic-gradient(#d8dee8 0 100%)';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('calculateButton').addEventListener('click', calculate);
+    document.getElementById('resetButton').addEventListener('click', resetForm);
+
+    document.querySelectorAll('.field input').forEach((input) => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') calculate();
+      });
+    });
+
+    const stickyCta = document.getElementById('stickyCta');
+    const pageHero = document.querySelector('.page-hero');
+
+    window.addEventListener('scroll', () => {
+      const heroBottom = pageHero.getBoundingClientRect().bottom;
+      stickyCta.classList.toggle('is-visible', heroBottom < 0);
+    });
+
+    stickyCta.addEventListener('click', () => {
+      window.location.href = 'start-learning.html';
+    });
+  </script>
+</body>
+</html>

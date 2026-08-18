@@ -180,15 +180,58 @@
     .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
 
     .visual { position: relative; min-height: 355px; display: grid; place-items: center; }
-    .visual::before, .visual::after { content: ""; position: absolute; border-radius: 50%; border: 1px dashed #ffd7b1; }
-    .visual::before { width: 315px; height: 315px; }
-    .visual::after { width: 245px; height: 245px; border-color: #ffe7d1; }
-    .orbit { position: absolute; width: 345px; height: 345px; animation: spin 22s linear infinite; }
-    .orbit span { position: absolute; padding: 9px 12px; border-radius: 10px; color: #667084; background: white; box-shadow: 0 8px 20px rgba(47, 56, 79, .1); font-size: 12px; font-weight: 750; }
-    .orbit span:nth-child(1) { top: 20px; right: 16px; }
-    .orbit span:nth-child(2) { bottom: 35px; left: 3px; }
-    .orbit span:nth-child(3) { bottom: 4px; right: 52px; }
-    .mascot { position: relative; z-index: 1; width: 190px; height: 190px; display: grid; place-items: center; border-radius: 54% 46% 48% 52%; background: linear-gradient(145deg, #ff9a32, #f26800); box-shadow: 0 22px 35px rgba(238, 108, 8, .25); transform: rotate(-5deg); }
+
+    .glow-halo {
+      position: absolute; width: 260px; height: 260px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,140,26,.35) 0%, rgba(255,140,26,0) 70%);
+      filter: blur(4px);
+      animation: haloPulse 3.4s ease-in-out infinite;
+    }
+
+    .progress-ring { position: absolute; width: 300px; height: 300px; transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: #ffe7d1; stroke-width: 6; }
+    .ring-fill {
+      fill: none; stroke: url(#ringGradient); stroke-width: 6; stroke-linecap: round;
+      stroke-dasharray: 804; stroke-dashoffset: 804;
+      transition: stroke-dashoffset 1.7s cubic-bezier(.22,.9,.25,1);
+    }
+    .progress-ring.filled .ring-fill { stroke-dashoffset: 177; }
+
+    .comet-orbit { position: absolute; width: 300px; height: 300px; animation: spin 5.5s linear infinite; }
+    .comet-dot {
+      position: absolute; top: -1px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px;
+      border-radius: 50%; background: radial-gradient(circle, #fff, var(--orange));
+      box-shadow: 0 0 14px 4px rgba(255, 120, 0, .55);
+    }
+
+    .orbit-ring { position: absolute; width: 300px; height: 300px; }
+    .orbit-item { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+    .orbit-pill {
+      position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      padding: 9px 13px; border-radius: 99px; background: white; color: #4b5568;
+      font-size: 12px; font-weight: 750; box-shadow: 0 10px 24px rgba(47, 56, 79, .14);
+      animation: counterSpin 26s linear infinite;
+    }
+    .orbit-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .particles { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+    .particles i {
+      position: absolute; bottom: 10%; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--orange); opacity: 0; animation: riseUp 4.5s ease-in infinite;
+    }
+    .particles i:nth-child(1) { left: 18%; animation-delay: 0s; background: #ff8c1a; }
+    .particles i:nth-child(2) { left: 82%; animation-delay: 1.1s; background: #367dd7; }
+    .particles i:nth-child(3) { left: 30%; animation-delay: 2.2s; background: #7957db; }
+    .particles i:nth-child(4) { left: 70%; animation-delay: 3.1s; background: #239363; }
+    .particles i:nth-child(5) { left: 50%; animation-delay: .6s; background: #ff8c1a; }
+
+    .mascot {
+      position: relative; z-index: 3; width: 190px; height: 190px; display: grid; place-items: center;
+      border-radius: 54% 46% 48% 52%; background: linear-gradient(145deg, #ff9a32, #f26800);
+      box-shadow: 0 22px 35px rgba(238, 108, 8, .25); transform: rotate(-5deg);
+      animation: breathe 3.4s ease-in-out infinite;
+    }
     .mascot::before { content: ""; position: absolute; inset: 22px; border: 2px solid rgba(255,255,255,.28); border-radius: 50%; }
     .mascot .book { position: absolute; bottom: 35px; width: 74px; height: 43px; background: white; border-radius: 5px 12px 5px 3px; transform: rotate(5deg); }
     .mascot .book::after { content: ""; position: absolute; left: 50%; top: 0; height: 100%; border-left: 3px solid #f78b28; }
@@ -196,6 +239,11 @@
     .mascot .person::before, .mascot .person::after { content: ""; position: absolute; top: 25px; width: 20px; height: 75px; background: white; clip-path: polygon(50% 0, 100% 100%, 73% 100%, 50% 50%, 27% 100%, 0 100%); }
     .mascot .person::before { right: 14px; transform: rotate(33deg); }
     .mascot .person::after { left: 14px; transform: rotate(-33deg); }
+
+    @keyframes haloPulse { 0%, 100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.12); opacity: 1; } }
+    @keyframes breathe { 0%, 100% { transform: rotate(-5deg) scale(1); } 50% { transform: rotate(-5deg) scale(1.035); } }
+    @keyframes riseUp { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .5; } 100% { transform: translateY(-230px) scale(1.1); opacity: 0; } }
+    @keyframes counterSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
 
     .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
     .feature { padding: 21px; border: 1px solid var(--line); border-radius: 19px; background: rgba(255,255,255,.88); box-shadow: 0 8px 25px rgba(44, 54, 78, .04); }
@@ -206,6 +254,33 @@
     a.feature:hover { transform: translateY(-3px); border-color: #ffd0a8; box-shadow: 0 14px 30px rgba(193, 117, 43, .1); }
     a.feature .feature-arrow { position: absolute; right: 21px; bottom: 21px; color: #a1a8b5; font-size: 17px; transition: transform .2s ease, color .2s ease; }
     a.feature:hover .feature-arrow { color: var(--orange); transform: translateX(3px); }
+
+    .ecosystem { margin-top: 20px; padding: 34px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .ecosystem h2 { margin: 0 0 6px; font-size: 25px; letter-spacing: -.6px; }
+    .ecosystem .lead { max-width: 640px; margin: 0 0 24px; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
+    .ecosystem-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .eco-card {
+      position: relative; display: block; padding: 19px; text-align: left; border: 1px solid var(--line);
+      border-radius: 17px; background: rgba(255,255,255,.92); color: inherit; text-decoration: none;
+      cursor: pointer; box-shadow: 0 8px 22px rgba(44, 54, 78, .04);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .eco-card:hover { transform: translateY(-3px); border-color: #ffd0a8; box-shadow: 0 14px 28px rgba(193, 117, 43, .1); }
+    .eco-icon { width: 32px; height: 32px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 9px; font-size: 15px; }
+    .eco-card h4 { margin: 0 0 5px; font-size: 14px; letter-spacing: -.2px; }
+    .eco-card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+    .eco-arrow { position: absolute; right: 16px; bottom: 16px; color: #a1a8b5; font-size: 14px; transition: transform .2s ease, color .2s ease; }
+    .eco-card:hover .eco-arrow { color: var(--orange); transform: translateX(3px); }
+    .ecosystem-grid .eco-card:nth-child(1) { transition-delay: 0s; }
+    .ecosystem-grid .eco-card:nth-child(2) { transition-delay: .04s; }
+    .ecosystem-grid .eco-card:nth-child(3) { transition-delay: .08s; }
+    .ecosystem-grid .eco-card:nth-child(4) { transition-delay: .12s; }
+    .ecosystem-grid .eco-card:nth-child(5) { transition-delay: .16s; }
+    .ecosystem-grid .eco-card:nth-child(6) { transition-delay: .2s; }
+    .ecosystem-grid .eco-card:nth-child(7) { transition-delay: .24s; }
+    .ecosystem-grid .eco-card:nth-child(8) { transition-delay: .28s; }
+    .ecosystem-grid .eco-card:nth-child(9) { transition-delay: .32s; }
+    .ecosystem-grid .eco-card:nth-child(10) { transition-delay: .36s; }
     .status { min-height: 22px; margin-top: 16px; color: #e56b14; font-size: 13px; font-weight: 650; }
 
     .footer {
@@ -265,6 +340,8 @@
       h1 { letter-spacing: -2px; }
       .visual { min-height: 300px; transform: scale(.85); margin: -20px 0 -35px; }
       .features { grid-template-columns: 1fr; }
+      .ecosystem { padding: 24px 18px; }
+      .ecosystem-grid { grid-template-columns: repeat(2, 1fr); }
       .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
     }
   </style>
@@ -288,7 +365,7 @@
           <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
           <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
           <button class="menu-item" data-message="Mock tests coming soon."><span class="menu-icon orange">◈</span>Mock tests</button>
-          <button class="menu-item" data-message="Calculators coming soon."><span class="menu-icon blue">▤</span>Calculators</button>
+          <a class="menu-item" href="score-calculator.html"><span class="menu-icon blue">▤</span>Calculators</a>
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
@@ -309,7 +386,35 @@
       </div>
 
       <div class="visual" aria-label="Illustration representing learning and achievement">
-        <div class="orbit" aria-hidden="true"><span>Consistency</span><span>Focus</span><span>Progress</span></div>
+        <div class="glow-halo" aria-hidden="true"></div>
+
+        <svg class="progress-ring" id="progressRing" viewBox="0 0 300 300" aria-hidden="true">
+          <defs>
+            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff8c1a" />
+              <stop offset="100%" stop-color="#f06400" />
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="150" cy="150" r="128" />
+          <circle class="ring-fill" cx="150" cy="150" r="128" />
+        </svg>
+
+        <div class="comet-orbit" aria-hidden="true"><div class="comet-dot"></div></div>
+
+        <div class="orbit-ring" aria-hidden="true">
+          <div class="orbit-item" style="transform: rotate(0deg) translateX(140px)">
+            <span class="orbit-pill" style="animation-delay:0s"><span class="dot" style="background:#f16d00"></span>Plan</span>
+          </div>
+          <div class="orbit-item" style="transform: rotate(120deg) translateX(140px)">
+            <span class="orbit-pill" style="animation-delay:-8.6667s"><span class="dot" style="background:#367dd7"></span>Track</span>
+          </div>
+          <div class="orbit-item" style="transform: rotate(240deg) translateX(140px)">
+            <span class="orbit-pill" style="animation-delay:-17.3333s"><span class="dot" style="background:#7957db"></span>Learn</span>
+          </div>
+        </div>
+
+        <div class="particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+
         <div class="mascot" aria-hidden="true"><div class="person"></div><div class="book"></div></div>
       </div>
     </section>
@@ -318,6 +423,23 @@
       <a class="feature reveal" href="plan-with-purpose.html"><div class="feature-icon orange">◎</div><h3>Plan with purpose</h3><p>Turn big ambitions into clear, achievable daily steps.</p><span class="feature-arrow">→</span></a>
       <a class="feature reveal" href="track-your-progress.html"><div class="feature-icon blue">↗</div><h3>Track your progress</h3><p>See your momentum grow and stay accountable to your goals.</p><span class="feature-arrow">→</span></a>
       <a class="feature reveal" href="learn-with-clarity.html"><div class="feature-icon purple">✎</div><h3>Learn with clarity</h3><p>Organise your notes, practice, and insights in one place.</p><span class="feature-arrow">→</span></a>
+    </section>
+
+    <section class="ecosystem">
+      <h2>The Aspinora ecosystem</h2>
+      <p class="lead">Everything we're building to support your preparation, all in one place.</p>
+      <div class="ecosystem-grid">
+        <button class="eco-card reveal" data-message="Aspinora Brain coming soon."><div class="eco-icon orange">✦</div><h4>Aspinora Brain</h4><p>Your AI-powered study companion for instant doubt-solving.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Journal coming soon."><div class="eco-icon blue">✎</div><h4>Aspinora Journal</h4><p>Reflect on what you learned and track your thinking over time.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Challenges coming soon."><div class="eco-icon purple">◈</div><h4>Aspinora Challenges</h4><p>Daily and weekly challenges to keep you sharp and consistent.</p><span class="eco-arrow">→</span></button>
+        <a class="eco-card reveal" href="roadmap.html"><div class="eco-icon green">↗</div><h4>Aspinora Roadmap</h4><p>Your structured, stage-by-stage preparation plan.</p><span class="eco-arrow">→</span></a>
+        <button class="eco-card reveal" data-message="Aspinora Labs coming soon."><div class="eco-icon orange">▣</div><h4>Aspinora Labs</h4><p>Experimental tools and features, built and tested in the open.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Study-Rooms coming soon."><div class="eco-icon blue">⌂</div><h4>Aspinora Study-Rooms</h4><p>Study alongside other aspirants in focused virtual rooms.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Library coming soon."><div class="eco-icon purple">▤</div><h4>Aspinora Library</h4><p>A central library of notes, references, and resources.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Mentors coming soon."><div class="eco-icon green">♡</div><h4>Aspinora Mentors</h4><p>Connect with mentors and seniors who've been where you are.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Briefs coming soon."><div class="eco-icon orange">≡</div><h4>Aspinora Briefs</h4><p>Concise, exam-focused current affairs summaries.</p><span class="eco-arrow">→</span></button>
+        <button class="eco-card reveal" data-message="Aspinora Quiz-Arena coming soon."><div class="eco-icon blue">⚑</div><h4>Aspinora Quiz-Arena</h4><p>Compete head-to-head with other aspirants in live quizzes.</p><span class="eco-arrow">→</span></button>
+      </div>
     </section>
 
     <footer class="footer reveal">
@@ -381,6 +503,12 @@
     document.getElementById('homeButton').addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setStatus('Welcome back to Aspinora.');
+    });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('progressRing').classList.add('filled');
+      }, 350);
     });
 
     const revealObserver = new IntersectionObserver((entries) => {
