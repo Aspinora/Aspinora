@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Login or Sign Up</title>
+  <style>
+    :root {
+      --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
+      --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+      --red: #e5484d; --green: #239363;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
+    button { font: inherit; }
+    input { font: inherit; }
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+
+    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px; transition: background .2s ease, transform .2s ease; }
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+    .menu-wrap { position: relative; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .auth-button { border: 1px solid var(--line); background: white; color: #4e586b; font-weight: 750; font-size: 13.5px; padding: 10px 16px; border-radius: 12px; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+    .auth-button:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; transform: translateY(-1px); }
+    .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+    .menu-panel { position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px; background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow); opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .auth-wrap { display: flex; justify-content: center; padding: 30px 6% 10px; }
+    .auth-card {
+      width: 100%; max-width: 460px; padding: 40px 38px; border: 1px solid #f8e6d6; border-radius: 30px;
+      background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+      opacity: 0; transform: translateY(18px); animation: cardIn .6s cubic-bezier(.22,.9,.3,1) forwards;
+    }
+    @keyframes cardIn { to { opacity: 1; transform: none; } }
+
+    .auth-card h1 { margin: 16px 0 8px; font-size: clamp(26px, 3.4vw, 32px); letter-spacing: -1.2px; }
+    .auth-card h1 em { color: var(--orange); font-style: normal; }
+    .auth-card .sub { margin: 0 0 26px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    .auth-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 14px; background: #fdf2e7; margin-bottom: 26px; }
+    .auth-tab { flex: 1; padding: 10px; border: 0; border-radius: 10px; background: transparent; color: #8a7358; font-weight: 750; font-size: 13.5px; cursor: pointer; transition: all .2s ease; }
+    .auth-tab.active { background: white; color: var(--orange-dark); box-shadow: 0 6px 16px rgba(193, 117, 43, .12); }
+
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; animation: fadeSwap .35s ease; }
+    @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; position: relative; }
+    .field label { font-size: 13px; font-weight: 750; color: #394255; }
+    .field input {
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14.5px;
+      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+    .field input.invalid { border-color: var(--red); }
+    .field input.valid { border-color: var(--green); }
+
+    .field-msg { min-height: 16px; font-size: 12px; font-weight: 650; }
+    .field-msg.error { color: var(--red); }
+    .field-msg.success { color: var(--green); }
+    .field-msg.checking { color: #a0a6b2; }
+
+    .password-row { position: relative; }
+    .toggle-pw {
+      position: absolute; right: 12px; top: 38px; background: none; border: 0; cursor: pointer;
+      color: #a0a6b2; font-size: 12px; font-weight: 750; padding: 4px;
+    }
+    .toggle-pw:hover { color: var(--orange-dark); }
+
+    .forgot-link { display: block; text-align: right; margin: -6px 0 18px; font-size: 12.5px; color: var(--orange-dark); text-decoration: none; font-weight: 650; cursor: pointer; background: none; border: 0; padding: 0; width: 100%; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .primary-full {
+      width: 100%; border: 0; border-radius: 12px; padding: 14px; cursor: pointer; font-weight: 750; font-size: 15px;
+      color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2);
+      transition: all .2s ease; margin-top: 4px;
+    }
+    .primary-full:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .primary-full:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .form-status { min-height: 20px; margin-top: 14px; font-size: 13px; font-weight: 650; text-align: center; }
+    .form-status.error { color: var(--red); }
+    .form-status.success { color: var(--green); }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: #c3c9d4; font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .5px; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+    .switch-line { text-align: center; font-size: 13.5px; color: var(--muted); }
+    .switch-line button { background: none; border: 0; color: var(--orange-dark); font-weight: 750; cursor: pointer; padding: 0; }
+    .switch-line button:hover { text-decoration: underline; }
+
+    .reset-panel { display: none; }
+    .reset-panel.active { display: block; animation: fadeSwap .35s ease; }
+
+    .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .footer-contact { font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .auth-card { padding: 30px 24px; }
+      .auth-wrap { padding: 16px 0 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+      <div class="topbar-right">
+        <div class="menu-wrap">
+          <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+            <span class="dots"><i></i><i></i><i></i></span>
+          </button>
+          <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+            <div class="menu-label">Explore Aspinora</div>
+            <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
+            <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+            <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+            <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+            <button class="menu-item" data-message="Mock tests coming soon."><span class="menu-icon orange">◈</span>Mock tests</button>
+            <a class="menu-item" href="score-calculator.html"><span class="menu-icon blue">▤</span>Calculators</a>
+            <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
+            <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
+            <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="eyebrow">Your account</div>
+
+        <div id="mainAuth">
+          <h1>Welcome to <em>Aspinora.</em></h1>
+          <p class="sub">Log in to pick up where you left off, or create a free account to save your progress.</p>
+
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab active" data-panel="login" role="tab" aria-selected="true">Log In</button>
+            <button class="auth-tab" data-panel="signup" role="tab" aria-selected="false">Sign Up</button>
+          </div>
+
+          <!-- LOGIN PANEL -->
+          <div class="auth-panel active" id="loginPanel">
+            <form id="loginForm" novalidate>
+              <div class="field">
+                <label for="loginIdentifier">Username or Email</label>
+                <input type="text" id="loginIdentifier" autocomplete="username" placeholder="yourname or you@example.com" />
+                <div class="field-msg" id="loginIdentifierMsg"></div>
+              </div>
+              <div class="field password-row">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter your password" />
+                <button type="button" class="toggle-pw" data-target="loginPassword">Show</button>
+                <div class="field-msg" id="loginPasswordMsg"></div>
+              </div>
+              <button type="button" class="forgot-link" id="showForgot">Forgot password?</button>
+              <button type="submit" class="primary-full" id="loginSubmit">Log In</button>
+              <div class="form-status" id="loginStatus"></div>
+            </form>
+
+            <div class="divider">or</div>
+            <p class="switch-line">New to Aspinora? <button type="button" id="toSignup">Create an account</button></p>
+          </div>
+
+          <!-- SIGNUP PANEL -->
+          <div class="auth-panel" id="signupPanel">
+            <form id="signupForm" novalidate>
+              <div class="field">
+                <label for="signupUsername">Username</label>
+                <input type="text" id="signupUsername" autocomplete="username" placeholder="Choose a username" />
+                <div class="field-msg" id="signupUsernameMsg"></div>
+              </div>
+              <div class="field">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" autocomplete="email" placeholder="you@example.com" />
+                <div class="field-msg" id="signupEmailMsg"></div>
+              </div>
+              <div class="field password-row">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" autocomplete="new-password" placeholder="At least 8 characters" />
+                <button type="button" class="toggle-pw" data-target="signupPassword">Show</button>
+                <div class="field-msg" id="signupPasswordMsg"></div>
+              </div>
+              <button type="submit" class="primary-full" id="signupSubmit">Create Account</button>
+              <div class="form-status" id="signupStatus"></div>
+            </form>
+
+            <div class="divider">or</div>
+            <p class="switch-line">Already have an account? <button type="button" id="toLogin">Log in</button></p>
+          </div>
+        </div>
+
+        <!-- FORGOT PASSWORD PANEL -->
+        <div class="reset-panel" id="resetPanel">
+          <h1>Reset your <em>password.</em></h1>
+          <p class="sub">Enter the email linked to your account and we'll send you a reset link.</p>
+          <form id="resetForm" novalidate>
+            <div class="field">
+              <label for="resetEmail">Email</label>
+              <input type="email" id="resetEmail" autocomplete="email" placeholder="you@example.com" />
+              <div class="field-msg" id="resetEmailMsg"></div>
+            </div>
+            <button type="submit" class="primary-full" id="resetSubmit">Send Reset Link</button>
+            <div class="form-status" id="resetStatus"></div>
+          </form>
+          <div class="divider">or</div>
+          <p class="switch-line"><button type="button" id="backToLogin">Back to log in</button></p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="legal.html#privacy-policy">Privacy Policy</a>
+        <a href="legal.html#terms-of-use">Terms of Use</a>
+        <a href="legal.html#disclaimer">Disclaimer</a>
+        <a href="legal.html#contact-us">Contact Us</a>
+      </nav>
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <script>
+    /* ============================================================
+       AUTH BACKEND HOOKS
+       Replace the bodies of these three functions with real Supabase
+       calls once your project is set up. Everything else in this file
+       (UI, validation, error states) already calls these functions,
+       so no other code needs to change.
+
+       Example with Supabase JS v2:
+         const { data, error } = await supabase.auth.signUp({ email, password });
+         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+         const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+       For username availability, you'd typically query a `profiles`
+       table: supabase.from('profiles').select('username').eq('username', username)
+    ============================================================ */
+
+    // TEMPORARY mock "database" so the page is testable before Supabase is wired up.
+    const MOCK_TAKEN_USERNAMES = ['admin', 'aspinora', 'test'];
+    const MOCK_TAKEN_EMAILS = ['test@aspinora.in', 'demo@aspinora.in'];
+
+    function mockDelay(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+    async function checkUsernameAvailable(username) {
+      // TODO: replace with Supabase query against your profiles table
+      await mockDelay(500);
+      return !MOCK_TAKEN_USERNAMES.includes(username.trim().toLowerCase());
+    }
+
+    async function checkEmailAvailable(email) {
+      // TODO: replace with Supabase query, or rely on signUp's own error response
+      await mockDelay(500);
+      return !MOCK_TAKEN_EMAILS.includes(email.trim().toLowerCase());
+    }
+
+    async function performSignUp(username, email, password) {
+      // TODO: replace with supabase.auth.signUp({ email, password }) then
+      // save { username } into a profiles table linked to the new user's id.
+      await mockDelay(700);
+      return { success: true };
+    }
+
+    async function performLogin(identifier, password) {
+      // TODO: replace with supabase.auth.signInWithPassword({ email, password }).
+      // If your users log in by username, look up the matching email first.
+      await mockDelay(700);
+      // Mock: any password under 8 chars is treated as "incorrect" for demo purposes.
+      if (password.length < 8) {
+        return { success: false, reason: 'invalid_credentials' };
+      }
+      return { success: true };
+    }
+
+    async function performPasswordReset(email) {
+      // TODO: replace with supabase.auth.resetPasswordForEmail(email)
+      await mockDelay(700);
+      return { success: true };
+    }
+
+    /* ============================================================ */
+
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const statusHolder = { timeout: null };
+
+    function flashMessage(message) {
+      let el = document.getElementById('status');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'status';
+        el.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(statusHolder.timeout);
+      statusHolder.timeout = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+    }
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        flashMessage(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.getElementById('homeButton').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    // Tab switching (Login / Sign Up)
+    const authTabs = document.querySelectorAll('.auth-tab');
+    function switchPanel(name) {
+      authTabs.forEach((t) => {
+        const isMatch = t.dataset.panel === name;
+        t.classList.toggle('active', isMatch);
+        t.setAttribute('aria-selected', String(isMatch));
+      });
+      document.getElementById('loginPanel').classList.toggle('active', name === 'login');
+      document.getElementById('signupPanel').classList.toggle('active', name === 'signup');
+    }
+    authTabs.forEach((tab) => {
+      tab.addEventListener('click', () => switchPanel(tab.dataset.panel));
+    });
+    document.getElementById('toSignup').addEventListener('click', () => switchPanel('signup'));
+    document.getElementById('toLogin').addEventListener('click', () => switchPanel('login'));
+
+    // Forgot password panel toggle
+    const mainAuth = document.getElementById('mainAuth');
+    const resetPanel = document.getElementById('resetPanel');
+    document.getElementById('showForgot').addEventListener('click', () => {
+      mainAuth.style.display = 'none';
+      resetPanel.classList.add('active');
+    });
+    document.getElementById('backToLogin').addEventListener('click', () => {
+      resetPanel.classList.remove('active');
+      mainAuth.style.display = 'block';
+      switchPanel('login');
+    });
+
+    // Show/hide password toggles
+    document.querySelectorAll('.toggle-pw').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.textContent = isPassword ? 'Hide' : 'Show';
+      });
+    });
+
+    function setFieldState(inputEl, msgEl, state, message) {
+      inputEl.classList.remove('valid', 'invalid');
+      msgEl.classList.remove('error', 'success', 'checking');
+      if (state === 'valid') { inputEl.classList.add('valid'); msgEl.classList.add('success'); }
+      if (state === 'invalid') { inputEl.classList.add('invalid'); msgEl.classList.add('error'); }
+      if (state === 'checking') { msgEl.classList.add('checking'); }
+      msgEl.textContent = message || '';
+    }
+
+    // Live username availability check (debounced)
+    const signupUsername = document.getElementById('signupUsername');
+    const signupUsernameMsg = document.getElementById('signupUsernameMsg');
+    let usernameTimer;
+    signupUsername.addEventListener('input', () => {
+      clearTimeout(usernameTimer);
+      const value = signupUsername.value.trim();
+      if (value.length < 3) {
+        setFieldState(signupUsername, signupUsernameMsg, value.length ? 'invalid' : 'none', value.length ? 'Username must be at least 3 characters.' : '');
+        return;
+      }
+      setFieldState(signupUsername, signupUsernameMsg, 'checking', 'Checking availability…');
+      usernameTimer = setTimeout(async () => {
+        const available = await checkUsernameAvailable(value);
+        if (signupUsername.value.trim() !== value) return; // stale check
+        setFieldState(signupUsername, signupUsernameMsg, available ? 'valid' : 'invalid', available ? 'Username is available.' : 'Username is already taken.');
+      }, 450);
+    });
+
+    // Live email availability check (debounced)
+    const signupEmail = document.getElementById('signupEmail');
+    const signupEmailMsg = document.getElementById('signupEmailMsg');
+    let emailTimer;
+    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    signupEmail.addEventListener('input', () => {
+      clearTimeout(emailTimer);
+      const value = signupEmail.value.trim();
+      if (!value) { setFieldState(signupEmail, signupEmailMsg, 'none', ''); return; }
+      if (!isValidEmail(value)) {
+        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.');
+        return;
+      }
+      setFieldState(signupEmail, signupEmailMsg, 'checking', 'Checking availability…');
+      emailTimer = setTimeout(async () => {
+        const available = await checkEmailAvailable(value);
+        if (signupEmail.value.trim() !== value) return;
+        setFieldState(signupEmail, signupEmailMsg, available ? 'valid' : 'invalid', available ? 'Email is available.' : 'Email is already registered.');
+      }, 450);
+    });
+
+    // Password strength hint
+    const signupPassword = document.getElementById('signupPassword');
+    const signupPasswordMsg = document.getElementById('signupPasswordMsg');
+    signupPassword.addEventListener('input', () => {
+      const value = signupPassword.value;
+      if (!value) { setFieldState(signupPassword, signupPasswordMsg, 'none', ''); return; }
+      if (value.length < 8) {
+        setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.');
+      } else {
+        setFieldState(signupPassword, signupPasswordMsg, 'valid', 'Looks good.');
+      }
+    });
+
+    // Sign up submit
+    const signupForm = document.getElementById('signupForm');
+    const signupSubmit = document.getElementById('signupSubmit');
+    const signupStatus = document.getElementById('signupStatus');
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      signupStatus.textContent = '';
+      signupStatus.className = 'form-status';
+
+      const username = signupUsername.value.trim();
+      const email = signupEmail.value.trim();
+      const password = signupPassword.value;
+
+      if (username.length < 3) { setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username must be at least 3 characters.'); return; }
+      if (!isValidEmail(email)) { setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.'); return; }
+      if (password.length < 8) { setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.'); return; }
+
+      signupSubmit.disabled = true;
+      signupSubmit.textContent = 'Checking…';
+
+      const [usernameOk, emailOk] = await Promise.all([
+        checkUsernameAvailable(username),
+        checkEmailAvailable(email)
+      ]);
+
+      if (!usernameOk) { setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username is already taken.'); }
+      if (!emailOk) { setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Email is already registered.'); }
+
+      if (!usernameOk || !emailOk) {
+        signupSubmit.disabled = false;
+        signupSubmit.textContent = 'Create Account';
+        signupStatus.textContent = 'Please fix the issues above.';
+        signupStatus.classList.add('error');
+        return;
+      }
+
+      signupSubmit.textContent = 'Creating account…';
+      const result = await performSignUp(username, email, password);
+
+      signupSubmit.disabled = false;
+      signupSubmit.textContent = 'Create Account';
+
+      if (result.success) {
+        signupStatus.textContent = 'Account created! You can now log in.';
+        signupStatus.classList.add('success');
+        setTimeout(() => { switchPanel('login'); signupStatus.textContent = ''; }, 1600);
+      } else {
+        signupStatus.textContent = 'Something went wrong. Please try again.';
+        signupStatus.classList.add('error');
+      }
+    });
+
+    // Login submit
+    const loginForm = document.getElementById('loginForm');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const loginStatus = document.getElementById('loginStatus');
+    const loginIdentifier = document.getElementById('loginIdentifier');
+    const loginIdentifierMsg = document.getElementById('loginIdentifierMsg');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginPasswordMsg = document.getElementById('loginPasswordMsg');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginStatus.textContent = '';
+      loginStatus.className = 'form-status';
+      setFieldState(loginIdentifier, loginIdentifierMsg, 'none', '');
+      setFieldState(loginPassword, loginPasswordMsg, 'none', '');
+
+      const identifier = loginIdentifier.value.trim();
+      const password = loginPassword.value;
+
+      if (!identifier) { setFieldState(loginIdentifier, loginIdentifierMsg, 'invalid', 'Enter your username or email.'); return; }
+      if (!password) { setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Enter your password.'); return; }
+
+      loginSubmit.disabled = true;
+      loginSubmit.textContent = 'Logging in…';
+
+      const result = await performLogin(identifier, password);
+
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = 'Log In';
+
+      if (result.success) {
+        loginStatus.textContent = 'Logged in! Redirecting…';
+        loginStatus.classList.add('success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 900);
+      } else {
+        setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Incorrect username/email or password.');
+        loginStatus.textContent = 'That didn\'t match our records. Try again or reset your password.';
+        loginStatus.classList.add('error');
+      }
+    });
+
+    // Forgot password submit
+    const resetForm = document.getElementById('resetForm');
+    const resetSubmit = document.getElementById('resetSubmit');
+    const resetStatus = document.getElementById('resetStatus');
+    const resetEmail = document.getElementById('resetEmail');
+    const resetEmailMsg = document.getElementById('resetEmailMsg');
+
+    resetForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resetStatus.textContent = '';
+      resetStatus.className = 'form-status';
+
+      const email = resetEmail.value.trim();
+      if (!isValidEmail(email)) {
+        setFieldState(resetEmail, resetEmailMsg, 'invalid', 'Enter a valid email address.');
+        return;
+      }
+
+      resetSubmit.disabled = true;
+      resetSubmit.textContent = 'Sending…';
+
+      const result = await performPasswordReset(email);
+
+      resetSubmit.disabled = false;
+      resetSubmit.textContent = 'Send Reset Link';
+
+      if (result.success) {
+        resetStatus.textContent = 'If that email is registered, a reset link is on its way.';
+        resetStatus.classList.add('success');
+      } else {
+        resetStatus.textContent = 'Something went wrong. Please try again.';
+        resetStatus.classList.add('error');
+      }
+    });
+  </script>
+</body>
+</html>

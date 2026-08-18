@@ -21,6 +21,10 @@
     .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
     .brand-name span { color: var(--orange); }
     .menu-wrap { position: relative; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .auth-button { border: 1px solid var(--line); background: white; color: #4e586b; font-weight: 750; font-size: 13.5px; padding: 10px 16px; border-radius: 12px; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+    .auth-button:hover { border-color: #ffcc9e; color: var(--orange-dark, #e85d00); background: #fffaf5; transform: translateY(-1px); }
+
     .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
     .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
     .dots { display: flex; gap: 4px; }
@@ -128,7 +132,7 @@
         <img src="aspinora-logo.png" alt="Aspinora logo" />
         <span class="brand-name">Aspi<span>nora</span></span>
       </button>
-      <div class="menu-wrap">
+      <div class="topbar-right"><button class="auth-button" id="authButton">Login</button><div class="menu-wrap">
         <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
@@ -145,7 +149,7 @@
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
         </nav>
       </div>
-    </header>
+    </div></header>
 
     <section class="page-hero">
       <div class="eyebrow">Plan with purpose</div>
@@ -285,6 +289,10 @@
 
     document.getElementById('homeButton').addEventListener('click', () => {
       window.location.href = 'index.html';
+    });
+
+    document.getElementById('authButton').addEventListener('click', () => {
+      window.location.href = 'auth.html';
     });
 
     document.getElementById('ctaButton').addEventListener('click', () => {
