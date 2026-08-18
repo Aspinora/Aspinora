@@ -103,11 +103,11 @@
     .legend-item .swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
     .legend-item strong { color: var(--ink); }
 
-    .gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .gauge-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
+    .gauge-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+    .gauge-svg { width: 200px; height: 200px; transform: rotate(-90deg); display: block; }
     .gauge-track { fill: none; stroke: #ffe7d1; stroke-width: 14; }
     .gauge-fill { fill: none; stroke: url(#gaugeGradient); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 534; stroke-dashoffset: 534; transition: stroke-dashoffset 1.3s cubic-bezier(.22,.9,.25,1); }
-    .gauge-center { margin-top: -138px; text-align: center; }
+    .gauge-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
     .gauge-center strong { display: block; font-size: 32px; letter-spacing: -1.3px; color: var(--ink); }
     .gauge-center strong.negative { color: var(--red); }
     .gauge-center span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
