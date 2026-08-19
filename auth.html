@@ -247,62 +247,91 @@
     </footer>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     /* ============================================================
-       AUTH BACKEND HOOKS
-       Replace the bodies of these three functions with real Supabase
-       calls once your project is set up. Everything else in this file
-       (UI, validation, error states) already calls these functions,
-       so no other code needs to change.
-
-       Example with Supabase JS v2:
-         const { data, error } = await supabase.auth.signUp({ email, password });
-         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-         const { error } = await supabase.auth.resetPasswordForEmail(email);
-
-       For username availability, you'd typically query a `profiles`
-       table: supabase.from('profiles').select('username').eq('username', username)
+       SUPABASE CONNECTION
     ============================================================ */
+    const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-    // TEMPORARY mock "database" so the page is testable before Supabase is wired up.
-    const MOCK_TAKEN_USERNAMES = ['admin', 'aspinora', 'test'];
-    const MOCK_TAKEN_EMAILS = ['test@aspinora.in', 'demo@aspinora.in'];
-
-    function mockDelay(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+    // If someone's already logged in, sending them back to auth.html doesn't
+    // make sense — send them straight to their dashboard instead.
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) window.location.href = 'dashboard.html';
+    })();
 
     async function checkUsernameAvailable(username) {
-      // TODO: replace with Supabase query against your profiles table
-      await mockDelay(500);
-      return !MOCK_TAKEN_USERNAMES.includes(username.trim().toLowerCase());
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .ilike('username', username.trim())
+        .maybeSingle();
+      if (error) { console.error('Username check failed:', error); return true; }
+      return !data;
     }
 
+    // Note: Supabase intentionally avoids confirming/denying whether an email
+    // is already registered while you type (this prevents attackers from
+    // scanning for valid accounts). We validate the format live, and the
+    // "already registered" case is caught for real at submit time below.
     async function checkEmailAvailable(email) {
-      // TODO: replace with Supabase query, or rely on signUp's own error response
-      await mockDelay(500);
-      return !MOCK_TAKEN_EMAILS.includes(email.trim().toLowerCase());
+      return true;
     }
 
     async function performSignUp(username, email, password) {
-      // TODO: replace with supabase.auth.signUp({ email, password }) then
-      // save { username } into a profiles table linked to the new user's id.
-      await mockDelay(700);
-      return { success: true };
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username },
+          emailRedirectTo: window.location.origin + '/dashboard.html'
+        }
+      });
+
+      if (error) {
+        if (error.message.toLowerCase().includes('already registered')) {
+          return { success: false, reason: 'email_taken' };
+        }
+        return { success: false, reason: 'error', message: error.message };
+      }
+
+      // Supabase's anti-enumeration signal for "this email already has an account"
+      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        return { success: false, reason: 'email_taken' };
+      }
+
+      return { success: true, needsConfirmation: !data.session };
     }
 
     async function performLogin(identifier, password) {
-      // TODO: replace with supabase.auth.signInWithPassword({ email, password }).
-      // If your users log in by username, look up the matching email first.
-      await mockDelay(700);
-      // Mock: any password under 8 chars is treated as "incorrect" for demo purposes.
-      if (password.length < 8) {
+      let email = identifier.trim();
+
+      if (!email.includes('@')) {
+        const { data: resolvedEmail, error: rpcError } = await supabaseClient.rpc(
+          'get_email_by_username',
+          { lookup_username: email }
+        );
+        if (rpcError || !resolvedEmail) {
+          return { success: false, reason: 'invalid_credentials' };
+        }
+        email = resolvedEmail;
+      }
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
         return { success: false, reason: 'invalid_credentials' };
       }
       return { success: true };
     }
 
     async function performPasswordReset(email) {
-      // TODO: replace with supabase.auth.resetPasswordForEmail(email)
-      await mockDelay(700);
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/auth.html'
+      });
+      if (error) return { success: false };
       return { success: true };
     }
 
@@ -479,15 +508,10 @@
       signupSubmit.disabled = true;
       signupSubmit.textContent = 'Checking…';
 
-      const [usernameOk, emailOk] = await Promise.all([
-        checkUsernameAvailable(username),
-        checkEmailAvailable(email)
-      ]);
+      const usernameOk = await checkUsernameAvailable(username);
 
-      if (!usernameOk) { setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username is already taken.'); }
-      if (!emailOk) { setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Email is already registered.'); }
-
-      if (!usernameOk || !emailOk) {
+      if (!usernameOk) {
+        setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username is already taken.');
         signupSubmit.disabled = false;
         signupSubmit.textContent = 'Create Account';
         signupStatus.textContent = 'Please fix the issues above.';
@@ -501,12 +525,20 @@
       signupSubmit.disabled = false;
       signupSubmit.textContent = 'Create Account';
 
-      if (result.success) {
-        signupStatus.textContent = 'Account created! You can now log in.';
+      if (result.success && result.needsConfirmation) {
+        signupStatus.textContent = 'Account created! Check your email to confirm, then log in.';
         signupStatus.classList.add('success');
-        setTimeout(() => { switchPanel('login'); signupStatus.textContent = ''; }, 1600);
+        setTimeout(() => { switchPanel('login'); signupStatus.textContent = ''; }, 2600);
+      } else if (result.success) {
+        signupStatus.textContent = 'Account created! Redirecting to your dashboard…';
+        signupStatus.classList.add('success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+      } else if (result.reason === 'email_taken') {
+        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Email is already registered.');
+        signupStatus.textContent = 'Please fix the issues above.';
+        signupStatus.classList.add('error');
       } else {
-        signupStatus.textContent = 'Something went wrong. Please try again.';
+        signupStatus.textContent = result.message || 'Something went wrong. Please try again.';
         signupStatus.classList.add('error');
       }
     });
@@ -544,7 +576,7 @@
       if (result.success) {
         loginStatus.textContent = 'Logged in! Redirecting…';
         loginStatus.classList.add('success');
-        setTimeout(() => { window.location.href = '/'; }, 900);
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
       } else {
         setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Incorrect username/email or password.');
         loginStatus.textContent = 'That didn\'t match our records. Try again or reset your password.';
