@@ -142,11 +142,11 @@
     .green { background: #eaf9f1; color: #239363; }
     .red { background: #ffe9e9; color: #e5484d; }
 
-    .menu-profile { margin-bottom: 6px; }
-    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
+    .menu-profile-block { display: flex; align-items: center; gap: 11px; padding: 11px 10px; margin-bottom: 6px; border-bottom: 1px solid #f5eee6; padding-bottom: 15px; }
+    .menu-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
     .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
     .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-profile-joined { font-size: 11px; color: #a0a6b2; font-weight: 650; }
     .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
 
     .hero {
@@ -393,13 +393,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
-          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+          <div class="menu-profile-block" id="menuProfileBlock" style="display:none;">
             <span class="menu-avatar" id="menuAvatar">A</span>
             <span class="menu-profile-info">
               <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
-              <span class="menu-profile-sub">View profile</span>
+              <span class="menu-profile-joined" id="menuProfileJoined">Joined recently</span>
             </span>
-          </button>
+          </div>
           <div class="menu-label">Explore Aspinora</div>
           <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -410,7 +410,8 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
-          <div class="menu-divider" id="menuLogoutDivider" style="display:none;"></div>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
           <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
@@ -582,7 +583,7 @@
       return 'Good night';
     }
 
-    function applyLoggedInState(username) {
+    function applyLoggedInState(username, joinedDate) {
       // Hero auth row → hidden; status pill shown in its place
       document.getElementById('heroAuthRow').style.display = 'none';
 
@@ -601,10 +602,13 @@
 
       document.getElementById('dashboardButton').style.display = 'inline-flex';
 
+      const joinedOptions = { month: 'long', year: 'numeric' };
       document.getElementById('menuAvatar').textContent = username.charAt(0).toUpperCase();
       document.getElementById('menuProfileName').textContent = username;
-      document.getElementById('menuProfileItem').style.display = 'flex';
-      document.getElementById('menuLogoutDivider').style.display = 'block';
+      document.getElementById('menuProfileJoined').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', joinedOptions);
+      document.getElementById('menuProfileBlock').style.display = 'flex';
+      document.getElementById('menuAccountDivider').style.display = 'block';
+      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
       document.getElementById('menuLogoutButton').style.display = 'flex';
     }
 
@@ -615,12 +619,13 @@
       const user = session.user;
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('username')
+        .select('username, created_at')
         .eq('id', user.id)
         .single();
 
       const username = profile?.username || user.email.split('@')[0];
-      applyLoggedInState(username);
+      const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
+      applyLoggedInState(username, joinedDate);
     }
 
     async function performLogout() {
@@ -629,10 +634,10 @@
       setTimeout(() => { window.location.reload(); }, 500);
     }
 
-    document.getElementById('menuProfileItem').addEventListener('click', () => {
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
       menuButton.setAttribute('aria-expanded', 'false');
-      window.location.href = 'dashboard.html';
+      setStatus('Profile editing coming soon.');
     });
 
     document.getElementById('menuLogoutButton').addEventListener('click', () => {
