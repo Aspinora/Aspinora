@@ -232,6 +232,28 @@
           <div class="divider">or</div>
           <p class="switch-line"><button type="button" id="backToLogin">Back to log in</button></p>
         </div>
+
+        <!-- SET NEW PASSWORD PANEL (shown when arriving from a reset-link email) -->
+        <div class="reset-panel" id="newPasswordPanel">
+          <h1>Set a new <em>password.</em></h1>
+          <p class="sub">You're verified — choose a new password for your account.</p>
+          <form id="newPasswordForm" novalidate>
+            <div class="field password-row">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" autocomplete="new-password" placeholder="At least 8 characters" />
+              <button type="button" class="toggle-pw" data-target="newPassword">Show</button>
+              <div class="field-msg" id="newPasswordMsg"></div>
+            </div>
+            <div class="field password-row">
+              <label for="confirmNewPassword">Confirm Password</label>
+              <input type="password" id="confirmNewPassword" autocomplete="new-password" placeholder="Re-enter your new password" />
+              <button type="button" class="toggle-pw" data-target="confirmNewPassword">Show</button>
+              <div class="field-msg" id="confirmNewPasswordMsg"></div>
+            </div>
+            <button type="submit" class="primary-full" id="newPasswordSubmit">Update Password</button>
+            <div class="form-status" id="newPasswordStatus"></div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -256,12 +278,28 @@
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-    // If someone's already logged in, sending them back to auth.html doesn't
-    // make sense — send them straight to their dashboard instead.
+    // A password-reset email link lands back here with a recovery token in
+    // the URL (e.g. #type=recovery&access_token=...). Supabase turns that
+    // into a temporary session automatically, so we must NOT treat it like
+    // a normal logged-in visit and redirect to the dashboard — the user
+    // still needs to set their new password first.
+    const isPasswordRecovery = window.location.hash.includes('type=recovery');
+
+    // If someone's already logged in (and this isn't a recovery link),
+    // sending them back to auth.html doesn't make sense — send them
+    // straight to their dashboard instead.
     (async () => {
+      if (isPasswordRecovery) return;
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) window.location.href = 'dashboard.html';
     })();
+
+    // Fires when Supabase detects a valid recovery link in the URL.
+    supabaseClient.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        showNewPasswordPanel();
+      }
+    });
 
     async function checkUsernameAvailable(username) {
       const { data, error } = await supabaseClient
@@ -406,6 +444,7 @@
     // Forgot password panel toggle
     const mainAuth = document.getElementById('mainAuth');
     const resetPanel = document.getElementById('resetPanel');
+    const newPasswordPanel = document.getElementById('newPasswordPanel');
     document.getElementById('showForgot').addEventListener('click', () => {
       mainAuth.style.display = 'none';
       resetPanel.classList.add('active');
@@ -415,6 +454,12 @@
       mainAuth.style.display = 'block';
       switchPanel('login');
     });
+
+    function showNewPasswordPanel() {
+      mainAuth.style.display = 'none';
+      resetPanel.classList.remove('active');
+      newPasswordPanel.classList.add('active');
+    }
 
     // Show/hide password toggles
     document.querySelectorAll('.toggle-pw').forEach((btn) => {
@@ -617,6 +662,53 @@
         resetStatus.textContent = 'Something went wrong. Please try again.';
         resetStatus.classList.add('error');
       }
+    });
+
+    // Set new password submit (recovery flow)
+    const newPasswordForm = document.getElementById('newPasswordForm');
+    const newPasswordSubmit = document.getElementById('newPasswordSubmit');
+    const newPasswordStatus = document.getElementById('newPasswordStatus');
+    const newPasswordInput = document.getElementById('newPassword');
+    const newPasswordMsg = document.getElementById('newPasswordMsg');
+    const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+    const confirmNewPasswordMsg = document.getElementById('confirmNewPasswordMsg');
+
+    newPasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      newPasswordStatus.textContent = '';
+      newPasswordStatus.className = 'form-status';
+      setFieldState(newPasswordInput, newPasswordMsg, 'none', '');
+      setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'none', '');
+
+      const password = newPasswordInput.value;
+      const confirmPassword = confirmNewPasswordInput.value;
+
+      if (password.length < 8) {
+        setFieldState(newPasswordInput, newPasswordMsg, 'invalid', 'Use at least 8 characters.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'invalid', 'Passwords do not match.');
+        return;
+      }
+
+      newPasswordSubmit.disabled = true;
+      newPasswordSubmit.textContent = 'Updating…';
+
+      const { error } = await supabaseClient.auth.updateUser({ password });
+
+      newPasswordSubmit.disabled = false;
+      newPasswordSubmit.textContent = 'Update Password';
+
+      if (error) {
+        newPasswordStatus.textContent = error.message || 'Something went wrong. Please try again.';
+        newPasswordStatus.classList.add('error');
+        return;
+      }
+
+      newPasswordStatus.textContent = 'Password updated! Redirecting to your dashboard…';
+      newPasswordStatus.classList.add('success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
     });
   </script>
 </body>

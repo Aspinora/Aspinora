@@ -32,6 +32,12 @@
     .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
     .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
     .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .menu-profile { margin-bottom: 6px; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
     .orange { background: #fff0e1; color: #f16d00; }
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
@@ -141,6 +147,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub">View profile</span>
+            </span>
+          </button>
           <div class="menu-label">Explore Aspinora</div>
           <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -151,6 +164,8 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider"></div>
+          <button class="menu-item menu-logout" id="menuLogoutButton"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
@@ -161,7 +176,7 @@
       <p class="quote" id="quoteText">"Small steps today, big results tomorrow."</p>
     </section>
 
-    <section class="section reveal">
+    <section class="section reveal" id="profileSection">
       <h2>Your profile</h2>
       <p class="lead">This is you — update it any time.</p>
       <div class="profile-card">
@@ -324,6 +339,9 @@
 
       const options = { month: 'long', year: 'numeric' };
       document.getElementById('joinedBadge').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
+
+      document.getElementById('menuAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+      document.getElementById('menuProfileName').textContent = currentUser.username;
     }
 
     (async () => {
@@ -387,6 +405,17 @@
     }
 
     document.getElementById('logoutButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      performLogout();
+    });
+
+    document.getElementById('menuProfileItem').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      document.getElementById('profileSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
       performLogout();
     });

@@ -140,6 +140,14 @@
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
     .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: #e5484d; }
+
+    .menu-profile { margin-bottom: 6px; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
 
     .hero {
       min-height: 505px;
@@ -169,6 +177,11 @@
       text-transform: uppercase;
     }
     .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .status-pill { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px; border-radius: 99px; background: #fff0e2; color: #e56b14; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #3ecf7a; box-shadow: 0 0 0 0 rgba(62, 207, 122, .5); animation: pulseDot 2s infinite; }
+    @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(62, 207, 122, .5); } 70% { box-shadow: 0 0 0 9px rgba(62, 207, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(62, 207, 122, 0); } }
+    .intro.is-quote { font-style: italic; }
 
     .hero { position: relative; }
 
@@ -380,6 +393,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub">View profile</span>
+            </span>
+          </button>
           <div class="menu-label">Explore Aspinora</div>
           <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -390,21 +410,24 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider" id="menuLogoutDivider" style="display:none;"></div>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
 
     <section class="hero">
-      <div class="hero-auth-row">
+      <div class="hero-auth-row" id="heroAuthRow">
         <a class="hero-signup-btn" href="auth.html#signup">Sign up</a>
         <a class="hero-login-btn" href="auth.html#login">Login</a>
       </div>
       <div class="copy">
-        <div class="eyebrow">Your preparation, elevated</div>
-        <h1>Build your future, <em>one goal</em> at a time.</h1>
-        <p class="intro">A focused space for ambitious learners to plan smarter, learn consistently, and move closer to their dream career.</p>
+        <div class="eyebrow" id="heroEyebrow">Your preparation, elevated</div>
+        <h1 id="heroHeading">Build your future, <em>one goal</em> at a time.</h1>
+        <p class="intro" id="heroIntro">A focused space for ambitious learners to plan smarter, learn consistently, and move closer to their dream career.</p>
         <div class="actions">
           <button class="primary" id="startLearningButton">Start learning&nbsp; →</button>
+          <button class="primary" id="dashboardButton" style="display:none;">Go to dashboard&nbsp; →</button>
           <button class="secondary" id="viewRoadmapButton">View roadmap</button>
         </div>
         <div class="status" id="status" aria-live="polite"></div>
@@ -486,6 +509,7 @@
 
   <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const menuButton = document.getElementById('menuButton');
     const menuPanel = document.getElementById('menuPanel');
@@ -520,6 +544,104 @@
     document.getElementById('startLearningButton').addEventListener('click', () => {
       window.location.href = 'start-learning.html';
     });
+
+    document.getElementById('dashboardButton').addEventListener('click', () => {
+      window.location.href = 'dashboard.html';
+    });
+
+    /* ============================================================
+       SUPABASE — logged-in state for the homepage
+    ============================================================ */
+    const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const QUOTES = [
+      "Small steps today, big results tomorrow.",
+      "Discipline beats motivation on the hard days.",
+      "You don't need to be perfect, just consistent.",
+      "Every topic you finish is one less thing standing between you and your goal.",
+      "Progress hides in the boring, repeated days.",
+      "Trust the process, revise the plan, not the goal.",
+      "The exam rewards preparation, not panic.",
+      "Focus on today's page, not tomorrow's fear.",
+      "Your future self is counting on today's effort.",
+      "Consistency is the quiet superpower of every topper.",
+      "One more revision. One more mock. One more step closer.",
+      "Doubt kills more dreams than failure ever will — keep going.",
+      "You're not behind. You're exactly where your journey needs you to be.",
+      "Great scores are built one focused hour at a time.",
+      "The syllabus doesn't care about your mood — show up anyway."
+    ];
+
+    function getGreeting(hour) {
+      if (hour < 5) return 'Good night';
+      if (hour < 12) return 'Good morning';
+      if (hour < 17) return 'Good afternoon';
+      if (hour < 21) return 'Good evening';
+      return 'Good night';
+    }
+
+    function applyLoggedInState(username) {
+      // Hero auth row → hidden; status pill shown in its place
+      document.getElementById('heroAuthRow').style.display = 'none';
+
+      const eyebrow = document.getElementById('heroEyebrow');
+      eyebrow.classList.remove('eyebrow');
+      eyebrow.classList.add('status-pill');
+      eyebrow.innerHTML = '<span class="pulse-dot"></span>Active session';
+
+      const greeting = getGreeting(new Date().getHours());
+      document.getElementById('heroHeading').innerHTML = `${greeting}, <em>${username}</em>.`;
+
+      const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      const introEl = document.getElementById('heroIntro');
+      introEl.classList.add('is-quote');
+      introEl.textContent = `"${randomQuote}"`;
+
+      document.getElementById('dashboardButton').style.display = 'inline-flex';
+
+      document.getElementById('menuAvatar').textContent = username.charAt(0).toUpperCase();
+      document.getElementById('menuProfileName').textContent = username;
+      document.getElementById('menuProfileItem').style.display = 'flex';
+      document.getElementById('menuLogoutDivider').style.display = 'block';
+      document.getElementById('menuLogoutButton').style.display = 'flex';
+    }
+
+    async function checkSessionAndUpdateUI() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+
+      const user = session.user;
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+      const username = profile?.username || user.email.split('@')[0];
+      applyLoggedInState(username);
+    }
+
+    async function performLogout() {
+      setStatus('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.reload(); }, 500);
+    }
+
+    document.getElementById('menuProfileItem').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = 'dashboard.html';
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      performLogout();
+    });
+
+    checkSessionAndUpdateUI();
 
     document.getElementById('viewRoadmapButton').addEventListener('click', () => {
       window.location.href = 'roadmap.html';
