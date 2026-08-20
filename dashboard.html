@@ -32,6 +32,13 @@
     .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
     .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
     .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .menu-profile-block { display: flex; align-items: center; gap: 11px; padding: 11px 10px; margin-bottom: 6px; border-bottom: 1px solid #f5eee6; padding-bottom: 15px; }
+    .menu-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-joined { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
     .orange { background: #fff0e1; color: #f16d00; }
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
@@ -52,15 +59,6 @@
     .section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.6px; }
     .section .lead { max-width: 640px; margin: 0 0 22px; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
 
-    /* Profile card */
-    .profile-card { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
-    .avatar { width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 26px; font-weight: 800; box-shadow: 0 12px 26px rgba(238, 108, 8, .25); flex-shrink: 0; overflow: hidden; }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .profile-info { flex: 1; min-width: 200px; }
-    .profile-info h2 { margin: 0 0 3px; font-size: 20px; letter-spacing: -.4px; }
-    .profile-username { margin: 0 0 8px; color: var(--muted); font-size: 13.5px; font-weight: 650; }
-    .joined-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; background: #fff0e2; color: #e56b14; font-size: 11.5px; font-weight: 750; }
-    .joined-badge::before { content: "✦"; font-size: 10px; }
     .primary { border: 0; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-weight: 750; transition: all .2s ease; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); white-space: nowrap; }
     .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
 
@@ -125,7 +123,6 @@
       .section { padding: 24px 18px; }
       .continue-grid { grid-template-columns: 1fr; }
       .eco-grid { grid-template-columns: repeat(2, 1fr); }
-      .profile-card { flex-direction: column; align-items: flex-start; }
       .primary { width: 100%; text-align: center; }
     }
   </style>
@@ -142,6 +139,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <div class="menu-profile-block" id="menuProfileBlock">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-joined" id="menuProfileJoined">Joined recently</span>
+            </span>
+          </div>
           <div class="menu-label">Explore Aspinora</div>
           <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -152,6 +156,9 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider"></div>
+          <button class="menu-item" id="menuUpdateProfileButton"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
@@ -160,20 +167,6 @@
       <div class="status-pill"><span class="pulse-dot"></span>Active session</div>
       <h1 id="greetingText">Good morning, <em>there.</em></h1>
       <p class="quote" id="quoteText">"Small steps today, big results tomorrow."</p>
-    </section>
-
-    <section class="section reveal">
-      <h2>Your profile</h2>
-      <p class="lead">This is you — update it any time.</p>
-      <div class="profile-card">
-        <div class="avatar" id="avatarInitial">A</div>
-        <div class="profile-info">
-          <h2 id="profileName">Aspirant</h2>
-          <p class="profile-username" id="profileUsername">@username</p>
-          <span class="joined-badge" id="joinedBadge">Joined recently</span>
-        </div>
-        <button class="primary" id="updateProfileButton">Update Profile</button>
-      </div>
     </section>
 
     <section class="section reveal">
@@ -320,21 +313,19 @@
     }
 
     function initProfile() {
-      const avatarEl = document.getElementById('avatarInitial');
+      const options = { month: 'long', year: 'numeric' };
+      const menuAvatar = document.getElementById('menuAvatar');
       if (currentUser.avatarUrl) {
-        avatarEl.innerHTML = '';
+        menuAvatar.innerHTML = '';
         const img = document.createElement('img');
         img.src = currentUser.avatarUrl;
         img.alt = currentUser.username + '\u2019s profile photo';
-        avatarEl.appendChild(img);
+        menuAvatar.appendChild(img);
       } else {
-        avatarEl.textContent = currentUser.username.charAt(0).toUpperCase();
+        menuAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
       }
-      document.getElementById('profileName').textContent = currentUser.username;
-      document.getElementById('profileUsername').textContent = '@' + currentUser.username;
-
-      const options = { month: 'long', year: 'numeric' };
-      document.getElementById('joinedBadge').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
+      document.getElementById('menuProfileName').textContent = currentUser.username;
+      document.getElementById('menuProfileJoined').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
     }
 
     (async () => {
@@ -387,10 +378,6 @@
       window.location.href = '/';
     });
 
-    document.getElementById('updateProfileButton').addEventListener('click', () => {
-      window.location.href = 'edit-profile.html';
-    });
-
     async function performLogout() {
       flashMessage('Logging out…');
       await supabaseClient.auth.signOut();
@@ -398,6 +385,17 @@
     }
 
     document.getElementById('logoutButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      performLogout();
+    });
+
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = 'edit-profile.html';
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
       performLogout();
     });
