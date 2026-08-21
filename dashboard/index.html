@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspinora — Login or Sign Up</title>
+  <title>Aspinora — Dashboard</title>
   <style>
     :root {
       --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
       --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
-      --red: #e5484d; --green: #239363;
+      --red: #e5484d; --green: #3ecf7a;
     }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
     button { font: inherit; }
-    input { font: inherit; }
     .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
 
     .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
@@ -33,82 +32,66 @@
     .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
     .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
     .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .menu-profile-block { display: flex; align-items: center; gap: 11px; padding: 11px 10px; margin-bottom: 6px; border-bottom: 1px solid #f5eee6; padding-bottom: 15px; }
+    .menu-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-joined { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
     .orange { background: #fff0e1; color: #f16d00; }
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
     .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: var(--red); }
 
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
-    .eyebrow::before { content: "✦"; font-size: 13px; }
+    /* Hero / Greeting */
+    .dash-hero { padding: 44px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .dash-label { margin: 0 0 12px; color: #a0a6b2; font-size: 12.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .status-pill { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px; border-radius: 99px; background: #fff0e2; color: #e56b14; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 18px; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(62, 207, 122, .5); animation: pulseDot 2s infinite; }
+    @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(62, 207, 122, .5); } 70% { box-shadow: 0 0 0 9px rgba(62, 207, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(62, 207, 122, 0); } }
+    .dash-hero h1 { margin: 0 0 14px; font-size: clamp(32px, 4.6vw, 50px); line-height: 1.06; letter-spacing: -2.2px; }
+    .dash-hero h1 em { color: var(--orange); font-style: normal; }
+    .quote { max-width: 640px; margin: 0; color: var(--muted); font-size: 16.5px; line-height: 1.65; font-style: italic; }
 
-    .auth-wrap { display: flex; justify-content: center; padding: 30px 6% 10px; }
-    .auth-card {
-      width: 100%; max-width: 460px; padding: 40px 38px; border: 1px solid #f8e6d6; border-radius: 30px;
-      background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
-      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
-      opacity: 0; transform: translateY(18px); animation: cardIn .6s cubic-bezier(.22,.9,.3,1) forwards;
+    /* Sections */
+    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 32px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.6px; }
+    .section .lead { max-width: 640px; margin: 0 0 22px; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
+
+    .primary { border: 0; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-weight: 750; transition: all .2s ease; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); white-space: nowrap; }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+
+    /* Continue learning */
+    .continue-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .continue-card { display: block; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); text-decoration: none; color: inherit; transition: all .2s ease; position: relative; }
+    .continue-card:hover { transform: translateY(-3px); border-color: #ffd0a8; box-shadow: 0 14px 28px rgba(193, 117, 43, .1); }
+    .continue-icon { width: 38px; height: 38px; display: grid; place-items: center; margin-bottom: 13px; border-radius: 11px; font-size: 17px; background: #fff0e1; color: var(--orange-dark); }
+    .continue-card h3 { margin: 0 0 6px; font-size: 16px; }
+    .continue-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .continue-arrow { position: absolute; right: 20px; bottom: 20px; color: #a1a8b5; font-size: 16px; transition: all .2s ease; }
+    .continue-card:hover .continue-arrow { color: var(--orange); transform: translateX(3px); }
+
+    /* Explore Aspinora grid */
+    .explore-group { margin-top: 28px; }
+    .explore-group:first-of-type { margin-top: 4px; }
+    .explore-group h3 { margin: 0 0 14px; font-size: 15.5px; letter-spacing: -.2px; color: #273146; }
+    .eco-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .eco-card {
+      position: relative; display: block; padding: 19px; text-align: left; border: 1px solid var(--line);
+      border-radius: 17px; background: rgba(255,255,255,.92); color: inherit; text-decoration: none;
+      cursor: pointer; box-shadow: 0 8px 22px rgba(44, 54, 78, .04);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
-    @keyframes cardIn { to { opacity: 1; transform: none; } }
+    .eco-card:hover { transform: translateY(-3px); border-color: #ffd0a8; box-shadow: 0 14px 28px rgba(193, 117, 43, .1); }
+    .eco-icon { width: 32px; height: 32px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 9px; font-size: 15px; }
+    .eco-card h4 { margin: 0 0 5px; font-size: 14px; letter-spacing: -.2px; }
+    .eco-card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+    .eco-arrow { position: absolute; right: 16px; bottom: 16px; color: #a1a8b5; font-size: 14px; transition: transform .2s ease, color .2s ease; }
+    .eco-card:hover .eco-arrow { color: var(--orange); transform: translateX(3px); }
 
-    .auth-card h1 { margin: 16px 0 8px; font-size: clamp(26px, 3.4vw, 32px); letter-spacing: -1.2px; }
-    .auth-card h1 em { color: var(--orange); font-style: normal; }
-    .auth-card .sub { margin: 0 0 26px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-    .auth-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 14px; background: #fdf2e7; margin-bottom: 26px; }
-    .auth-tab { flex: 1; padding: 10px; border: 0; border-radius: 10px; background: transparent; color: #8a7358; font-weight: 750; font-size: 13.5px; cursor: pointer; transition: all .2s ease; }
-    .auth-tab.active { background: white; color: var(--orange-dark); box-shadow: 0 6px 16px rgba(193, 117, 43, .12); }
-
-    .auth-panel { display: none; }
-    .auth-panel.active { display: block; animation: fadeSwap .35s ease; }
-    @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; position: relative; }
-    .field label { font-size: 13px; font-weight: 750; color: #394255; }
-    .field input {
-      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14.5px;
-      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
-    }
-    .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
-    .field input.invalid { border-color: var(--red); }
-    .field input.valid { border-color: var(--green); }
-
-    .field-msg { min-height: 16px; font-size: 12px; font-weight: 650; }
-    .field-msg.error { color: var(--red); }
-    .field-msg.success { color: var(--green); }
-    .field-msg.checking { color: #a0a6b2; }
-
-    .password-row { position: relative; }
-    .toggle-pw {
-      position: absolute; right: 12px; top: 38px; background: none; border: 0; cursor: pointer;
-      color: #a0a6b2; font-size: 12px; font-weight: 750; padding: 4px;
-    }
-    .toggle-pw:hover { color: var(--orange-dark); }
-
-    .forgot-link { display: block; text-align: right; margin: -6px 0 18px; font-size: 12.5px; color: var(--orange-dark); text-decoration: none; font-weight: 650; cursor: pointer; background: none; border: 0; padding: 0; width: 100%; }
-    .forgot-link:hover { text-decoration: underline; }
-
-    .primary-full {
-      width: 100%; border: 0; border-radius: 12px; padding: 14px; cursor: pointer; font-weight: 750; font-size: 15px;
-      color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2);
-      transition: all .2s ease; margin-top: 4px;
-    }
-    .primary-full:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
-    .primary-full:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-
-    .form-status { min-height: 20px; margin-top: 14px; font-size: 13px; font-weight: 650; text-align: center; }
-    .form-status.error { color: var(--red); }
-    .form-status.success { color: var(--green); }
-
-    .divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: #c3c9d4; font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .5px; }
-    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-
-    .switch-line { text-align: center; font-size: 13.5px; color: var(--muted); }
-    .switch-line button { background: none; border: 0; color: var(--orange-dark); font-weight: 750; cursor: pointer; padding: 0; }
-    .switch-line button:hover { text-decoration: underline; }
-
-    .reset-panel { display: none; }
-    .reset-panel.active { display: block; animation: fadeSwap .35s ease; }
-
+    /* Footer */
     .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
     .footer-contact { font-size: 14px; color: var(--muted); }
     .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
@@ -118,11 +101,30 @@
     .footer-links a:hover { color: var(--orange-dark); }
     .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
 
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    .eco-grid .eco-card:nth-child(1) { transition-delay: 0s; }
+    .eco-grid .eco-card:nth-child(2) { transition-delay: .04s; }
+    .eco-grid .eco-card:nth-child(3) { transition-delay: .08s; }
+    .eco-grid .eco-card:nth-child(4) { transition-delay: .12s; }
+    .eco-grid .eco-card:nth-child(5) { transition-delay: .16s; }
+    .eco-grid .eco-card:nth-child(6) { transition-delay: .2s; }
+    .eco-grid .eco-card:nth-child(7) { transition-delay: .24s; }
+    .eco-grid .eco-card:nth-child(8) { transition-delay: .28s; }
+    .eco-grid .eco-card:nth-child(9) { transition-delay: .32s; }
+    .eco-grid .eco-card:nth-child(10) { transition-delay: .36s; }
+
+    @media (max-width: 900px) {
+      .eco-grid { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 760px) {
       .page { width: min(100% - 22px, 590px); }
       .topbar { height: 72px; }
-      .auth-card { padding: 30px 24px; }
-      .auth-wrap { padding: 16px 0 10px; }
+      .dash-hero { padding: 30px 24px; }
+      .section { padding: 24px 18px; }
+      .continue-grid { grid-template-columns: 1fr; }
+      .eco-grid { grid-template-columns: repeat(2, 1fr); }
+      .primary { width: 100%; text-align: center; }
     }
   </style>
 </head>
@@ -138,8 +140,15 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <div class="menu-profile-block" id="menuProfileBlock">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-joined" id="menuProfileJoined">Joined recently</span>
+            </span>
+          </div>
           <div class="menu-label">Explore Aspinora</div>
-          <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
+          <a class="menu-item" href="/"><span class="menu-icon orange">⌂</span>Homepage</a>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
           <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
           <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
@@ -148,114 +157,81 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider"></div>
+          <button class="menu-item" id="menuUpdateProfileButton"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
 
-    <div class="auth-wrap">
-      <div class="auth-card">
-        <div class="eyebrow">Your account</div>
+    <section class="dash-hero reveal">
+      <p class="dash-label" id="dashLabel">Dashboard</p>
+      <div class="status-pill"><span class="pulse-dot"></span>Active session</div>
+      <h1 id="greetingText">Good morning, <em>there.</em></h1>
+      <p class="quote" id="quoteText">"Small steps today, big results tomorrow."</p>
+    </section>
 
-        <div id="mainAuth">
-          <h1>Welcome to <em>Aspinora.</em></h1>
-          <p class="sub">Log in to pick up where you left off, or create a free account to save your progress.</p>
+    <section class="section reveal">
+      <h2>Continue where you left off</h2>
+      <p class="lead">Jump straight back into your preparation.</p>
+      <div class="continue-grid">
+        <a class="continue-card" href="/roadmap/">
+          <div class="continue-icon">↗</div>
+          <h3>Your Roadmap</h3>
+          <p>Pick up your stage-by-stage preparation plan.</p>
+          <span class="continue-arrow">→</span>
+        </a>
+        <a class="continue-card" href="/start-learning/">
+          <div class="continue-icon">✎</div>
+          <h3>Choose Your Exam</h3>
+          <p>Head into your SSC CGL or IB ACIO study material.</p>
+          <span class="continue-arrow">→</span>
+        </a>
+      </div>
+    </section>
 
-          <div class="auth-tabs" role="tablist">
-            <button class="auth-tab active" data-panel="login" role="tab" aria-selected="true">Log In</button>
-            <button class="auth-tab" data-panel="signup" role="tab" aria-selected="false">Sign Up</button>
-          </div>
+    <section class="section reveal">
+      <h2>Explore Aspinora</h2>
+      <p class="lead">Everything you need, in one place.</p>
 
-          <!-- LOGIN PANEL -->
-          <div class="auth-panel active" id="loginPanel">
-            <form id="loginForm" novalidate>
-              <div class="field">
-                <label for="loginIdentifier">Username or Email</label>
-                <input type="text" id="loginIdentifier" autocomplete="username" placeholder="yourname or you@example.com" />
-                <div class="field-msg" id="loginIdentifierMsg"></div>
-              </div>
-              <div class="field password-row">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter your password" />
-                <button type="button" class="toggle-pw" data-target="loginPassword">Show</button>
-                <div class="field-msg" id="loginPasswordMsg"></div>
-              </div>
-              <button type="button" class="forgot-link" id="showForgot">Forgot password?</button>
-              <button type="submit" class="primary-full" id="loginSubmit">Log In</button>
-              <div class="form-status" id="loginStatus"></div>
-            </form>
-
-            <div class="divider">or</div>
-            <p class="switch-line">New to Aspinora? <button type="button" id="toSignup">Create an account</button></p>
-          </div>
-
-          <!-- SIGNUP PANEL -->
-          <div class="auth-panel" id="signupPanel">
-            <form id="signupForm" novalidate>
-              <div class="field">
-                <label for="signupUsername">Username</label>
-                <input type="text" id="signupUsername" autocomplete="username" placeholder="Choose a username" />
-                <div class="field-msg" id="signupUsernameMsg"></div>
-              </div>
-              <div class="field">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" autocomplete="email" placeholder="you@example.com" />
-                <div class="field-msg" id="signupEmailMsg"></div>
-              </div>
-              <div class="field password-row">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" autocomplete="new-password" placeholder="At least 8 characters" />
-                <button type="button" class="toggle-pw" data-target="signupPassword">Show</button>
-                <div class="field-msg" id="signupPasswordMsg"></div>
-              </div>
-              <button type="submit" class="primary-full" id="signupSubmit">Create Account</button>
-              <div class="form-status" id="signupStatus"></div>
-            </form>
-
-            <div class="divider">or</div>
-            <p class="switch-line">Already have an account? <button type="button" id="toLogin">Log in</button></p>
-          </div>
-        </div>
-
-        <!-- FORGOT PASSWORD PANEL -->
-        <div class="reset-panel" id="resetPanel">
-          <h1>Reset your <em>password.</em></h1>
-          <p class="sub">Enter the email linked to your account and we'll send you a reset link.</p>
-          <form id="resetForm" novalidate>
-            <div class="field">
-              <label for="resetEmail">Email</label>
-              <input type="email" id="resetEmail" autocomplete="email" placeholder="you@example.com" />
-              <div class="field-msg" id="resetEmailMsg"></div>
-            </div>
-            <button type="submit" class="primary-full" id="resetSubmit">Send Reset Link</button>
-            <div class="form-status" id="resetStatus"></div>
-          </form>
-          <div class="divider">or</div>
-          <p class="switch-line"><button type="button" id="backToLogin">Back to log in</button></p>
-        </div>
-
-        <!-- SET NEW PASSWORD PANEL (shown when arriving from a reset-link email) -->
-        <div class="reset-panel" id="newPasswordPanel">
-          <h1>Set a new <em>password.</em></h1>
-          <p class="sub">You're verified — choose a new password for your account.</p>
-          <form id="newPasswordForm" novalidate>
-            <div class="field password-row">
-              <label for="newPassword">New Password</label>
-              <input type="password" id="newPassword" autocomplete="new-password" placeholder="At least 8 characters" />
-              <button type="button" class="toggle-pw" data-target="newPassword">Show</button>
-              <div class="field-msg" id="newPasswordMsg"></div>
-            </div>
-            <div class="field password-row">
-              <label for="confirmNewPassword">Confirm Password</label>
-              <input type="password" id="confirmNewPassword" autocomplete="new-password" placeholder="Re-enter your new password" />
-              <button type="button" class="toggle-pw" data-target="confirmNewPassword">Show</button>
-              <div class="field-msg" id="confirmNewPasswordMsg"></div>
-            </div>
-            <button type="submit" class="primary-full" id="newPasswordSubmit">Update Password</button>
-            <div class="form-status" id="newPasswordStatus"></div>
-          </form>
+      <div class="explore-group">
+        <h3>Study Tools</h3>
+        <div class="eco-grid">
+          <button class="eco-card reveal" data-message="Study planner coming soon."><div class="eco-icon orange">▣</div><h4>Study Planner</h4><p>Plan your week, subject by subject.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Saved notes coming soon."><div class="eco-icon blue">♡</div><h4>Saved Notes</h4><p>Everything you've bookmarked, in one list.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Current affairs coming soon."><div class="eco-icon purple">✦</div><h4>Current Affairs</h4><p>Daily briefs, exam-focused.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Mock tests coming soon."><div class="eco-icon green">◈</div><h4>Mock Tests</h4><p>Timed practice, real exam conditions.</p><span class="eco-arrow">→</span></button>
+          <a class="eco-card reveal" href="/score-calculator/"><div class="eco-icon orange">▤</div><h4>Calculators</h4><p>Score your last attempt instantly.</p><span class="eco-arrow">→</span></a>
+          <button class="eco-card reveal" data-message="Rank/Score tools coming soon."><div class="eco-icon blue">◔</div><h4>Rank/Score Tools</h4><p>See where you stand.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Important links coming soon."><div class="eco-icon purple">⚑</div><h4>Important Links</h4><p>Official notifications and resources.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="More utilities coming soon."><div class="eco-icon green">≡</div><h4>Other Utilities</h4><p>Small tools that make prep easier.</p><span class="eco-arrow">→</span></button>
         </div>
       </div>
-    </div>
+
+      <div class="explore-group">
+        <h3>Aspinora Ecosystem</h3>
+        <div class="eco-grid">
+          <button class="eco-card reveal" data-message="Aspinora Brain coming soon."><div class="eco-icon orange">✦</div><h4>Aspinora Brain</h4><p>Your AI-powered study companion.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Journal coming soon."><div class="eco-icon blue">✎</div><h4>Aspinora Journal</h4><p>Reflect and track your thinking.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Challenges coming soon."><div class="eco-icon purple">◈</div><h4>Aspinora Challenges</h4><p>Daily and weekly streaks.</p><span class="eco-arrow">→</span></button>
+          <a class="eco-card reveal" href="/roadmap/"><div class="eco-icon green">↗</div><h4>Aspinora Roadmap</h4><p>Your structured preparation plan.</p><span class="eco-arrow">→</span></a>
+          <button class="eco-card reveal" data-message="Aspinora Labs coming soon."><div class="eco-icon orange">▣</div><h4>Aspinora Labs</h4><p>Experimental tools, built in the open.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Study-Rooms coming soon."><div class="eco-icon blue">⌂</div><h4>Aspinora Study-Rooms</h4><p>Study alongside other aspirants.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Library coming soon."><div class="eco-icon purple">▤</div><h4>Aspinora Library</h4><p>Notes, references, and resources.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Mentors coming soon."><div class="eco-icon green">♡</div><h4>Aspinora Mentors</h4><p>Guidance from those who've been there.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Briefs coming soon."><div class="eco-icon orange">≡</div><h4>Aspinora Briefs</h4><p>Concise current affairs summaries.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" data-message="Aspinora Quiz-Arena coming soon."><div class="eco-icon blue">⚑</div><h4>Aspinora Quiz-Arena</h4><p>Compete live with other aspirants.</p><span class="eco-arrow">→</span></button>
+        </div>
+      </div>
+
+      <div class="explore-group">
+        <h3>Account</h3>
+        <div class="eco-grid">
+          <button class="eco-card reveal" data-message="Contribution page coming soon."><div class="eco-icon red">♥</div><h4>Donate</h4><p>Support Aspinora staying free for everyone.</p><span class="eco-arrow">→</span></button>
+          <button class="eco-card reveal" id="logoutButton"><div class="eco-icon red">⏻</div><h4>Log Out</h4><p>Sign out of your Aspinora account.</p><span class="eco-arrow">→</span></button>
+        </div>
+      </div>
+    </section>
 
     <footer class="footer">
       <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
@@ -278,102 +254,89 @@
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-    // A password-reset email link lands back here with a recovery token in
-    // the URL (e.g. #type=recovery&access_token=...). Supabase turns that
-    // into a temporary session automatically, so we must NOT treat it like
-    // a normal logged-in visit and redirect to the dashboard — the user
-    // still needs to set their new password first.
-    const isPasswordRecovery = window.location.hash.includes('type=recovery');
+    let currentUser = { username: 'there', joinedDate: new Date() };
 
-    // If someone's already logged in (and this isn't a recovery link),
-    // sending them back to auth.html doesn't make sense — send them
-    // straight to their dashboard instead.
-    (async () => {
-      if (isPasswordRecovery) return;
+    async function loadUserAndGuardPage() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) window.location.href = '/dashboard/';
-    })();
 
-    // Fires when Supabase detects a valid recovery link in the URL.
-    supabaseClient.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        showNewPasswordPanel();
+      if (!session) {
+        window.location.href = '/auth/';
+        return false;
       }
-    });
 
-    async function checkUsernameAvailable(username) {
-      const { data, error } = await supabaseClient
+      const user = session.user;
+      const { data: profile, error } = await supabaseClient
         .from('profiles')
-        .select('username')
-        .ilike('username', username.trim())
-        .maybeSingle();
-      if (error) { console.error('Username check failed:', error); return true; }
-      return !data;
-    }
+        .select('username, created_at, avatar_url')
+        .eq('id', user.id)
+        .single();
 
-    // Note: Supabase intentionally avoids confirming/denying whether an email
-    // is already registered while you type (this prevents attackers from
-    // scanning for valid accounts). We validate the format live, and the
-    // "already registered" case is caught for real at submit time below.
-    async function checkEmailAvailable(email) {
+      currentUser = {
+        username: profile?.username || user.email.split('@')[0],
+        joinedDate: profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at),
+        avatarUrl: profile?.avatar_url || null
+      };
       return true;
     }
 
-    async function performSignUp(username, email, password) {
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-          emailRedirectTo: window.location.origin + '/dashboard/'
-        }
-      });
-
-      if (error) {
-        if (error.message.toLowerCase().includes('already registered')) {
-          return { success: false, reason: 'email_taken' };
-        }
-        return { success: false, reason: 'error', message: error.message };
-      }
-
-      // Supabase's anti-enumeration signal for "this email already has an account"
-      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        return { success: false, reason: 'email_taken' };
-      }
-
-      return { success: true, needsConfirmation: !data.session };
+    function getGreeting(hour) {
+      if (hour < 5) return 'Good night';
+      if (hour < 12) return 'Good morning';
+      if (hour < 17) return 'Good afternoon';
+      if (hour < 21) return 'Good evening';
+      return 'Good night';
     }
 
-    async function performLogin(identifier, password) {
-      let email = identifier.trim();
+    const QUOTES = [
+      "Small steps today, big results tomorrow.",
+      "Discipline beats motivation on the hard days.",
+      "You don't need to be perfect, just consistent.",
+      "Every topic you finish is one less thing standing between you and your goal.",
+      "Progress hides in the boring, repeated days.",
+      "Trust the process, revise the plan, not the goal.",
+      "The exam rewards preparation, not panic.",
+      "Focus on today's page, not tomorrow's fear.",
+      "Your future self is counting on today's effort.",
+      "Consistency is the quiet superpower of every topper.",
+      "One more revision. One more mock. One more step closer.",
+      "Doubt kills more dreams than failure ever will — keep going.",
+      "You're not behind. You're exactly where your journey needs you to be.",
+      "Great scores are built one focused hour at a time.",
+      "The syllabus doesn't care about your mood — show up anyway."
+    ];
 
-      if (!email.includes('@')) {
-        const { data: resolvedEmail, error: rpcError } = await supabaseClient.rpc(
-          'get_email_by_username',
-          { lookup_username: email }
-        );
-        if (rpcError || !resolvedEmail) {
-          return { success: false, reason: 'invalid_credentials' };
-        }
-        email = resolvedEmail;
-      }
+    function initGreeting() {
+      const hour = new Date().getHours();
+      const greeting = getGreeting(hour);
+      document.getElementById('greetingText').innerHTML = `${greeting}, <em>${currentUser.username}</em>.`;
+      document.getElementById('dashLabel').textContent = currentUser.username + '\u2019s Dashboard';
 
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) {
-        return { success: false, reason: 'invalid_credentials' };
-      }
-      return { success: true };
+      const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById('quoteText').textContent = `"${randomQuote}"`;
     }
 
-    async function performPasswordReset(email) {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/auth/'
-      });
-      if (error) return { success: false };
-      return { success: true };
+    function initProfile() {
+      const options = { month: 'long', year: 'numeric' };
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (currentUser.avatarUrl) {
+        menuAvatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = currentUser.avatarUrl;
+        img.alt = currentUser.username + '\u2019s profile photo';
+        menuAvatar.appendChild(img);
+      } else {
+        menuAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+      }
+      document.getElementById('menuProfileName').textContent = currentUser.username;
+      document.getElementById('menuProfileJoined').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
     }
 
-    /* ============================================================ */
+    (async () => {
+      const ok = await loadUserAndGuardPage();
+      if (!ok) return;
+      initGreeting();
+      initProfile();
+    })();
 
     const menuButton = document.getElementById('menuButton');
     const menuPanel = document.getElementById('menuPanel');
@@ -418,298 +381,39 @@
       window.location.href = '/';
     });
 
-    // Tab switching (Login / Sign Up)
-    const authTabs = document.querySelectorAll('.auth-tab');
-    function switchPanel(name) {
-      authTabs.forEach((t) => {
-        const isMatch = t.dataset.panel === name;
-        t.classList.toggle('active', isMatch);
-        t.setAttribute('aria-selected', String(isMatch));
+    async function performLogout() {
+      flashMessage('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.href = '/'; }, 600);
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      performLogout();
+    });
+
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = '/edit-profile/';
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      performLogout();
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
       });
-      document.getElementById('loginPanel').classList.toggle('active', name === 'login');
-      document.getElementById('signupPanel').classList.toggle('active', name === 'signup');
-    }
-    authTabs.forEach((tab) => {
-      tab.addEventListener('click', () => switchPanel(tab.dataset.panel));
-    });
-    document.getElementById('toSignup').addEventListener('click', () => switchPanel('signup'));
-    document.getElementById('toLogin').addEventListener('click', () => switchPanel('login'));
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-    // Deep-link support: auth.html#signup or auth.html#login opens directly to that tab
-    const initialHash = window.location.hash.replace('#', '');
-    if (initialHash === 'signup' || initialHash === 'login') {
-      switchPanel(initialHash);
-    }
-
-    // Forgot password panel toggle
-    const mainAuth = document.getElementById('mainAuth');
-    const resetPanel = document.getElementById('resetPanel');
-    const newPasswordPanel = document.getElementById('newPasswordPanel');
-    document.getElementById('showForgot').addEventListener('click', () => {
-      mainAuth.style.display = 'none';
-      resetPanel.classList.add('active');
-    });
-    document.getElementById('backToLogin').addEventListener('click', () => {
-      resetPanel.classList.remove('active');
-      mainAuth.style.display = 'block';
-      switchPanel('login');
-    });
-
-    function showNewPasswordPanel() {
-      mainAuth.style.display = 'none';
-      resetPanel.classList.remove('active');
-      newPasswordPanel.classList.add('active');
-    }
-
-    // Show/hide password toggles
-    document.querySelectorAll('.toggle-pw').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const input = document.getElementById(btn.dataset.target);
-        const isPassword = input.type === 'password';
-        input.type = isPassword ? 'text' : 'password';
-        btn.textContent = isPassword ? 'Hide' : 'Show';
-      });
-    });
-
-    function setFieldState(inputEl, msgEl, state, message) {
-      inputEl.classList.remove('valid', 'invalid');
-      msgEl.classList.remove('error', 'success', 'checking');
-      if (state === 'valid') { inputEl.classList.add('valid'); msgEl.classList.add('success'); }
-      if (state === 'invalid') { inputEl.classList.add('invalid'); msgEl.classList.add('error'); }
-      if (state === 'checking') { msgEl.classList.add('checking'); }
-      msgEl.textContent = message || '';
-    }
-
-    // Live username availability check (debounced)
-    const signupUsername = document.getElementById('signupUsername');
-    const signupUsernameMsg = document.getElementById('signupUsernameMsg');
-    let usernameTimer;
-    signupUsername.addEventListener('input', () => {
-      clearTimeout(usernameTimer);
-      const value = signupUsername.value.trim();
-      if (value.length < 3) {
-        setFieldState(signupUsername, signupUsernameMsg, value.length ? 'invalid' : 'none', value.length ? 'Username must be at least 3 characters.' : '');
-        return;
-      }
-      setFieldState(signupUsername, signupUsernameMsg, 'checking', 'Checking availability…');
-      usernameTimer = setTimeout(async () => {
-        const available = await checkUsernameAvailable(value);
-        if (signupUsername.value.trim() !== value) return; // stale check
-        setFieldState(signupUsername, signupUsernameMsg, available ? 'valid' : 'invalid', available ? 'Username is available.' : 'Username is already taken.');
-      }, 450);
-    });
-
-    // Live email availability check (debounced)
-    const signupEmail = document.getElementById('signupEmail');
-    const signupEmailMsg = document.getElementById('signupEmailMsg');
-    let emailTimer;
-    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-    signupEmail.addEventListener('input', () => {
-      clearTimeout(emailTimer);
-      const value = signupEmail.value.trim();
-      if (!value) { setFieldState(signupEmail, signupEmailMsg, 'none', ''); return; }
-      if (!isValidEmail(value)) {
-        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.');
-        return;
-      }
-      setFieldState(signupEmail, signupEmailMsg, 'checking', 'Checking availability…');
-      emailTimer = setTimeout(async () => {
-        const available = await checkEmailAvailable(value);
-        if (signupEmail.value.trim() !== value) return;
-        setFieldState(signupEmail, signupEmailMsg, available ? 'valid' : 'invalid', available ? 'Email is available.' : 'Email is already registered.');
-      }, 450);
-    });
-
-    // Password strength hint
-    const signupPassword = document.getElementById('signupPassword');
-    const signupPasswordMsg = document.getElementById('signupPasswordMsg');
-    signupPassword.addEventListener('input', () => {
-      const value = signupPassword.value;
-      if (!value) { setFieldState(signupPassword, signupPasswordMsg, 'none', ''); return; }
-      if (value.length < 8) {
-        setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.');
-      } else {
-        setFieldState(signupPassword, signupPasswordMsg, 'valid', 'Looks good.');
-      }
-    });
-
-    // Sign up submit
-    const signupForm = document.getElementById('signupForm');
-    const signupSubmit = document.getElementById('signupSubmit');
-    const signupStatus = document.getElementById('signupStatus');
-    signupForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      signupStatus.textContent = '';
-      signupStatus.className = 'form-status';
-
-      const username = signupUsername.value.trim();
-      const email = signupEmail.value.trim();
-      const password = signupPassword.value;
-
-      if (username.length < 3) { setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username must be at least 3 characters.'); return; }
-      if (!isValidEmail(email)) { setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.'); return; }
-      if (password.length < 8) { setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.'); return; }
-
-      signupSubmit.disabled = true;
-      signupSubmit.textContent = 'Checking…';
-
-      const usernameOk = await checkUsernameAvailable(username);
-
-      if (!usernameOk) {
-        setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username is already taken.');
-        signupSubmit.disabled = false;
-        signupSubmit.textContent = 'Create Account';
-        signupStatus.textContent = 'Please fix the issues above.';
-        signupStatus.classList.add('error');
-        return;
-      }
-
-      signupSubmit.textContent = 'Creating account…';
-      const result = await performSignUp(username, email, password);
-
-      signupSubmit.disabled = false;
-      signupSubmit.textContent = 'Create Account';
-
-      if (result.success && result.needsConfirmation) {
-        signupStatus.textContent = 'Account created! Check your email to confirm, then log in.';
-        signupStatus.classList.add('success');
-        setTimeout(() => { switchPanel('login'); signupStatus.textContent = ''; }, 2600);
-      } else if (result.success) {
-        signupStatus.textContent = 'Account created! Redirecting to your dashboard…';
-        signupStatus.classList.add('success');
-        setTimeout(() => { window.location.href = '/dashboard/'; }, 1200);
-      } else if (result.reason === 'email_taken') {
-        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Email is already registered.');
-        signupStatus.textContent = 'Please fix the issues above.';
-        signupStatus.classList.add('error');
-      } else {
-        signupStatus.textContent = result.message || 'Something went wrong. Please try again.';
-        signupStatus.classList.add('error');
-      }
-    });
-
-    // Login submit
-    const loginForm = document.getElementById('loginForm');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const loginStatus = document.getElementById('loginStatus');
-    const loginIdentifier = document.getElementById('loginIdentifier');
-    const loginIdentifierMsg = document.getElementById('loginIdentifierMsg');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginPasswordMsg = document.getElementById('loginPasswordMsg');
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      loginStatus.textContent = '';
-      loginStatus.className = 'form-status';
-      setFieldState(loginIdentifier, loginIdentifierMsg, 'none', '');
-      setFieldState(loginPassword, loginPasswordMsg, 'none', '');
-
-      const identifier = loginIdentifier.value.trim();
-      const password = loginPassword.value;
-
-      if (!identifier) { setFieldState(loginIdentifier, loginIdentifierMsg, 'invalid', 'Enter your username or email.'); return; }
-      if (!password) { setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Enter your password.'); return; }
-
-      loginSubmit.disabled = true;
-      loginSubmit.textContent = 'Logging in…';
-
-      const result = await performLogin(identifier, password);
-
-      loginSubmit.disabled = false;
-      loginSubmit.textContent = 'Log In';
-
-      if (result.success) {
-        loginStatus.textContent = 'Logged in! Redirecting…';
-        loginStatus.classList.add('success');
-        setTimeout(() => { window.location.href = '/dashboard/'; }, 900);
-      } else {
-        setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Incorrect username/email or password.');
-        loginStatus.textContent = 'That didn\'t match our records. Try again or reset your password.';
-        loginStatus.classList.add('error');
-      }
-    });
-
-    // Forgot password submit
-    const resetForm = document.getElementById('resetForm');
-    const resetSubmit = document.getElementById('resetSubmit');
-    const resetStatus = document.getElementById('resetStatus');
-    const resetEmail = document.getElementById('resetEmail');
-    const resetEmailMsg = document.getElementById('resetEmailMsg');
-
-    resetForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resetStatus.textContent = '';
-      resetStatus.className = 'form-status';
-
-      const email = resetEmail.value.trim();
-      if (!isValidEmail(email)) {
-        setFieldState(resetEmail, resetEmailMsg, 'invalid', 'Enter a valid email address.');
-        return;
-      }
-
-      resetSubmit.disabled = true;
-      resetSubmit.textContent = 'Sending…';
-
-      const result = await performPasswordReset(email);
-
-      resetSubmit.disabled = false;
-      resetSubmit.textContent = 'Send Reset Link';
-
-      if (result.success) {
-        resetStatus.textContent = 'If that email is registered, a reset link is on its way.';
-        resetStatus.classList.add('success');
-      } else {
-        resetStatus.textContent = 'Something went wrong. Please try again.';
-        resetStatus.classList.add('error');
-      }
-    });
-
-    // Set new password submit (recovery flow)
-    const newPasswordForm = document.getElementById('newPasswordForm');
-    const newPasswordSubmit = document.getElementById('newPasswordSubmit');
-    const newPasswordStatus = document.getElementById('newPasswordStatus');
-    const newPasswordInput = document.getElementById('newPassword');
-    const newPasswordMsg = document.getElementById('newPasswordMsg');
-    const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
-    const confirmNewPasswordMsg = document.getElementById('confirmNewPasswordMsg');
-
-    newPasswordForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      newPasswordStatus.textContent = '';
-      newPasswordStatus.className = 'form-status';
-      setFieldState(newPasswordInput, newPasswordMsg, 'none', '');
-      setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'none', '');
-
-      const password = newPasswordInput.value;
-      const confirmPassword = confirmNewPasswordInput.value;
-
-      if (password.length < 8) {
-        setFieldState(newPasswordInput, newPasswordMsg, 'invalid', 'Use at least 8 characters.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'invalid', 'Passwords do not match.');
-        return;
-      }
-
-      newPasswordSubmit.disabled = true;
-      newPasswordSubmit.textContent = 'Updating…';
-
-      const { error } = await supabaseClient.auth.updateUser({ password });
-
-      newPasswordSubmit.disabled = false;
-      newPasswordSubmit.textContent = 'Update Password';
-
-      if (error) {
-        newPasswordStatus.textContent = error.message || 'Something went wrong. Please try again.';
-        newPasswordStatus.classList.add('error');
-        return;
-      }
-
-      newPasswordStatus.textContent = 'Password updated! Redirecting to your dashboard…';
-      newPasswordStatus.classList.add('success');
-      setTimeout(() => { window.location.href = '/dashboard/'; }, 1200);
-    });
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
   </script>
 </body>
 </html>
+
