@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Privacy Policy, Terms &amp; Contact</title>
+  <style>
+    :root {
+      --orange: #ff7800;
+      --orange-dark: #e85d00;
+      --ink: #172033;
+      --muted: #6d7585;
+      --line: #edf0f5;
+      --surface: #ffffff;
+      --soft: #fff7ef;
+      --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%);
+    }
+
+    button { font: inherit; }
+
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+
+    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent;
+      color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px;
+      transition: background .2s ease, transform .2s ease;
+    }
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+
+    .menu-wrap { position: relative; }
+
+    .menu-button {
+      width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent;
+      border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease;
+    }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+    .menu-panel {
+      position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px;
+      background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow);
+      opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item {
+      width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0;
+      border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer;
+      text-decoration: none; transition: background .16s ease, color .16s ease;
+    }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: #e5484d; }
+
+    .menu-profile { margin-bottom: 6px; cursor: default; }
+    .menu-item.menu-profile:hover { background: transparent; color: #394255; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px;
+      color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .legal-hero {
+      padding: 46px 6%; border: 1px solid #f8e6d6; border-radius: 30px;
+      background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+    .legal-hero h1 { max-width: 660px; margin: 18px 0 14px; font-size: clamp(34px, 4.4vw, 52px); line-height: 1.05; letter-spacing: -2.2px; }
+    .legal-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    .section {
+      scroll-margin-top: 20px; margin-top: 20px; padding: 32px 6%;
+      border: 1px solid #f8e6d6; border-radius: 30px;
+      background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+    .tab-btn {
+      padding: 11px 20px; border-radius: 12px; border: 1px solid var(--line); background: white;
+      color: #4e586b; cursor: pointer; font-weight: 750; transition: all .2s ease;
+    }
+    .tab-btn:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent;
+      box-shadow: 0 10px 20px rgba(242, 105, 0, .2);
+    }
+
+    .legal-track { display: none; }
+    .legal-track.active { display: block; }
+    .legal-track h2 { margin: 0 0 6px; font-size: 25px; letter-spacing: -.6px; }
+    .legal-track .updated { color: #a0a6b2; font-size: 12.5px; font-weight: 650; margin-bottom: 24px; display: block; }
+
+    .legal-body h3 { margin: 26px 0 8px; font-size: 16.5px; letter-spacing: -.2px; }
+    .legal-body h3:first-of-type { margin-top: 0; }
+    .legal-body p { margin: 0 0 12px; color: var(--muted); font-size: 14.5px; line-height: 1.75; }
+    .legal-body ul { margin: 0 0 12px; padding-left: 20px; color: var(--muted); font-size: 14.5px; line-height: 1.75; }
+    .legal-body li { margin-bottom: 6px; }
+    .legal-body strong { color: var(--ink); }
+
+    .contact-card {
+      margin-top: 8px; padding: 24px; border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(255,255,255,.9); box-shadow: 0 8px 25px rgba(44, 54, 78, .04);
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .contact-icon {
+      width: 46px; height: 46px; border-radius: 13px; background: #fff0e1; color: var(--orange-dark);
+      display: grid; place-items: center; font-size: 19px; flex-shrink: 0;
+    }
+    .contact-card a { color: var(--orange-dark); font-weight: 750; font-size: 16px; text-decoration: none; }
+    .contact-card a:hover { text-decoration: underline; }
+    .contact-card p { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
+
+    .footer {
+      margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px;
+      background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
+      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
+    }
+    .footer-contact { font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; cursor: pointer; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    .sticky-cta {
+      position: fixed; right: 26px; bottom: 26px; z-index: 50; display: inline-flex; align-items: center;
+      gap: 8px; border: 0; border-radius: 99px; padding: 15px 22px; color: white;
+      background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 14px 30px rgba(242, 105, 0, .3);
+      cursor: pointer; font-weight: 750; opacity: 0; transform: translateY(18px) scale(.96); pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease;
+    }
+    .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+    .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
+
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .legal-hero { padding: 32px 24px; }
+      .legal-hero h1 { letter-spacing: -1.6px; }
+      .section { padding: 24px 18px; }
+      .contact-card { flex-direction: column; align-items: flex-start; }
+      .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="/aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+            </span>
+          </button>
+          <div class="menu-label">Explore Aspinora</div>
+          <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
+          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+          <button class="menu-item" data-message="Mock tests coming soon."><span class="menu-icon orange">◈</span>Mock tests</button>
+          <a class="menu-item" href="/score-calculator/"><span class="menu-icon blue">▤</span>Calculators</a>
+          <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
+          <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
+          <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
+        </nav>
+      </div>
+    </div></header>
+
+    <section class="legal-hero">
+      <div class="eyebrow">Legal &amp; support</div>
+      <h1>Policies, terms &amp; <em>how to reach us.</em></h1>
+      <p class="intro">Everything about how Aspinora works, what you agree to by using it, and how to get in touch — all in one place.</p>
+    </section>
+
+    <section class="section">
+      <div class="tabs" role="tablist" aria-label="Choose a topic">
+        <button class="tab-btn active" data-track="privacy-policy" role="tab" aria-selected="true">Privacy Policy</button>
+        <button class="tab-btn" data-track="terms-of-use" role="tab" aria-selected="false">Terms of Use</button>
+        <button class="tab-btn" data-track="disclaimer" role="tab" aria-selected="false">Disclaimer</button>
+        <button class="tab-btn" data-track="contact-us" role="tab" aria-selected="false">Contact Us</button>
+      </div>
+
+      <div class="legal-track active" id="privacy-policy" data-track="privacy-policy">
+        <h2>Privacy Policy</h2>
+        <span class="updated">Last updated: August 2026</span>
+        <div class="legal-body reveal">
+          <p>Aspinora ("we," "our," or "us") respects your privacy. This Privacy Policy explains what information we collect when you use aspinora.in, how we use it, and the choices you have.</p>
+
+          <h3>Information we collect</h3>
+          <p>Aspinora is a free learning resource and does not require you to create an account or submit personal details to browse or use most of the site. We may collect limited, non-identifying information, such as:</p>
+          <ul>
+            <li>Basic usage data (pages visited, time spent, device/browser type) through analytics tools, to understand how the site is used and improve it.</li>
+            <li>Information you voluntarily provide, such as your email address, if you contact us directly.</li>
+          </ul>
+
+          <h3>How we use information</h3>
+          <p>Any information collected is used solely to operate, maintain, and improve Aspinora — for example, understanding which study materials are most useful, fixing issues, and responding to your queries. We do not sell, rent, or trade your information to third parties.</p>
+
+          <h3>Cookies &amp; analytics</h3>
+          <p>Aspinora may use cookies or similar technologies through analytics services to understand aggregate site usage. You can disable cookies through your browser settings at any time; this will not prevent you from accessing the site's content.</p>
+
+          <h3>Third-party links</h3>
+          <p>Our pages may occasionally link to external resources or references. We are not responsible for the privacy practices or content of these third-party sites, and we encourage you to review their policies separately.</p>
+
+          <h3>Data security</h3>
+          <p>We take reasonable measures to protect any information shared with us. However, no method of transmission over the internet is completely secure, and we cannot guarantee absolute security.</p>
+
+          <h3>Children's privacy</h3>
+          <p>Aspinora is intended for exam aspirants generally above the age of 16 and does not knowingly collect personal information from young children.</p>
+
+          <h3>Changes to this policy</h3>
+          <p>We may update this Privacy Policy from time to time. Continued use of the site after changes are posted constitutes acceptance of the revised policy.</p>
+        </div>
+      </div>
+
+      <div class="legal-track" id="terms-of-use" data-track="terms-of-use">
+        <h2>Terms of Use</h2>
+        <span class="updated">Last updated: August 2026</span>
+        <div class="legal-body reveal">
+          <p>By accessing or using aspinora.in, you agree to the following terms. If you do not agree, please discontinue use of the site.</p>
+
+          <h3>Use of the platform</h3>
+          <p>Aspinora provides free study resources, notes, and preparation material for competitive exam aspirants. You may use this content for personal, non-commercial study purposes.</p>
+
+          <h3>Content ownership</h3>
+          <p>Unless otherwise stated, all content on Aspinora — including notes, essays, and study material — is the property of Aspinora or its contributors. You may not reproduce, redistribute, or resell this content without prior permission.</p>
+
+          <h3>Accuracy of information</h3>
+          <p>We strive to keep our content accurate, relevant, and up to date. However, exam patterns, syllabi, and official information can change. Aspinora does not guarantee that all material is current or error-free, and you should verify important details against official sources.</p>
+
+          <h3>Acceptable use</h3>
+          <p>You agree not to misuse the platform, including but not limited to attempting unauthorized access, distributing harmful software, or using the site in any way that could damage, disable, or impair its functioning.</p>
+
+          <h3>No guarantee of results</h3>
+          <p>Aspinora is a preparation aid, not a guarantee of exam success. Your results depend on your own effort, aptitude, and circumstances beyond our control.</p>
+
+          <h3>Voluntary contributions</h3>
+          <p>Aspinora is free to use. Any contributions made to support the platform are voluntary and non-refundable, and do not entitle the contributor to any special access or guarantees.</p>
+
+          <h3>Changes to these terms</h3>
+          <p>We may revise these Terms of Use periodically. Continued use of the site after updates are posted means you accept the revised terms.</p>
+        </div>
+      </div>
+
+      <div class="legal-track" id="disclaimer" data-track="disclaimer">
+        <h2>Disclaimer</h2>
+        <span class="updated">Last updated: August 2026</span>
+        <div class="legal-body reveal">
+          <p>The information provided on Aspinora is for general educational and preparatory purposes only.</p>
+
+          <h3>Not an official source</h3>
+          <p>Aspinora is an independent, free learning platform and is not affiliated with, endorsed by, or officially connected to the Staff Selection Commission (SSC), the Intelligence Bureau (IB), or any other examination or government body. Exam names used on this site are for identification purposes only.</p>
+
+          <h3>Accuracy of content</h3>
+          <p>While we make reasonable efforts to ensure the notes, essays, and answers on this site are accurate and well-researched, they represent one interpretation of the topic and should not be treated as the only correct or official answer. Always cross-check critical exam-related details, dates, and syllabi with official notifications.</p>
+
+          <h3>No professional advice</h3>
+          <p>Content on Aspinora does not constitute legal, financial, or career advice. Decisions about your exam strategy and preparation should be based on your own judgment, alongside official resources.</p>
+
+          <h3>External references</h3>
+          <p>Where applicable, our content may reference current affairs or public information available at the time of writing. Aspinora is not responsible for outcomes resulting from reliance on outdated information.</p>
+
+          <h3>Limitation of liability</h3>
+          <p>Aspinora, its creators, and contributors shall not be held liable for any loss, damage, or exam outcome arising from the use of, or reliance on, information provided on this site.</p>
+        </div>
+      </div>
+
+      <div class="legal-track" id="contact-us" data-track="contact-us">
+        <h2>Contact Us</h2>
+        <span class="updated">We usually respond within a few days</span>
+        <div class="legal-body reveal">
+          <p>Have a question, found an error in our content, or want to share feedback? We'd love to hear from you.</p>
+          <div class="contact-card">
+            <div class="contact-icon">✉</div>
+            <div>
+              <a href="mailto:support@aspinora.in">support@aspinora.in</a>
+              <p>Email us anytime — for corrections, suggestions, or general queries about Aspinora.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="#" data-track="privacy-policy">Privacy Policy</a>
+        <a href="#" data-track="terms-of-use">Terms of Use</a>
+        <a href="#" data-track="disclaimer">Disclaimer</a>
+        <a href="#" data-track="contact-us">Contact Us</a>
+      </nav>
+
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+    const statusHolder = { timeout: null };
+
+    function flashMessage(message) {
+      let el = document.getElementById('status');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'status';
+        el.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(statusHolder.timeout);
+      statusHolder.timeout = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+    }
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        flashMessage(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.getElementById('homeButton').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+
+    /* ============================================================
+       SUPABASE — logged-in state for the triple-dot menu
+    ============================================================ */
+    const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    async function checkSessionAndUpdateMenu() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+
+      const user = session.user;
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('username, created_at, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      const username = profile?.username || user.email.split('@')[0];
+      const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
+      const options = { month: 'long', year: 'numeric' };
+
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (profile?.avatar_url) {
+        menuAvatar.innerHTML = '';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = profile.avatar_url;
+        avatarImg.alt = username + '\u2019s profile photo';
+        menuAvatar.appendChild(avatarImg);
+      } else {
+        menuAvatar.textContent = username.charAt(0).toUpperCase();
+      }
+      document.getElementById('menuProfileName').textContent = username;
+      document.getElementById('menuProfileSub').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', options);
+      document.getElementById('menuProfileItem').style.display = 'flex';
+      document.getElementById('menuAccountDivider').style.display = 'block';
+      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+      document.getElementById('menuLogoutButton').style.display = 'flex';
+    }
+
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = '/edit-profile/';
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      flashMessage('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.href = '/'; }, 600);
+    });
+
+    checkSessionAndUpdateMenu();
+
+    function activateTrack(slug, scroll) {
+      const validSlugs = ['privacy-policy', 'terms-of-use', 'disclaimer', 'contact-us'];
+      if (!validSlugs.includes(slug)) return;
+
+      document.querySelectorAll('.tab-btn').forEach((b) => {
+        const isMatch = b.dataset.track === slug;
+        b.classList.toggle('active', isMatch);
+        b.setAttribute('aria-selected', String(isMatch));
+      });
+
+      document.querySelectorAll('.legal-track').forEach((t) => t.classList.remove('active'));
+      const activeTrack = document.getElementById(slug);
+      activeTrack.classList.add('active');
+      activeTrack.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+
+      if (scroll) {
+        document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        history.replaceState(null, '', '#' + btn.dataset.track);
+        activateTrack(btn.dataset.track, false);
+      });
+    });
+
+    document.querySelectorAll('.footer-links a[data-track]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        history.replaceState(null, '', '#' + link.dataset.track);
+        activateTrack(link.dataset.track, true);
+      });
+    });
+
+    const initialSlug = window.location.hash.replace('#', '');
+    if (initialSlug) {
+      activateTrack(initialSlug, false);
+    } else {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+    }
+
+    const stickyCta = document.getElementById('stickyCta');
+    const legalHero = document.querySelector('.legal-hero');
+
+    window.addEventListener('scroll', () => {
+      const heroBottom = legalHero.getBoundingClientRect().bottom;
+      stickyCta.classList.toggle('is-visible', heroBottom < 0);
+    });
+
+    stickyCta.addEventListener('click', () => {
+      window.location.href = '/start-learning/';
+    });
+  </script>
+</body>
+</html>
