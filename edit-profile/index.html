@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspinora — Login or Sign Up</title>
+  <title>Aspinora — Edit Profile</title>
   <style>
     :root {
       --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
       --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
-      --red: #e5484d; --green: #239363;
+      --red: #e5484d; --green: #3ecf7a;
     }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
@@ -37,77 +37,90 @@
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
     .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: #e5484d; }
+
+    .menu-profile { margin-bottom: 6px; cursor: default; }
+    .menu-item.menu-profile:hover { background: transparent; color: #394255; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
 
     .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
     .eyebrow::before { content: "✦"; font-size: 13px; }
 
-    .auth-wrap { display: flex; justify-content: center; padding: 30px 6% 10px; }
-    .auth-card {
-      width: 100%; max-width: 460px; padding: 40px 38px; border: 1px solid #f8e6d6; border-radius: 30px;
-      background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%);
-      box-shadow: 0 16px 50px rgba(193, 117, 43, .07);
-      opacity: 0; transform: translateY(18px); animation: cardIn .6s cubic-bezier(.22,.9,.3,1) forwards;
+    .page-hero { padding: 46px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .page-hero h1 { max-width: 680px; margin: 18px 0 14px; font-size: clamp(34px, 4.6vw, 54px); line-height: 1.05; letter-spacing: -2.2px; }
+    .page-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+    .back-link { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 18px; color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; cursor: pointer; background: none; border: 0; padding: 0; }
+    .back-link:hover { color: var(--orange-dark); }
+
+    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 34px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .section h2 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.5px; }
+    .section .lead { max-width: 620px; margin: 0 0 24px; color: var(--muted); font-size: 14.5px; line-height: 1.65; }
+
+    /* Photo card */
+    .photo-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+    .avatar-preview {
+      width: 108px; height: 108px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800);
+      color: white; font-size: 40px; font-weight: 800; box-shadow: 0 14px 30px rgba(238, 108, 8, .25);
     }
-    @keyframes cardIn { to { opacity: 1; transform: none; } }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-actions { display: flex; flex-direction: column; gap: 10px; }
+    .photo-actions p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; max-width: 320px; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .primary, .secondary, .danger-outline {
+      border: 0; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-weight: 750; transition: all .2s ease;
+    }
+    .primary { color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .primary:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .secondary { color: #4e586b; border: 1px solid #e8ebf0; background: white; }
+    .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .danger-outline { color: var(--red); border: 1px solid #ffd6d6; background: #fff0f0; }
+    .danger-outline:hover { background: #ffe4e4; }
 
-    .auth-card h1 { margin: 16px 0 8px; font-size: clamp(26px, 3.4vw, 32px); letter-spacing: -1.2px; }
-    .auth-card h1 em { color: var(--orange); font-style: normal; }
-    .auth-card .sub { margin: 0 0 26px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-    .auth-tabs { display: flex; gap: 6px; padding: 5px; border-radius: 14px; background: #fdf2e7; margin-bottom: 26px; }
-    .auth-tab { flex: 1; padding: 10px; border: 0; border-radius: 10px; background: transparent; color: #8a7358; font-weight: 750; font-size: 13.5px; cursor: pointer; transition: all .2s ease; }
-    .auth-tab.active { background: white; color: var(--orange-dark); box-shadow: 0 6px 16px rgba(193, 117, 43, .12); }
-
-    .auth-panel { display: none; }
-    .auth-panel.active { display: block; animation: fadeSwap .35s ease; }
+    /* Crop UI */
+    .crop-wrap { display: none; margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--line); }
+    .crop-wrap.show { display: block; animation: fadeSwap .3s ease; }
     @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .crop-layout { display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
+    .crop-stage {
+      position: relative; width: 280px; height: 280px; border-radius: 20px; background: #fdf2e7;
+      display: grid; place-items: center; flex-shrink: 0; touch-action: none; cursor: grab;
+      border: 1px solid var(--line);
+    }
+    .crop-stage:active { cursor: grabbing; }
+    #cropCanvas { width: 280px; height: 280px; border-radius: 50%; box-shadow: 0 0 0 3px white, 0 0 0 4px #ffd0a8, 0 14px 30px rgba(193, 117, 43, .18); }
+    .crop-controls { flex: 1; min-width: 230px; display: flex; flex-direction: column; gap: 18px; }
+    .zoom-field label { display: block; font-size: 13px; font-weight: 750; color: #394255; margin-bottom: 9px; }
+    .zoom-field input[type="range"] { width: 100%; accent-color: var(--orange); }
+    .crop-hint { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+    .size-readout { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 99px; background: #eafaf1; color: #1f8a53; font-size: 12px; font-weight: 750; width: fit-content; }
+    .size-readout.warn { background: #fff0f0; color: #c0323a; }
+    .crop-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
 
-    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; position: relative; }
+    input[type="file"] { display: none; }
+
+    /* Name field */
+    .field { display: flex; flex-direction: column; gap: 7px; max-width: 360px; }
     .field label { font-size: 13px; font-weight: 750; color: #394255; }
     .field input {
-      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14.5px;
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px;
       color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
     }
     .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
-    .field input.invalid { border-color: var(--red); }
-    .field input.valid { border-color: var(--green); }
-
     .field-msg { min-height: 16px; font-size: 12px; font-weight: 650; }
     .field-msg.error { color: var(--red); }
     .field-msg.success { color: var(--green); }
-    .field-msg.checking { color: #a0a6b2; }
 
-    .password-row { position: relative; }
-    .toggle-pw {
-      position: absolute; right: 12px; top: 38px; background: none; border: 0; cursor: pointer;
-      color: #a0a6b2; font-size: 12px; font-weight: 750; padding: 4px;
-    }
-    .toggle-pw:hover { color: var(--orange-dark); }
-
-    .forgot-link { display: block; text-align: right; margin: -6px 0 18px; font-size: 12.5px; color: var(--orange-dark); text-decoration: none; font-weight: 650; cursor: pointer; background: none; border: 0; padding: 0; width: 100%; }
-    .forgot-link:hover { text-decoration: underline; }
-
-    .primary-full {
-      width: 100%; border: 0; border-radius: 12px; padding: 14px; cursor: pointer; font-weight: 750; font-size: 15px;
-      color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2);
-      transition: all .2s ease; margin-top: 4px;
-    }
-    .primary-full:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
-    .primary-full:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-
-    .form-status { min-height: 20px; margin-top: 14px; font-size: 13px; font-weight: 650; text-align: center; }
+    .form-status { min-height: 20px; margin-top: 14px; font-size: 13px; font-weight: 650; }
     .form-status.error { color: var(--red); }
     .form-status.success { color: var(--green); }
-
-    .divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: #c3c9d4; font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .5px; }
-    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-
-    .switch-line { text-align: center; font-size: 13.5px; color: var(--muted); }
-    .switch-line button { background: none; border: 0; color: var(--orange-dark); font-weight: 750; cursor: pointer; padding: 0; }
-    .switch-line button:hover { text-decoration: underline; }
-
-    .reset-panel { display: none; }
-    .reset-panel.active { display: block; animation: fadeSwap .35s ease; }
 
     .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
     .footer-contact { font-size: 14px; color: var(--muted); }
@@ -121,8 +134,13 @@
     @media (max-width: 760px) {
       .page { width: min(100% - 22px, 590px); }
       .topbar { height: 72px; }
-      .auth-card { padding: 30px 24px; }
-      .auth-wrap { padding: 16px 0 10px; }
+      .page-hero { padding: 32px 24px; }
+      .page-hero h1 { letter-spacing: -1.6px; }
+      .section { padding: 24px 18px; }
+      .photo-row { flex-direction: column; align-items: flex-start; }
+      .crop-layout { justify-content: center; }
+      .crop-stage { width: 240px; height: 240px; }
+      #cropCanvas { width: 240px; height: 240px; }
     }
   </style>
 </head>
@@ -138,6 +156,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+            </span>
+          </button>
           <div class="menu-label">Explore Aspinora</div>
           <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -148,114 +173,72 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
 
-    <div class="auth-wrap">
-      <div class="auth-card">
-        <div class="eyebrow">Your account</div>
+    <section class="page-hero">
+      <button class="back-link" id="backToDashboard">← Back to dashboard</button>
+      <div class="eyebrow">Your account</div>
+      <h1>Edit your profile, <em>make it yours.</em></h1>
+      <p class="intro">Update your profile photo and display name. Your photo is cropped and compressed automatically so it loads fast everywhere on Aspinora.</p>
+    </section>
 
-        <div id="mainAuth">
-          <h1>Welcome to <em>Aspinora.</em></h1>
-          <p class="sub">Log in to pick up where you left off, or create a free account to save your progress.</p>
+    <section class="section">
+      <h2>Profile photo</h2>
+      <p class="lead">Upload a photo, then drag to reposition and use the slider to zoom before saving.</p>
 
-          <div class="auth-tabs" role="tablist">
-            <button class="auth-tab active" data-panel="login" role="tab" aria-selected="true">Log In</button>
-            <button class="auth-tab" data-panel="signup" role="tab" aria-selected="false">Sign Up</button>
+      <div class="photo-row">
+        <div class="avatar-preview" id="avatarPreview">A</div>
+        <div class="photo-actions">
+          <div class="btn-row">
+            <button class="primary" id="choosePhotoButton">Upload a photo</button>
+            <button class="danger-outline" id="removePhotoButton" style="display:none;">Remove photo</button>
           </div>
-
-          <!-- LOGIN PANEL -->
-          <div class="auth-panel active" id="loginPanel">
-            <form id="loginForm" novalidate>
-              <div class="field">
-                <label for="loginIdentifier">Username or Email</label>
-                <input type="text" id="loginIdentifier" autocomplete="username" placeholder="yourname or you@example.com" />
-                <div class="field-msg" id="loginIdentifierMsg"></div>
-              </div>
-              <div class="field password-row">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter your password" />
-                <button type="button" class="toggle-pw" data-target="loginPassword">Show</button>
-                <div class="field-msg" id="loginPasswordMsg"></div>
-              </div>
-              <button type="button" class="forgot-link" id="showForgot">Forgot password?</button>
-              <button type="submit" class="primary-full" id="loginSubmit">Log In</button>
-              <div class="form-status" id="loginStatus"></div>
-            </form>
-
-            <div class="divider">or</div>
-            <p class="switch-line">New to Aspinora? <button type="button" id="toSignup">Create an account</button></p>
-          </div>
-
-          <!-- SIGNUP PANEL -->
-          <div class="auth-panel" id="signupPanel">
-            <form id="signupForm" novalidate>
-              <div class="field">
-                <label for="signupUsername">Username</label>
-                <input type="text" id="signupUsername" autocomplete="username" placeholder="Choose a username" />
-                <div class="field-msg" id="signupUsernameMsg"></div>
-              </div>
-              <div class="field">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" autocomplete="email" placeholder="you@example.com" />
-                <div class="field-msg" id="signupEmailMsg"></div>
-              </div>
-              <div class="field password-row">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" autocomplete="new-password" placeholder="At least 8 characters" />
-                <button type="button" class="toggle-pw" data-target="signupPassword">Show</button>
-                <div class="field-msg" id="signupPasswordMsg"></div>
-              </div>
-              <button type="submit" class="primary-full" id="signupSubmit">Create Account</button>
-              <div class="form-status" id="signupStatus"></div>
-            </form>
-
-            <div class="divider">or</div>
-            <p class="switch-line">Already have an account? <button type="button" id="toLogin">Log in</button></p>
-          </div>
+          <p>JPG or PNG, any size — it'll be cropped to a circle and shrunk to under 10&nbsp;KB automatically.</p>
         </div>
+        <input type="file" id="photoInput" accept="image/*" />
+      </div>
 
-        <!-- FORGOT PASSWORD PANEL -->
-        <div class="reset-panel" id="resetPanel">
-          <h1>Reset your <em>password.</em></h1>
-          <p class="sub">Enter the email linked to your account and we'll send you a reset link.</p>
-          <form id="resetForm" novalidate>
-            <div class="field">
-              <label for="resetEmail">Email</label>
-              <input type="email" id="resetEmail" autocomplete="email" placeholder="you@example.com" />
-              <div class="field-msg" id="resetEmailMsg"></div>
+      <div class="crop-wrap" id="cropWrap">
+        <div class="crop-layout">
+          <div class="crop-stage" id="cropStage">
+            <canvas id="cropCanvas" width="280" height="280"></canvas>
+          </div>
+          <div class="crop-controls">
+            <div class="zoom-field">
+              <label for="zoomRange">Zoom</label>
+              <input type="range" id="zoomRange" min="1" max="3" step="0.01" value="1" />
             </div>
-            <button type="submit" class="primary-full" id="resetSubmit">Send Reset Link</button>
-            <div class="form-status" id="resetStatus"></div>
-          </form>
-          <div class="divider">or</div>
-          <p class="switch-line"><button type="button" id="backToLogin">Back to log in</button></p>
-        </div>
-
-        <!-- SET NEW PASSWORD PANEL (shown when arriving from a reset-link email) -->
-        <div class="reset-panel" id="newPasswordPanel">
-          <h1>Set a new <em>password.</em></h1>
-          <p class="sub">You're verified — choose a new password for your account.</p>
-          <form id="newPasswordForm" novalidate>
-            <div class="field password-row">
-              <label for="newPassword">New Password</label>
-              <input type="password" id="newPassword" autocomplete="new-password" placeholder="At least 8 characters" />
-              <button type="button" class="toggle-pw" data-target="newPassword">Show</button>
-              <div class="field-msg" id="newPasswordMsg"></div>
+            <p class="crop-hint">Drag inside the circle to reposition your photo. Use the slider to zoom in or out.</p>
+            <span class="size-readout" id="sizeReadout">Estimating final size…</span>
+            <div class="crop-actions">
+              <button class="primary" id="saveCropButton">Save photo</button>
+              <button class="secondary" id="cancelCropButton">Cancel</button>
             </div>
-            <div class="field password-row">
-              <label for="confirmNewPassword">Confirm Password</label>
-              <input type="password" id="confirmNewPassword" autocomplete="new-password" placeholder="Re-enter your new password" />
-              <button type="button" class="toggle-pw" data-target="confirmNewPassword">Show</button>
-              <div class="field-msg" id="confirmNewPasswordMsg"></div>
-            </div>
-            <button type="submit" class="primary-full" id="newPasswordSubmit">Update Password</button>
-            <div class="form-status" id="newPasswordStatus"></div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="form-status" id="photoStatus"></div>
+    </section>
+
+    <section class="section">
+      <h2>Display name</h2>
+      <p class="lead">This is the name shown across your dashboard and greetings.</p>
+      <div class="field">
+        <label for="nameInput">Username</label>
+        <input type="text" id="nameInput" placeholder="Your username" autocomplete="off" />
+        <div class="field-msg" id="nameMsg"></div>
+      </div>
+      <div class="btn-row" style="margin-top: 16px;">
+        <button class="primary" id="saveNameButton">Save name</button>
+      </div>
+      <div class="form-status" id="nameStatus"></div>
+    </section>
 
     <footer class="footer">
       <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
@@ -273,108 +256,85 @@
   <script>
     /* ============================================================
        SUPABASE CONNECTION
+       NOTE: this page reads/writes a text column named `avatar_url`
+       on the `profiles` table (stores a compressed base64 JPEG data
+       URL, well under 10 KB). Add that column in Supabase if it
+       doesn't already exist: alter table profiles add column
+       avatar_url text;
     ============================================================ */
     const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-    // A password-reset email link lands back here with a recovery token in
-    // the URL (e.g. #type=recovery&access_token=...). Supabase turns that
-    // into a temporary session automatically, so we must NOT treat it like
-    // a normal logged-in visit and redirect to the dashboard — the user
-    // still needs to set their new password first.
-    const isPasswordRecovery = window.location.hash.includes('type=recovery');
+    let currentUserId = null;
+    let currentUser = { username: 'there', avatarUrl: null, joinedDate: new Date() };
 
-    // If someone's already logged in (and this isn't a recovery link),
-    // sending them back to auth.html doesn't make sense — send them
-    // straight to their dashboard instead.
-    (async () => {
-      if (isPasswordRecovery) return;
+    async function loadUserAndGuardPage() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) window.location.href = '/dashboard/';
-    })();
+      if (!session) { window.location.href = '/auth/'; return false; }
 
-    // Fires when Supabase detects a valid recovery link in the URL.
-    supabaseClient.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        showNewPasswordPanel();
-      }
-    });
+      const user = session.user;
+      currentUserId = user.id;
 
-    async function checkUsernameAvailable(username) {
-      const { data, error } = await supabaseClient
+      const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('username')
-        .ilike('username', username.trim())
-        .maybeSingle();
-      if (error) { console.error('Username check failed:', error); return true; }
-      return !data;
-    }
+        .select('username, avatar_url, created_at')
+        .eq('id', user.id)
+        .single();
 
-    // Note: Supabase intentionally avoids confirming/denying whether an email
-    // is already registered while you type (this prevents attackers from
-    // scanning for valid accounts). We validate the format live, and the
-    // "already registered" case is caught for real at submit time below.
-    async function checkEmailAvailable(email) {
+      currentUser = {
+        username: profile?.username || user.email.split('@')[0],
+        avatarUrl: profile?.avatar_url || null,
+        joinedDate: profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at)
+      };
       return true;
     }
 
-    async function performSignUp(username, email, password) {
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-          emailRedirectTo: window.location.origin + '/dashboard/'
-        }
-      });
-
-      if (error) {
-        if (error.message.toLowerCase().includes('already registered')) {
-          return { success: false, reason: 'email_taken' };
-        }
-        return { success: false, reason: 'error', message: error.message };
+    function renderMenuProfile() {
+      const options = { month: 'long', year: 'numeric' };
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (currentUser.avatarUrl) {
+        menuAvatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = currentUser.avatarUrl;
+        img.alt = currentUser.username + '\u2019s profile photo';
+        menuAvatar.appendChild(img);
+      } else {
+        menuAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
       }
-
-      // Supabase's anti-enumeration signal for "this email already has an account"
-      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        return { success: false, reason: 'email_taken' };
-      }
-
-      return { success: true, needsConfirmation: !data.session };
+      document.getElementById('menuProfileName').textContent = currentUser.username;
+      document.getElementById('menuProfileSub').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
+      document.getElementById('menuProfileItem').style.display = 'flex';
+      document.getElementById('menuAccountDivider').style.display = 'block';
+      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+      document.getElementById('menuLogoutButton').style.display = 'flex';
     }
 
-    async function performLogin(identifier, password) {
-      let email = identifier.trim();
-
-      if (!email.includes('@')) {
-        const { data: resolvedEmail, error: rpcError } = await supabaseClient.rpc(
-          'get_email_by_username',
-          { lookup_username: email }
-        );
-        if (rpcError || !resolvedEmail) {
-          return { success: false, reason: 'invalid_credentials' };
-        }
-        email = resolvedEmail;
+    function renderAvatarPreview() {
+      const el = document.getElementById('avatarPreview');
+      const removeBtn = document.getElementById('removePhotoButton');
+      if (currentUser.avatarUrl) {
+        el.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = currentUser.avatarUrl;
+        img.alt = 'Your profile photo';
+        el.appendChild(img);
+        removeBtn.style.display = 'inline-block';
+      } else {
+        el.textContent = currentUser.username.charAt(0).toUpperCase();
+        removeBtn.style.display = 'none';
       }
-
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) {
-        return { success: false, reason: 'invalid_credentials' };
-      }
-      return { success: true };
     }
 
-    async function performPasswordReset(email) {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/auth/'
-      });
-      if (error) return { success: false };
-      return { success: true };
+    function initForm() {
+      document.getElementById('nameInput').value = currentUser.username;
+      renderAvatarPreview();
+      renderMenuProfile();
     }
 
-    /* ============================================================ */
-
+    /* ============================================================
+       TOPBAR / MENU (shared behaviour)
+    ============================================================ */
     const menuButton = document.getElementById('menuButton');
     const menuPanel = document.getElementById('menuPanel');
     const statusHolder = { timeout: null };
@@ -418,298 +378,367 @@
       window.location.href = '/';
     });
 
-    // Tab switching (Login / Sign Up)
-    const authTabs = document.querySelectorAll('.auth-tab');
-    function switchPanel(name) {
-      authTabs.forEach((t) => {
-        const isMatch = t.dataset.panel === name;
-        t.classList.toggle('active', isMatch);
-        t.setAttribute('aria-selected', String(isMatch));
-      });
-      document.getElementById('loginPanel').classList.toggle('active', name === 'login');
-      document.getElementById('signupPanel').classList.toggle('active', name === 'signup');
-    }
-    authTabs.forEach((tab) => {
-      tab.addEventListener('click', () => switchPanel(tab.dataset.panel));
-    });
-    document.getElementById('toSignup').addEventListener('click', () => switchPanel('signup'));
-    document.getElementById('toLogin').addEventListener('click', () => switchPanel('login'));
-
-    // Deep-link support: auth.html#signup or auth.html#login opens directly to that tab
-    const initialHash = window.location.hash.replace('#', '');
-    if (initialHash === 'signup' || initialHash === 'login') {
-      switchPanel(initialHash);
-    }
-
-    // Forgot password panel toggle
-    const mainAuth = document.getElementById('mainAuth');
-    const resetPanel = document.getElementById('resetPanel');
-    const newPasswordPanel = document.getElementById('newPasswordPanel');
-    document.getElementById('showForgot').addEventListener('click', () => {
-      mainAuth.style.display = 'none';
-      resetPanel.classList.add('active');
-    });
-    document.getElementById('backToLogin').addEventListener('click', () => {
-      resetPanel.classList.remove('active');
-      mainAuth.style.display = 'block';
-      switchPanel('login');
+    document.getElementById('backToDashboard').addEventListener('click', () => {
+      window.location.href = '/dashboard/';
     });
 
-    function showNewPasswordPanel() {
-      mainAuth.style.display = 'none';
-      resetPanel.classList.remove('active');
-      newPasswordPanel.classList.add('active');
-    }
-
-    // Show/hide password toggles
-    document.querySelectorAll('.toggle-pw').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const input = document.getElementById(btn.dataset.target);
-        const isPassword = input.type === 'password';
-        input.type = isPassword ? 'text' : 'password';
-        btn.textContent = isPassword ? 'Hide' : 'Show';
-      });
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
     });
 
-    function setFieldState(inputEl, msgEl, state, message) {
-      inputEl.classList.remove('valid', 'invalid');
-      msgEl.classList.remove('error', 'success', 'checking');
-      if (state === 'valid') { inputEl.classList.add('valid'); msgEl.classList.add('success'); }
-      if (state === 'invalid') { inputEl.classList.add('invalid'); msgEl.classList.add('error'); }
-      if (state === 'checking') { msgEl.classList.add('checking'); }
-      msgEl.textContent = message || '';
+    document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      flashMessage('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.href = '/'; }, 600);
+    });
+
+    /* ============================================================
+       CROPPER
+    ============================================================ */
+    const CANVAS_SIZE = 280;
+    const canvas = document.getElementById('cropCanvas');
+    const ctx = canvas.getContext('2d');
+    const cropStage = document.getElementById('cropStage');
+    const cropWrap = document.getElementById('cropWrap');
+    const zoomRange = document.getElementById('zoomRange');
+    const sizeReadout = document.getElementById('sizeReadout');
+    const photoInput = document.getElementById('photoInput');
+    const photoStatus = document.getElementById('photoStatus');
+
+    let img = null;
+    let baseScale = 1;
+    let scale = 1;
+    let offsetX = 0, offsetY = 0;
+    let dragging = false, dragStartX = 0, dragStartY = 0, dragOrigX = 0, dragOrigY = 0;
+    let pendingDataUrl = null;
+    let debounceTimer = null;
+
+    function loadImageForCrop(dataUrl) {
+      const image = new Image();
+      image.onload = () => {
+        img = image;
+        baseScale = Math.max(CANVAS_SIZE / img.naturalWidth, CANVAS_SIZE / img.naturalHeight);
+        scale = baseScale;
+        zoomRange.value = '1';
+        offsetX = (CANVAS_SIZE - img.naturalWidth * scale) / 2;
+        offsetY = (CANVAS_SIZE - img.naturalHeight * scale) / 2;
+        cropWrap.classList.add('show');
+        photoStatus.textContent = '';
+        photoStatus.className = 'form-status';
+        drawCrop();
+        scheduleSizeEstimate();
+      };
+      image.src = dataUrl;
     }
 
-    // Live username availability check (debounced)
-    const signupUsername = document.getElementById('signupUsername');
-    const signupUsernameMsg = document.getElementById('signupUsernameMsg');
-    let usernameTimer;
-    signupUsername.addEventListener('input', () => {
-      clearTimeout(usernameTimer);
-      const value = signupUsername.value.trim();
-      if (value.length < 3) {
-        setFieldState(signupUsername, signupUsernameMsg, value.length ? 'invalid' : 'none', value.length ? 'Username must be at least 3 characters.' : '');
-        return;
-      }
-      setFieldState(signupUsername, signupUsernameMsg, 'checking', 'Checking availability…');
-      usernameTimer = setTimeout(async () => {
-        const available = await checkUsernameAvailable(value);
-        if (signupUsername.value.trim() !== value) return; // stale check
-        setFieldState(signupUsername, signupUsernameMsg, available ? 'valid' : 'invalid', available ? 'Username is available.' : 'Username is already taken.');
-      }, 450);
+    function clampOffsets() {
+      const drawW = img.naturalWidth * scale;
+      const drawH = img.naturalHeight * scale;
+      const minX = CANVAS_SIZE - drawW;
+      const minY = CANVAS_SIZE - drawH;
+      offsetX = Math.min(0, Math.max(minX, offsetX));
+      offsetY = Math.min(0, Math.max(minY, offsetY));
+    }
+
+    function drawCrop() {
+      if (!img) return;
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.fillStyle = '#fdf2e7';
+      ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      ctx.drawImage(img, offsetX, offsetY, img.naturalWidth * scale, img.naturalHeight * scale);
+      ctx.restore();
+    }
+
+    function pointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: (clientX - rect.left) * (CANVAS_SIZE / rect.width), y: (clientY - rect.top) * (CANVAS_SIZE / rect.height) };
+    }
+
+    function startDrag(e) {
+      if (!img) return;
+      dragging = true;
+      const p = pointerPos(e);
+      dragStartX = p.x; dragStartY = p.y;
+      dragOrigX = offsetX; dragOrigY = offsetY;
+    }
+
+    function moveDrag(e) {
+      if (!dragging) return;
+      const p = pointerPos(e);
+      offsetX = dragOrigX + (p.x - dragStartX);
+      offsetY = dragOrigY + (p.y - dragStartY);
+      clampOffsets();
+      drawCrop();
+    }
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      scheduleSizeEstimate();
+    }
+
+    cropStage.addEventListener('pointerdown', (e) => { cropStage.setPointerCapture(e.pointerId); startDrag(e); });
+    cropStage.addEventListener('pointermove', moveDrag);
+    cropStage.addEventListener('pointerup', endDrag);
+    cropStage.addEventListener('pointercancel', endDrag);
+    cropStage.addEventListener('pointerleave', endDrag);
+
+    zoomRange.addEventListener('input', () => {
+      if (!img) return;
+      const zoomFactor = parseFloat(zoomRange.value);
+      const oldDrawW = img.naturalWidth * scale;
+      const oldDrawH = img.naturalHeight * scale;
+      const centerXRatio = (CANVAS_SIZE / 2 - offsetX) / oldDrawW;
+      const centerYRatio = (CANVAS_SIZE / 2 - offsetY) / oldDrawH;
+
+      scale = baseScale * zoomFactor;
+      const newDrawW = img.naturalWidth * scale;
+      const newDrawH = img.naturalHeight * scale;
+      offsetX = CANVAS_SIZE / 2 - centerXRatio * newDrawW;
+      offsetY = CANVAS_SIZE / 2 - centerYRatio * newDrawH;
+      clampOffsets();
+      drawCrop();
+      scheduleSizeEstimate();
     });
 
-    // Live email availability check (debounced)
-    const signupEmail = document.getElementById('signupEmail');
-    const signupEmailMsg = document.getElementById('signupEmailMsg');
-    let emailTimer;
-    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-    signupEmail.addEventListener('input', () => {
-      clearTimeout(emailTimer);
-      const value = signupEmail.value.trim();
-      if (!value) { setFieldState(signupEmail, signupEmailMsg, 'none', ''); return; }
-      if (!isValidEmail(value)) {
-        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.');
+    function approxBytes(dataUrl) {
+      const base64 = dataUrl.split(',')[1] || '';
+      return Math.floor(base64.length * 0.75);
+    }
+
+    function compressAvatar(targetBytes, maxBytes) {
+      if (!img) return null;
+      const sizes = [160, 128, 112, 96, 80, 64, 48];
+      let best = null;
+      for (const size of sizes) {
+        const c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        const cctx = c.getContext('2d');
+        const factor = size / CANVAS_SIZE;
+        cctx.fillStyle = '#ffffff';
+        cctx.fillRect(0, 0, size, size);
+        cctx.drawImage(img, offsetX * factor, offsetY * factor, img.naturalWidth * scale * factor, img.naturalHeight * scale * factor);
+
+        let quality = 0.92;
+        let dataUrl = c.toDataURL('image/jpeg', quality);
+        while (approxBytes(dataUrl) > targetBytes && quality > 0.1) {
+          quality -= 0.07;
+          dataUrl = c.toDataURL('image/jpeg', quality);
+        }
+        if (!best || approxBytes(dataUrl) < approxBytes(best)) best = dataUrl;
+        if (approxBytes(dataUrl) <= maxBytes) return dataUrl;
+      }
+      return best;
+    }
+
+    function scheduleSizeEstimate() {
+      clearTimeout(debounceTimer);
+      sizeReadout.textContent = 'Estimating final size…';
+      sizeReadout.classList.remove('warn');
+      debounceTimer = setTimeout(() => {
+        const result = compressAvatar(5 * 1024, 10 * 1024);
+        if (!result) return;
+        const kb = (approxBytes(result) / 1024).toFixed(1);
+        pendingDataUrl = result;
+        if (approxBytes(result) <= 10 * 1024) {
+          sizeReadout.textContent = 'Final size: ~' + kb + ' KB — under the 10 KB limit ✓';
+          sizeReadout.classList.remove('warn');
+        } else {
+          sizeReadout.textContent = 'Final size: ~' + kb + ' KB — try zooming out a little';
+          sizeReadout.classList.add('warn');
+        }
+      }, 250);
+    }
+
+    document.getElementById('choosePhotoButton').addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        photoStatus.textContent = 'Please choose an image file.';
+        photoStatus.className = 'form-status error';
         return;
       }
-      setFieldState(signupEmail, signupEmailMsg, 'checking', 'Checking availability…');
-      emailTimer = setTimeout(async () => {
-        const available = await checkEmailAvailable(value);
-        if (signupEmail.value.trim() !== value) return;
-        setFieldState(signupEmail, signupEmailMsg, available ? 'valid' : 'invalid', available ? 'Email is available.' : 'Email is already registered.');
-      }, 450);
+      const reader = new FileReader();
+      reader.onload = () => loadImageForCrop(reader.result);
+      reader.readAsDataURL(file);
+      photoInput.value = '';
     });
 
-    // Password strength hint
-    const signupPassword = document.getElementById('signupPassword');
-    const signupPasswordMsg = document.getElementById('signupPasswordMsg');
-    signupPassword.addEventListener('input', () => {
-      const value = signupPassword.value;
-      if (!value) { setFieldState(signupPassword, signupPasswordMsg, 'none', ''); return; }
-      if (value.length < 8) {
-        setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.');
-      } else {
-        setFieldState(signupPassword, signupPasswordMsg, 'valid', 'Looks good.');
-      }
+    document.getElementById('cancelCropButton').addEventListener('click', () => {
+      cropWrap.classList.remove('show');
+      img = null;
+      pendingDataUrl = null;
     });
 
-    // Sign up submit
-    const signupForm = document.getElementById('signupForm');
-    const signupSubmit = document.getElementById('signupSubmit');
-    const signupStatus = document.getElementById('signupStatus');
-    signupForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      signupStatus.textContent = '';
-      signupStatus.className = 'form-status';
+    document.getElementById('saveCropButton').addEventListener('click', async () => {
+      if (!img) return;
+      const saveBtn = document.getElementById('saveCropButton');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
 
-      const username = signupUsername.value.trim();
-      const email = signupEmail.value.trim();
-      const password = signupPassword.value;
+      const finalDataUrl = pendingDataUrl || compressAvatar(5 * 1024, 10 * 1024);
 
-      if (username.length < 3) { setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username must be at least 3 characters.'); return; }
-      if (!isValidEmail(email)) { setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Enter a valid email address.'); return; }
-      if (password.length < 8) { setFieldState(signupPassword, signupPasswordMsg, 'invalid', 'Use at least 8 characters.'); return; }
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ avatar_url: finalDataUrl })
+        .eq('id', currentUserId);
 
-      signupSubmit.disabled = true;
-      signupSubmit.textContent = 'Checking…';
-
-      const usernameOk = await checkUsernameAvailable(username);
-
-      if (!usernameOk) {
-        setFieldState(signupUsername, signupUsernameMsg, 'invalid', 'Username is already taken.');
-        signupSubmit.disabled = false;
-        signupSubmit.textContent = 'Create Account';
-        signupStatus.textContent = 'Please fix the issues above.';
-        signupStatus.classList.add('error');
-        return;
-      }
-
-      signupSubmit.textContent = 'Creating account…';
-      const result = await performSignUp(username, email, password);
-
-      signupSubmit.disabled = false;
-      signupSubmit.textContent = 'Create Account';
-
-      if (result.success && result.needsConfirmation) {
-        signupStatus.textContent = 'Account created! Check your email to confirm, then log in.';
-        signupStatus.classList.add('success');
-        setTimeout(() => { switchPanel('login'); signupStatus.textContent = ''; }, 2600);
-      } else if (result.success) {
-        signupStatus.textContent = 'Account created! Redirecting to your dashboard…';
-        signupStatus.classList.add('success');
-        setTimeout(() => { window.location.href = '/dashboard/'; }, 1200);
-      } else if (result.reason === 'email_taken') {
-        setFieldState(signupEmail, signupEmailMsg, 'invalid', 'Email is already registered.');
-        signupStatus.textContent = 'Please fix the issues above.';
-        signupStatus.classList.add('error');
-      } else {
-        signupStatus.textContent = result.message || 'Something went wrong. Please try again.';
-        signupStatus.classList.add('error');
-      }
-    });
-
-    // Login submit
-    const loginForm = document.getElementById('loginForm');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const loginStatus = document.getElementById('loginStatus');
-    const loginIdentifier = document.getElementById('loginIdentifier');
-    const loginIdentifierMsg = document.getElementById('loginIdentifierMsg');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginPasswordMsg = document.getElementById('loginPasswordMsg');
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      loginStatus.textContent = '';
-      loginStatus.className = 'form-status';
-      setFieldState(loginIdentifier, loginIdentifierMsg, 'none', '');
-      setFieldState(loginPassword, loginPasswordMsg, 'none', '');
-
-      const identifier = loginIdentifier.value.trim();
-      const password = loginPassword.value;
-
-      if (!identifier) { setFieldState(loginIdentifier, loginIdentifierMsg, 'invalid', 'Enter your username or email.'); return; }
-      if (!password) { setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Enter your password.'); return; }
-
-      loginSubmit.disabled = true;
-      loginSubmit.textContent = 'Logging in…';
-
-      const result = await performLogin(identifier, password);
-
-      loginSubmit.disabled = false;
-      loginSubmit.textContent = 'Log In';
-
-      if (result.success) {
-        loginStatus.textContent = 'Logged in! Redirecting…';
-        loginStatus.classList.add('success');
-        setTimeout(() => { window.location.href = '/dashboard/'; }, 900);
-      } else {
-        setFieldState(loginPassword, loginPasswordMsg, 'invalid', 'Incorrect username/email or password.');
-        loginStatus.textContent = 'That didn\'t match our records. Try again or reset your password.';
-        loginStatus.classList.add('error');
-      }
-    });
-
-    // Forgot password submit
-    const resetForm = document.getElementById('resetForm');
-    const resetSubmit = document.getElementById('resetSubmit');
-    const resetStatus = document.getElementById('resetStatus');
-    const resetEmail = document.getElementById('resetEmail');
-    const resetEmailMsg = document.getElementById('resetEmailMsg');
-
-    resetForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resetStatus.textContent = '';
-      resetStatus.className = 'form-status';
-
-      const email = resetEmail.value.trim();
-      if (!isValidEmail(email)) {
-        setFieldState(resetEmail, resetEmailMsg, 'invalid', 'Enter a valid email address.');
-        return;
-      }
-
-      resetSubmit.disabled = true;
-      resetSubmit.textContent = 'Sending…';
-
-      const result = await performPasswordReset(email);
-
-      resetSubmit.disabled = false;
-      resetSubmit.textContent = 'Send Reset Link';
-
-      if (result.success) {
-        resetStatus.textContent = 'If that email is registered, a reset link is on its way.';
-        resetStatus.classList.add('success');
-      } else {
-        resetStatus.textContent = 'Something went wrong. Please try again.';
-        resetStatus.classList.add('error');
-      }
-    });
-
-    // Set new password submit (recovery flow)
-    const newPasswordForm = document.getElementById('newPasswordForm');
-    const newPasswordSubmit = document.getElementById('newPasswordSubmit');
-    const newPasswordStatus = document.getElementById('newPasswordStatus');
-    const newPasswordInput = document.getElementById('newPassword');
-    const newPasswordMsg = document.getElementById('newPasswordMsg');
-    const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
-    const confirmNewPasswordMsg = document.getElementById('confirmNewPasswordMsg');
-
-    newPasswordForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      newPasswordStatus.textContent = '';
-      newPasswordStatus.className = 'form-status';
-      setFieldState(newPasswordInput, newPasswordMsg, 'none', '');
-      setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'none', '');
-
-      const password = newPasswordInput.value;
-      const confirmPassword = confirmNewPasswordInput.value;
-
-      if (password.length < 8) {
-        setFieldState(newPasswordInput, newPasswordMsg, 'invalid', 'Use at least 8 characters.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        setFieldState(confirmNewPasswordInput, confirmNewPasswordMsg, 'invalid', 'Passwords do not match.');
-        return;
-      }
-
-      newPasswordSubmit.disabled = true;
-      newPasswordSubmit.textContent = 'Updating…';
-
-      const { error } = await supabaseClient.auth.updateUser({ password });
-
-      newPasswordSubmit.disabled = false;
-      newPasswordSubmit.textContent = 'Update Password';
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save photo';
 
       if (error) {
-        newPasswordStatus.textContent = error.message || 'Something went wrong. Please try again.';
-        newPasswordStatus.classList.add('error');
+        photoStatus.textContent = 'Could not save your photo. Please try again.';
+        photoStatus.className = 'form-status error';
         return;
       }
 
-      newPasswordStatus.textContent = 'Password updated! Redirecting to your dashboard…';
-      newPasswordStatus.classList.add('success');
-      setTimeout(() => { window.location.href = '/dashboard/'; }, 1200);
+      currentUser.avatarUrl = finalDataUrl;
+      renderAvatarPreview();
+      renderMenuProfile();
+      cropWrap.classList.remove('show');
+      img = null;
+      photoStatus.textContent = 'Profile photo updated.';
+      photoStatus.className = 'form-status success';
     });
+
+    document.getElementById('removePhotoButton').addEventListener('click', async () => {
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ avatar_url: null })
+        .eq('id', currentUserId);
+      if (error) {
+        photoStatus.textContent = 'Could not remove your photo. Please try again.';
+        photoStatus.className = 'form-status error';
+        return;
+      }
+      currentUser.avatarUrl = null;
+      renderAvatarPreview();
+      renderMenuProfile();
+      photoStatus.textContent = 'Profile photo removed.';
+      photoStatus.className = 'form-status success';
+    });
+
+    /* ============================================================
+       DISPLAY NAME
+    ============================================================ */
+    const nameInput = document.getElementById('nameInput');
+    const nameMsg = document.getElementById('nameMsg');
+    const nameStatus = document.getElementById('nameStatus');
+    const saveNameButton = document.getElementById('saveNameButton');
+
+    // Checks availability against every profile except the current user's own row,
+    // so saving your existing username back never gets flagged as "taken".
+    async function checkUsernameAvailable(username) {
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .ilike('username', username.trim())
+        .neq('id', currentUserId)
+        .maybeSingle();
+      if (error) { console.error('Username check failed:', error); return true; }
+      return !data;
+    }
+
+    let nameCheckTimer;
+    nameInput.addEventListener('input', () => {
+      clearTimeout(nameCheckTimer);
+      const value = nameInput.value.trim();
+      nameStatus.textContent = '';
+      nameStatus.className = 'form-status';
+
+      if (!value || value === currentUser.username) {
+        nameMsg.textContent = '';
+        nameMsg.className = 'field-msg';
+        return;
+      }
+      if (value.length < 3) {
+        nameMsg.textContent = 'Username must be at least 3 characters.';
+        nameMsg.className = 'field-msg error';
+        return;
+      }
+      nameMsg.textContent = 'Checking availability…';
+      nameMsg.className = 'field-msg';
+      nameCheckTimer = setTimeout(async () => {
+        const available = await checkUsernameAvailable(value);
+        if (nameInput.value.trim() !== value) return; // stale check
+        nameMsg.textContent = available ? 'Username is available.' : 'Username is already taken.';
+        nameMsg.className = available ? 'field-msg success' : 'field-msg error';
+      }, 450);
+    });
+
+    document.getElementById('saveNameButton').addEventListener('click', async () => {
+      const value = nameInput.value.trim();
+      nameMsg.textContent = '';
+      nameMsg.className = 'field-msg';
+      nameStatus.textContent = '';
+      nameStatus.className = 'form-status';
+
+      if (value.length < 3) {
+        nameMsg.textContent = 'Username must be at least 3 characters.';
+        nameMsg.classList.add('error');
+        return;
+      }
+      if (value === currentUser.username) {
+        nameStatus.textContent = 'No changes to save.';
+        return;
+      }
+
+      saveNameButton.disabled = true;
+      saveNameButton.textContent = 'Checking…';
+
+      const available = await checkUsernameAvailable(value);
+      if (!available) {
+        saveNameButton.disabled = false;
+        saveNameButton.textContent = 'Save name';
+        nameMsg.textContent = 'Username is already taken.';
+        nameMsg.classList.add('error');
+        nameStatus.textContent = 'Please choose a different username.';
+        nameStatus.classList.add('error');
+        return;
+      }
+
+      saveNameButton.textContent = 'Saving…';
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ username: value })
+        .eq('id', currentUserId);
+
+      saveNameButton.disabled = false;
+      saveNameButton.textContent = 'Save name';
+
+      if (error) {
+        nameStatus.textContent = error.message.toLowerCase().includes('duplicate') || error.message.toLowerCase().includes('unique')
+          ? 'That username is already taken.'
+          : 'Could not update your name. Please try again.';
+        nameStatus.classList.add('error');
+        return;
+      }
+
+      currentUser.username = value;
+      renderAvatarPreview();
+      renderMenuProfile();
+      nameStatus.textContent = 'Display name updated.';
+      nameStatus.classList.add('success');
+    });
+
+    (async () => {
+      const ok = await loadUserAndGuardPage();
+      if (!ok) return;
+      initForm();
+    })();
   </script>
 </body>
 </html>
+
