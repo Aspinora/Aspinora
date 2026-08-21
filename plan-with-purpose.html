@@ -39,7 +39,8 @@
     .red { background: #ffe9e9; color: #e5484d; }
 
     .menu-profile { margin-bottom: 6px; }
-    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
     .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
@@ -321,7 +322,7 @@
       const user = session.user;
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('username, created_at')
+        .select('username, created_at, avatar_url')
         .eq('id', user.id)
         .single();
 
@@ -329,7 +330,16 @@
       const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
       const options = { month: 'long', year: 'numeric' };
 
-      document.getElementById('menuAvatar').textContent = username.charAt(0).toUpperCase();
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (profile?.avatar_url) {
+        menuAvatar.innerHTML = '';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = profile.avatar_url;
+        avatarImg.alt = username + '\u2019s profile photo';
+        menuAvatar.appendChild(avatarImg);
+      } else {
+        menuAvatar.textContent = username.charAt(0).toUpperCase();
+      }
       document.getElementById('menuProfileName').textContent = username;
       document.getElementById('menuProfileSub').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', options);
       document.getElementById('menuProfileItem').style.display = 'flex';
@@ -347,7 +357,7 @@
     document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
       menuButton.setAttribute('aria-expanded', 'false');
-      flashMessage('Profile editing coming soon.');
+      window.location.href = 'edit-profile.html';
     });
 
     document.getElementById('menuLogoutButton').addEventListener('click', async () => {

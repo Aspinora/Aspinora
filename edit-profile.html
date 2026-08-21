@@ -37,6 +37,15 @@
     .blue { background: #eaf4ff; color: #367dd7; }
     .purple { background: #f2edff; color: #7957db; }
     .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: #e5484d; }
+
+    .menu-profile { margin-bottom: 6px; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
 
     .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
     .eyebrow::before { content: "✦"; font-size: 13px; }
@@ -146,6 +155,13 @@
           <span class="dots"><i></i><i></i><i></i></span>
         </button>
         <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+            </span>
+          </button>
           <div class="menu-label">Explore Aspinora</div>
           <button class="menu-item" data-message="Dashboard selected"><span class="menu-icon orange">⌂</span>Dashboard</button>
           <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
@@ -156,6 +172,9 @@
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
           <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
         </nav>
       </div>
     </header>
@@ -247,7 +266,7 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
     let currentUserId = null;
-    let currentUser = { username: 'there', avatarUrl: null };
+    let currentUser = { username: 'there', avatarUrl: null, joinedDate: new Date() };
 
     async function loadUserAndGuardPage() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -258,15 +277,36 @@
 
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('username, avatar_url')
+        .select('username, avatar_url, created_at')
         .eq('id', user.id)
         .single();
 
       currentUser = {
         username: profile?.username || user.email.split('@')[0],
-        avatarUrl: profile?.avatar_url || null
+        avatarUrl: profile?.avatar_url || null,
+        joinedDate: profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at)
       };
       return true;
+    }
+
+    function renderMenuProfile() {
+      const options = { month: 'long', year: 'numeric' };
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (currentUser.avatarUrl) {
+        menuAvatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = currentUser.avatarUrl;
+        img.alt = currentUser.username + '\u2019s profile photo';
+        menuAvatar.appendChild(img);
+      } else {
+        menuAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+      }
+      document.getElementById('menuProfileName').textContent = currentUser.username;
+      document.getElementById('menuProfileSub').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
+      document.getElementById('menuProfileItem').style.display = 'flex';
+      document.getElementById('menuAccountDivider').style.display = 'block';
+      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+      document.getElementById('menuLogoutButton').style.display = 'flex';
     }
 
     function renderAvatarPreview() {
@@ -288,6 +328,7 @@
     function initForm() {
       document.getElementById('nameInput').value = currentUser.username;
       renderAvatarPreview();
+      renderMenuProfile();
     }
 
     /* ============================================================
@@ -338,6 +379,25 @@
 
     document.getElementById('backToDashboard').addEventListener('click', () => {
       window.location.href = 'dashboard.html';
+    });
+
+    document.getElementById('menuProfileItem').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = 'dashboard.html';
+    });
+
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+    });
+
+    document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      flashMessage('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.href = '/'; }, 600);
     });
 
     /* ============================================================
@@ -550,6 +610,7 @@
 
       currentUser.avatarUrl = finalDataUrl;
       renderAvatarPreview();
+      renderMenuProfile();
       cropWrap.classList.remove('show');
       img = null;
       photoStatus.textContent = 'Profile photo updated.';
@@ -568,6 +629,7 @@
       }
       currentUser.avatarUrl = null;
       renderAvatarPreview();
+      renderMenuProfile();
       photoStatus.textContent = 'Profile photo removed.';
       photoStatus.className = 'form-status success';
     });
@@ -578,6 +640,47 @@
     const nameInput = document.getElementById('nameInput');
     const nameMsg = document.getElementById('nameMsg');
     const nameStatus = document.getElementById('nameStatus');
+    const saveNameButton = document.getElementById('saveNameButton');
+
+    // Checks availability against every profile except the current user's own row,
+    // so saving your existing username back never gets flagged as "taken".
+    async function checkUsernameAvailable(username) {
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .ilike('username', username.trim())
+        .neq('id', currentUserId)
+        .maybeSingle();
+      if (error) { console.error('Username check failed:', error); return true; }
+      return !data;
+    }
+
+    let nameCheckTimer;
+    nameInput.addEventListener('input', () => {
+      clearTimeout(nameCheckTimer);
+      const value = nameInput.value.trim();
+      nameStatus.textContent = '';
+      nameStatus.className = 'form-status';
+
+      if (!value || value === currentUser.username) {
+        nameMsg.textContent = '';
+        nameMsg.className = 'field-msg';
+        return;
+      }
+      if (value.length < 3) {
+        nameMsg.textContent = 'Username must be at least 3 characters.';
+        nameMsg.className = 'field-msg error';
+        return;
+      }
+      nameMsg.textContent = 'Checking availability…';
+      nameMsg.className = 'field-msg';
+      nameCheckTimer = setTimeout(async () => {
+        const available = await checkUsernameAvailable(value);
+        if (nameInput.value.trim() !== value) return; // stale check
+        nameMsg.textContent = available ? 'Username is available.' : 'Username is already taken.';
+        nameMsg.className = available ? 'field-msg success' : 'field-msg error';
+      }, 450);
+    });
 
     document.getElementById('saveNameButton').addEventListener('click', async () => {
       const value = nameInput.value.trim();
@@ -596,10 +699,29 @@
         return;
       }
 
+      saveNameButton.disabled = true;
+      saveNameButton.textContent = 'Checking…';
+
+      const available = await checkUsernameAvailable(value);
+      if (!available) {
+        saveNameButton.disabled = false;
+        saveNameButton.textContent = 'Save name';
+        nameMsg.textContent = 'Username is already taken.';
+        nameMsg.classList.add('error');
+        nameStatus.textContent = 'Please choose a different username.';
+        nameStatus.classList.add('error');
+        return;
+      }
+
+      saveNameButton.textContent = 'Saving…';
+
       const { error } = await supabaseClient
         .from('profiles')
         .update({ username: value })
         .eq('id', currentUserId);
+
+      saveNameButton.disabled = false;
+      saveNameButton.textContent = 'Save name';
 
       if (error) {
         nameStatus.textContent = error.message.toLowerCase().includes('duplicate') || error.message.toLowerCase().includes('unique')
@@ -611,6 +733,7 @@
 
       currentUser.username = value;
       renderAvatarPreview();
+      renderMenuProfile();
       nameStatus.textContent = 'Display name updated.';
       nameStatus.classList.add('success');
     });

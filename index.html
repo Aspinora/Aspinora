@@ -143,7 +143,8 @@
     .red { background: #ffe9e9; color: #e5484d; }
 
     .menu-profile-block { display: flex; align-items: center; gap: 11px; padding: 11px 10px; margin-bottom: 6px; border-bottom: 1px solid #f5eee6; padding-bottom: 15px; }
-    .menu-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); }
+    .menu-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
     .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .menu-profile-joined { font-size: 11px; color: #a0a6b2; font-weight: 650; }
@@ -583,7 +584,7 @@
       return 'Good night';
     }
 
-    function applyLoggedInState(username, joinedDate) {
+    function applyLoggedInState(username, joinedDate, avatarUrl) {
       // Hero auth row → hidden; status pill shown in its place
       document.getElementById('heroAuthRow').style.display = 'none';
 
@@ -603,7 +604,16 @@
       document.getElementById('dashboardButton').style.display = 'inline-flex';
 
       const joinedOptions = { month: 'long', year: 'numeric' };
-      document.getElementById('menuAvatar').textContent = username.charAt(0).toUpperCase();
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (avatarUrl) {
+        menuAvatar.innerHTML = '';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = avatarUrl;
+        avatarImg.alt = username + '\u2019s profile photo';
+        menuAvatar.appendChild(avatarImg);
+      } else {
+        menuAvatar.textContent = username.charAt(0).toUpperCase();
+      }
       document.getElementById('menuProfileName').textContent = username;
       document.getElementById('menuProfileJoined').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', joinedOptions);
       document.getElementById('menuProfileBlock').style.display = 'flex';
@@ -619,13 +629,13 @@
       const user = session.user;
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('username, created_at')
+        .select('username, created_at, avatar_url')
         .eq('id', user.id)
         .single();
 
       const username = profile?.username || user.email.split('@')[0];
       const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
-      applyLoggedInState(username, joinedDate);
+      applyLoggedInState(username, joinedDate, profile?.avatar_url || null);
     }
 
     async function performLogout() {
@@ -637,7 +647,7 @@
     document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
       menuButton.setAttribute('aria-expanded', 'false');
-      setStatus('Profile editing coming soon.');
+      window.location.href = 'edit-profile.html';
     });
 
     document.getElementById('menuLogoutButton').addEventListener('click', () => {
