@@ -27,6 +27,7 @@
     --green:#3ecf7a;
   }
   *{box-sizing:border-box;}
+  html.no-scroll, body.no-scroll{overflow:hidden !important;height:100%;}
   body{margin:0;min-height:100vh;font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;color:var(--ink);background:linear-gradient(145deg,#fffaf5 0%,#ffffff 45%,#fff8ef 100%);}
   button{font:inherit;}
   .page{width:min(1180px, calc(100% - 36px));margin:0 auto;padding-bottom:40px;}
@@ -106,36 +107,50 @@
 
   .status{min-height:22px;margin-top:20px;color:#e56b14;font-size:13px;font-weight:650;}
 
-  .instr-topbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
-  .instr-back{border:0;background:transparent;color:#505b70;font-size:22px;cursor:pointer;padding:4px 8px;border-radius:10px;transition:all .2s ease;line-height:1;}
-  .instr-back:hover{color:var(--orange-dark);background:#fff0e3;}
-  .instr-topbar-title{font-size:15px;font-weight:750;color:#394255;}
+  /* Fixed, non-scrollable full-page instructions screen (matches SSC-style mock exam UI) */
+  .instr-fullpage{position:fixed;inset:0;background:#ffffff;z-index:1000;display:none;flex-direction:column;font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;}
+  .instr-fullpage.active{display:flex;}
+  .instr-fp-top{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid #e5e7eb;background:#fff;}
+  .instr-fp-back{border:0;background:transparent;font-size:20px;color:#374151;cursor:pointer;padding:4px 6px;line-height:1;}
+  .instr-fp-back:hover{color:var(--orange-dark);}
+  .instr-fp-top-title{font-size:15px;font-weight:600;color:#1f2937;}
 
-  .instr-layout{display:grid;grid-template-columns:1fr 220px;gap:30px;align-items:start;}
-  .instr-main h2{margin:0 0 18px;font-size:clamp(24px,3vw,32px);letter-spacing:-.8px;}
-  .instr-meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;font-weight:750;font-size:14px;color:#394255;}
-  .instr-lead{font-weight:750;margin:0 0 12px;color:var(--ink);}
-  .instr-list{margin:0;padding-left:22px;color:#394255;font-size:14.5px;line-height:1.9;}
-  .instr-list li{margin-bottom:4px;}
-  .instr-side{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 14px;border-radius:20px;background:#fdf2e7;}
-  .instr-avatar{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ff9a32,#f26800);color:white;font-size:34px;font-weight:800;box-shadow:0 14px 30px rgba(238,108,8,.25);overflow:hidden;margin-bottom:14px;}
-  .instr-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-  .instr-name{font-size:16px;font-weight:750;color:#273146;letter-spacing:.3px;text-transform:uppercase;}
+  .instr-fp-body{flex:1 1 auto;display:flex;padding:32px 40px;gap:24px;overflow:hidden;min-height:0;}
+  .instr-fp-main{flex:1 1 auto;min-width:0;overflow:hidden;}
+  .instr-fp-main h2{margin:0 0 20px;font-size:clamp(20px,2.6vw,30px);font-weight:800;color:#111827;line-height:1.25;}
+  .instr-fp-meta{display:flex;justify-content:space-between;max-width:640px;margin-bottom:22px;font-weight:700;font-size:14.5px;color:#1f2937;}
+  .instr-fp-lead{font-weight:700;margin:0 0 14px;color:#111827;font-size:15px;}
+  .instr-fp-list{margin:0;padding-left:22px;color:#1f2937;font-size:14.5px;line-height:1.95;}
+  .instr-fp-list li{margin-bottom:2px;}
 
-  .instr-footer{margin-top:30px;padding-top:24px;border-top:1px solid var(--line);}
-  .instr-lang-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
-  .instr-lang-row label{font-weight:750;font-size:14px;color:var(--ink);}
-  .instr-lang-row select{padding:9px 14px;border:1px solid #ffb46b;border-radius:10px;font-size:14px;color:var(--ink);background:white;}
-  .instr-lang-note{margin:0 0 18px;color:var(--red);font-size:13px;line-height:1.6;}
-  .instr-declare{display:flex;align-items:flex-start;gap:10px;font-weight:750;font-size:14.5px;color:var(--ink);cursor:pointer;margin-bottom:20px;}
-  .instr-declare input{width:18px;height:18px;margin-top:2px;accent-color:var(--orange);cursor:pointer;}
-  .instr-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-  .instr-actions .primary:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+  .instr-fp-side{flex:0 0 170px;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:6px;}
+  .instr-fp-avatar{width:132px;height:132px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;overflow:hidden;margin-bottom:14px;}
+  .instr-fp-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .instr-fp-avatar svg{width:62px;height:62px;fill:#ffffff;}
+  .instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;}
+
+  .instr-fp-footer{flex:0 0 auto;border-top:1px solid #e5e7eb;padding:18px 40px 22px;background:#fff;}
+  .instr-fp-lang-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .instr-fp-lang-row label{font-weight:700;font-size:14px;color:#111827;}
+  .instr-fp-lang-row select{padding:7px 12px;border:1px solid #93c5fd;border-radius:8px;font-size:14px;color:#111827;background:#fff;}
+  .instr-fp-lang-note{margin:0 0 14px;color:#dc2626;font-size:12.5px;line-height:1.5;}
+  .instr-fp-divider{height:1px;background:#e5e7eb;margin:0 0 14px;}
+  .instr-fp-declare-label{display:block;font-weight:700;font-size:14px;color:#111827;margin-bottom:8px;}
+  .instr-fp-declare{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px;color:#1f2937;cursor:pointer;margin-bottom:18px;}
+  .instr-fp-declare input{width:17px;height:17px;margin-top:2px;cursor:pointer;}
+  .instr-fp-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .instr-fp-btn{border:0;border-radius:8px;padding:11px 26px;font-size:14.5px;font-weight:700;color:#fff;cursor:pointer;transition:opacity .15s ease;}
+  .instr-fp-btn.secondary{background:#6f93c9;}
+  .instr-fp-btn.primary{background:#5fc3d6;}
+  .instr-fp-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .instr-fp-status{min-height:18px;margin-top:10px;color:#dc2626;font-size:12.5px;font-weight:650;text-align:center;}
 
   @media (max-width:700px){
-    .instr-layout{grid-template-columns:1fr;}
-    .instr-side{flex-direction:row;justify-content:flex-start;gap:14px;text-align:left;}
-    .instr-avatar{width:56px;height:56px;font-size:20px;margin-bottom:0;}
+    .instr-fp-body{flex-direction:column;padding:20px;}
+    .instr-fp-side{flex-direction:row;gap:14px;flex:0 0 auto;}
+    .instr-fp-avatar{width:64px;height:64px;margin-bottom:0;}
+    .instr-fp-avatar svg{width:32px;height:32px;}
+    .instr-fp-footer{padding:14px 20px 18px;}
   }
 
   .footer{margin-top:20px;padding:42px 7%;text-align:center;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 86% 14%, #fff3e5 0%, transparent 33%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
@@ -268,55 +283,6 @@
     <div class="year-grid" id="shiftGrid"></div>
     <div class="status" id="shiftStatus" aria-live="polite"></div>
   </div>
-
-  <div class="flow-view" id="view-instructions">
-    <div class="instr-topbar">
-      <button class="instr-back" id="instrBackButton" aria-label="Back">←</button>
-      <span class="instr-topbar-title" id="instrTopTitle">SSC CGL</span>
-    </div>
-    <div class="instr-layout">
-      <div class="instr-main">
-        <h2 id="instrTitle">SSC CGL</h2>
-        <div class="instr-meta">
-          <span>Duration: 60 Mins</span>
-          <span>Maximum Marks: 200</span>
-        </div>
-        <p class="instr-lead">Read the following instructions carefully.</p>
-        <ol class="instr-list">
-          <li>The test contains 4 sections having 100 questions.</li>
-          <li>Each question has 4 options out of which only one is correct.</li>
-          <li>You have to finish the test in 60 minutes.</li>
-          <li>You will be given 15 minutes to complete each section.</li>
-          <li>You will be awarded 2 marks for each correct answer and 0.5 will be deducted for each wrong answer.</li>
-          <li>There is no negative marking for the questions that you have not attempted.</li>
-        </ol>
-      </div>
-      <div class="instr-side">
-        <div class="instr-avatar" id="instrAvatar">A</div>
-        <div class="instr-name" id="instrName">Aspirant</div>
-      </div>
-    </div>
-    <div class="instr-footer">
-      <div class="instr-lang-row">
-        <label for="instrLang">Choose your default language</label>
-        <select id="instrLang">
-          <option value="">-- Select --</option>
-          <option value="english">English</option>
-          <option value="hindi">Hindi</option>
-        </select>
-      </div>
-      <p class="instr-lang-note">Please note all questions will appear in your default language. This language can be changed for a particular question later on.</p>
-      <label class="instr-declare">
-        <input type="checkbox" id="instrDeclare">
-        I have understood and agree to all the instructions.
-      </label>
-      <div class="instr-actions">
-        <button class="secondary" id="instrPreviousButton">Previous</button>
-        <button class="primary" id="instrReadyButton" disabled>I am ready to begin</button>
-      </div>
-      <div class="status" id="instrStatus" aria-live="polite"></div>
-    </div>
-  </div>
 </section>
 
 <footer class="footer">
@@ -330,6 +296,59 @@
   <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
 </footer>
 </main>
+
+<div class="instr-fullpage" id="view-instructions">
+  <div class="instr-fp-top">
+    <button class="instr-fp-back" id="instrBackButton" aria-label="Back">←</button>
+    <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
+  </div>
+  <div class="instr-fp-body">
+    <div class="instr-fp-main">
+      <h2 id="instrTitle">SSC CGL</h2>
+      <div class="instr-fp-meta">
+        <span>Duration: 60 Mins</span>
+        <span>Maximum Marks: 200</span>
+      </div>
+      <p class="instr-fp-lead">Read the following instructions carefully.</p>
+      <ol class="instr-fp-list">
+        <li>The test contains 4 sections having 100 questions.</li>
+        <li>Each question has 4 options out of which only one is correct.</li>
+        <li>You have to finish the test in 60 minutes.</li>
+        <li>You will be given 15 minutes to complete each section.</li>
+        <li>You will be awarded 2 marks for each correct answer and 0.5 will be deducted for each wrong answer.</li>
+        <li>There is no negative marking for the questions that you have not attempted.</li>
+      </ol>
+    </div>
+    <div class="instr-fp-side">
+      <div class="instr-fp-avatar" id="instrAvatar">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>
+      </div>
+      <div class="instr-fp-name" id="instrName">Aspirant</div>
+    </div>
+  </div>
+  <div class="instr-fp-footer">
+    <div class="instr-fp-lang-row">
+      <label for="instrLang">Choose your default language:</label>
+      <select id="instrLang">
+        <option value="">-- Select --</option>
+        <option value="english">English</option>
+        <option value="hindi">Hindi</option>
+      </select>
+    </div>
+    <p class="instr-fp-lang-note">Please note all questions will appear in your default language. This language can be changed for a particular question later on.</p>
+    <div class="instr-fp-divider"></div>
+    <span class="instr-fp-declare-label">Declaration:</span>
+    <label class="instr-fp-declare">
+      <input type="checkbox" id="instrDeclare">
+      I have understood and agree to all the instructions.
+    </label>
+    <div class="instr-fp-actions">
+      <button class="instr-fp-btn secondary" id="instrPreviousButton">Previous</button>
+      <button class="instr-fp-btn primary" id="instrReadyButton" disabled>I am ready to begin</button>
+    </div>
+    <div class="instr-fp-status" id="instrStatus" aria-live="polite"></div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -382,7 +401,7 @@
     if (!el) {
       el = document.createElement('div');
       el.id = 'toast';
-      el.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+      el.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:1100;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
       document.body.appendChild(el);
     }
     el.textContent = message;
@@ -424,6 +443,7 @@
   });
 
   // MOCK TEST FLOW: choice -> year -> tier -> date -> (shift) -> instructions
+  // Random flow: choice -> tier -> instructions (random year/date/shift auto-picked)
   const viewChoice = document.getElementById('view-choice');
   const viewYear = document.getElementById('view-year');
   const viewTier = document.getElementById('view-tier');
@@ -448,6 +468,7 @@
   let selectedDate = null;
   let selectedShift = null;
   let instrReturnView = null;
+  let isRandomFlow = false;
 
   // SSC CGL Tier 1 / Tier 2 exam dates and shifts, 2015-2025
   const examSchedule = {
@@ -500,7 +521,14 @@
   function showView(view) {
     [viewChoice, viewYear, viewTier, viewDate, viewShift, viewInstructions].forEach(v => v.classList.remove('active'));
     view.classList.add('active');
-    view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (view === viewInstructions) {
+      document.body.classList.add('no-scroll');
+      document.documentElement.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+      document.documentElement.classList.remove('no-scroll');
+      view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   // Build year grid: 2025 down to 2015
@@ -509,6 +537,7 @@
     chip.className = 'year-chip';
     chip.innerHTML = `<strong>${year}</strong><span>SSC CGL</span>`;
     chip.addEventListener('click', () => {
+      isRandomFlow = false;
       selectedYear = year;
       tierYearLabel.textContent = year;
       tierStatus.textContent = '';
@@ -518,10 +547,14 @@
   }
 
   document.getElementById('randomChoiceButton').addEventListener('click', () => {
-    // The actual test engine will be added later; this hands off the request for now.
-    choiceStatus.textContent = 'Picking a random paper for you — the test itself is coming very soon!';
+    isRandomFlow = true;
+    choiceStatus.textContent = '';
+    tierStatus.textContent = '';
+    tierYearLabel.textContent = 'Random Mock';
+    showView(viewTier);
   });
   document.getElementById('selectYearButton').addEventListener('click', () => {
+    isRandomFlow = false;
     choiceStatus.textContent = '';
     showView(viewYear);
   });
@@ -534,9 +567,31 @@
     card.addEventListener('click', () => {
       selectedTier = card.dataset.tier;
       tierStatus.textContent = '';
-      openDateView();
+      if (isRandomFlow) {
+        pickRandomAndOpenInstructions();
+      } else {
+        openDateView();
+      }
     });
   });
+
+  function pickRandomAndOpenInstructions() {
+    const key = selectedTier === 'Tier 2' ? 'tier2' : 'tier1';
+    const years = Object.keys(examSchedule).filter(y => examSchedule[y][key]);
+    if (!years.length) {
+      tierStatus.textContent = 'No exam date data available for this tier yet.';
+      return;
+    }
+    const year = years[Math.floor(Math.random() * years.length)];
+    const info = examSchedule[year][key];
+    const date = info.dates[Math.floor(Math.random() * info.dates.length)];
+    const shift = info.shifts[Math.floor(Math.random() * info.shifts.length)];
+    selectedYear = year;
+    selectedDate = date;
+    selectedShift = shift;
+    instrReturnView = viewTier;
+    openInstructions();
+  }
 
   function openDateView() {
     const key = selectedTier === 'Tier 2' ? 'tier2' : 'tier1';
@@ -589,7 +644,7 @@
     showView(viewShift);
   }
 
-  // INSTRUCTIONS ("I am ready to begin" view)
+  // INSTRUCTIONS ("I am ready to begin" full-page view)
   const instrTopTitle = document.getElementById('instrTopTitle');
   const instrTitle = document.getElementById('instrTitle');
   const instrAvatar = document.getElementById('instrAvatar');
@@ -600,11 +655,25 @@
   const instrPreviousButton = document.getElementById('instrPreviousButton');
   const instrBackButton = document.getElementById('instrBackButton');
   const instrStatus = document.getElementById('instrStatus');
+  const defaultAvatarSVG = '<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>';
+
+  function formatHeldOnDate(dateStr) {
+    const parts = dateStr.split(' ');
+    if (parts.length !== 3) return dateStr;
+    let [day, mon, year] = parts;
+    if (mon === 'Sep') mon = 'Sept';
+    return `${day} ${mon}, ${year}`;
+  }
 
   function openInstructions() {
-    let label = `SSC CGL ${selectedYear || 2014} — ${selectedTier}`;
-    if (selectedDate) label += ` — ${selectedDate}`;
-    if (selectedShift && selectedShift !== 'Single Shift') label += `, ${selectedShift}`;
+    let label = `SSC CGL ${selectedYear || 2014}`;
+    if (selectedDate) {
+      label += ` (Held On: ${formatHeldOnDate(selectedDate)}`;
+      if (selectedShift && selectedShift !== 'Single Shift') label += ` ${selectedShift}`;
+      label += ')';
+    } else {
+      label += ` — ${selectedTier}`;
+    }
     instrTopTitle.textContent = label;
     instrTitle.textContent = label;
     if (currentUser.avatarUrl) {
@@ -614,7 +683,7 @@
       img.alt = `${currentUser.username}'s profile photo`;
       instrAvatar.appendChild(img);
     } else {
-      instrAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+      instrAvatar.innerHTML = defaultAvatarSVG;
     }
     instrName.textContent = currentUser.username.toUpperCase();
     instrLang.value = '';
@@ -629,8 +698,13 @@
   instrBackButton.addEventListener('click', () => showView(instrReturnView || viewTier));
   instrReadyButton.addEventListener('click', () => {
     if (instrReadyButton.disabled) return;
+    if (!instrLang.value) {
+      instrStatus.textContent = 'Please select your default language before you begin.';
+      instrLang.focus();
+      return;
+    }
     // The actual mock test engine will be added later; this is where it launches from.
-    instrStatus.textContent = `Starting SSC CGL ${selectedYear || 2014} ${selectedTier}${selectedDate ? ' — ' + selectedDate : ''}${(selectedShift && selectedShift !== 'Single Shift') ? ', ' + selectedShift : ''} — the test itself is coming very soon!`;
+    instrStatus.textContent = 'Loading your test — this is coming very soon!';
   });
 
   loadUserAndGuardPage();
