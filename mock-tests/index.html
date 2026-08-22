@@ -124,9 +124,8 @@
   .instr-fp-list li{margin-bottom:2px;}
 
   .instr-fp-side{flex:0 0 170px;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:6px;}
-  .instr-fp-avatar{width:132px;height:132px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;overflow:hidden;margin-bottom:14px;}
+  .instr-fp-avatar{width:132px;height:132px;border-radius:50%;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;overflow:hidden;margin-bottom:14px;font-size:48px;font-weight:800;color:#ffffff;}
   .instr-fp-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-  .instr-fp-avatar svg{width:62px;height:62px;fill:#ffffff;}
   .instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;}
 
   .instr-fp-footer{flex:0 0 auto;border-top:1px solid #e5e7eb;padding:18px 40px 22px;background:#fff;}
@@ -148,8 +147,7 @@
   @media (max-width:700px){
     .instr-fp-body{flex-direction:column;padding:20px;}
     .instr-fp-side{flex-direction:row;gap:14px;flex:0 0 auto;}
-    .instr-fp-avatar{width:64px;height:64px;margin-bottom:0;}
-    .instr-fp-avatar svg{width:32px;height:32px;}
+    .instr-fp-avatar{width:64px;height:64px;margin-bottom:0;font-size:26px;}
     .instr-fp-footer{padding:14px 20px 18px;}
   }
 
@@ -320,9 +318,7 @@
       </ol>
     </div>
     <div class="instr-fp-side">
-      <div class="instr-fp-avatar" id="instrAvatar">
-        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>
-      </div>
+      <div class="instr-fp-avatar" id="instrAvatar">A</div>
       <div class="instr-fp-name" id="instrName">Aspirant</div>
     </div>
   </div>
@@ -655,7 +651,6 @@
   const instrPreviousButton = document.getElementById('instrPreviousButton');
   const instrBackButton = document.getElementById('instrBackButton');
   const instrStatus = document.getElementById('instrStatus');
-  const defaultAvatarSVG = '<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>';
 
   function formatHeldOnDate(dateStr) {
     const parts = dateStr.split(' ');
@@ -683,7 +678,7 @@
       img.alt = `${currentUser.username}'s profile photo`;
       instrAvatar.appendChild(img);
     } else {
-      instrAvatar.innerHTML = defaultAvatarSVG;
+      instrAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
     }
     instrName.textContent = currentUser.username.toUpperCase();
     instrLang.value = '';
