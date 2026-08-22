@@ -114,6 +114,40 @@
 
     .status { min-height: 22px; margin-top: 20px; color: #e56b14; font-size: 13px; font-weight: 650; }
 
+    /* Instructions / ready-to-begin view */
+    .instr-topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+    .instr-back { border: 0; background: transparent; color: #505b70; font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 10px; transition: all .2s ease; line-height: 1; }
+    .instr-back:hover { color: var(--orange-dark); background: #fff0e3; }
+    .instr-topbar-title { font-size: 15px; font-weight: 750; color: #394255; }
+
+    .instr-layout { display: grid; grid-template-columns: 1fr 220px; gap: 30px; align-items: start; }
+    .instr-main h2 { margin: 0 0 18px; font-size: clamp(24px, 3vw, 32px); letter-spacing: -.8px; }
+    .instr-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 22px; font-weight: 750; font-size: 14px; color: #394255; }
+    .instr-lead { font-weight: 750; margin: 0 0 12px; color: var(--ink); }
+    .instr-list { margin: 0; padding-left: 22px; color: #394255; font-size: 14.5px; line-height: 1.9; }
+    .instr-list li { margin-bottom: 4px; }
+
+    .instr-side { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 22px 14px; border-radius: 20px; background: #fdf2e7; }
+    .instr-avatar { width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26800); color: white; font-size: 34px; font-weight: 800; box-shadow: 0 14px 30px rgba(238, 108, 8, .25); overflow: hidden; margin-bottom: 14px; }
+    .instr-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .instr-name { font-size: 16px; font-weight: 750; color: #273146; letter-spacing: .3px; text-transform: uppercase; }
+
+    .instr-footer { margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .instr-lang-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .instr-lang-row label { font-weight: 750; font-size: 14px; color: var(--ink); }
+    .instr-lang-row select { padding: 9px 14px; border: 1px solid #ffb46b; border-radius: 10px; font-size: 14px; color: var(--ink); background: white; }
+    .instr-lang-note { margin: 0 0 18px; color: var(--red); font-size: 13px; line-height: 1.6; }
+    .instr-declare { display: flex; align-items: flex-start; gap: 10px; font-weight: 750; font-size: 14.5px; color: var(--ink); cursor: pointer; margin-bottom: 20px; }
+    .instr-declare input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--orange); cursor: pointer; }
+    .instr-actions { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .instr-actions .primary:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    @media (max-width: 700px) {
+      .instr-layout { grid-template-columns: 1fr; }
+      .instr-side { flex-direction: row; justify-content: flex-start; gap: 14px; text-align: left; }
+      .instr-avatar { width: 56px; height: 56px; font-size: 20px; margin-bottom: 0; }
+    }
+
     .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
     .footer-contact { font-size: 14px; color: var(--muted); }
     .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
@@ -222,11 +256,64 @@
           <button class="tier-card" data-tier="Tier 2">
             <span class="tier-tag">Mains</span>
             <h3>Tier 2</h3>
-            <p>Advanced Quant &amp; Reasoning, English Comprehension, General Awareness, and Computer Knowledge.</p>
+            <p>Advanced Quant &amp; Reasoning, English Comprehension, and Computer Knowledge.</p>
             <span class="tier-arrow">→</span>
           </button>
         </div>
         <div class="status" id="tierStatus" aria-live="polite"></div>
+      </div>
+
+      <div class="flow-view" id="view-instructions">
+        <div class="instr-topbar">
+          <button class="instr-back" id="instrBackButton" aria-label="Back">‹</button>
+          <span class="instr-topbar-title" id="instrTopTitle">SSC CGL</span>
+        </div>
+
+        <div class="instr-layout">
+          <div class="instr-main">
+            <h2 id="instrTitle">SSC CGL</h2>
+            <div class="instr-meta">
+              <span>Duration: 60 Mins</span>
+              <span>Maximum Marks: 200</span>
+            </div>
+            <p class="instr-lead">Read the following instructions carefully.</p>
+            <ol class="instr-list">
+              <li>The test contains 4 sections having 100 questions.</li>
+              <li>Each question has 4 options out of which only one is correct.</li>
+              <li>You have to finish the test in 60 minutes.</li>
+              <li>You will be given 15 minutes to complete each section.</li>
+              <li>You will be awarded 2 marks for each correct answer and 0.5 will be deducted for each wrong answer.</li>
+              <li>There is no negative marking for the questions that you have not attempted.</li>
+            </ol>
+          </div>
+          <div class="instr-side">
+            <div class="instr-avatar" id="instrAvatar">A</div>
+            <div class="instr-name" id="instrName">Aspirant</div>
+          </div>
+        </div>
+
+        <div class="instr-footer">
+          <div class="instr-lang-row">
+            <label for="instrLang">Choose your default language:</label>
+            <select id="instrLang">
+              <option value="">-- Select --</option>
+              <option value="english">English</option>
+              <option value="hindi">Hindi</option>
+            </select>
+          </div>
+          <p class="instr-lang-note">Please note all questions will appear in your default language. This language can be changed for a particular question later on.</p>
+
+          <label class="instr-declare">
+            <input type="checkbox" id="instrDeclare" />
+            I have understood and agree to all the instructions.
+          </label>
+
+          <div class="instr-actions">
+            <button class="secondary" id="instrPreviousButton">Previous</button>
+            <button class="primary" id="instrReadyButton" disabled>I am ready to begin</button>
+          </div>
+          <div class="status" id="instrStatus" aria-live="polite"></div>
+        </div>
       </div>
     </section>
 
@@ -251,6 +338,8 @@
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
+    let currentUser = { username: 'Aspirant', avatarUrl: null };
+
     async function loadUserAndGuardPage() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) {
@@ -268,6 +357,8 @@
       const username = profile?.username || user.email.split('@')[0];
       const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
       const options = { month: 'long', year: 'numeric' };
+
+      currentUser = { username, avatarUrl: profile?.avatar_url || null };
 
       const menuAvatar = document.getElementById('menuAvatar');
       if (profile?.avatar_url) {
@@ -354,15 +445,17 @@
     const viewChoice = document.getElementById('view-choice');
     const viewYear = document.getElementById('view-year');
     const viewTier = document.getElementById('view-tier');
+    const viewInstructions = document.getElementById('view-instructions');
     const choiceStatus = document.getElementById('choiceStatus');
     const tierStatus = document.getElementById('tierStatus');
     const yearGrid = document.getElementById('yearGrid');
     const tierYearLabel = document.getElementById('tierYearLabel');
 
     let selectedYear = null;
+    let selectedTier = null;
 
     function showView(view) {
-      [viewChoice, viewYear, viewTier].forEach((v) => v.classList.remove('active'));
+      [viewChoice, viewYear, viewTier, viewInstructions].forEach((v) => v.classList.remove('active'));
       view.classList.add('active');
       view.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -401,13 +494,69 @@
 
     document.querySelectorAll('.tier-card').forEach((card) => {
       card.addEventListener('click', () => {
-        const tier = card.dataset.tier;
-        // The actual mock test page will be added later — this is where it will launch from.
-        tierStatus.textContent = `SSC CGL ${selectedYear} ${tier} mock is coming very soon!`;
+        selectedTier = card.dataset.tier;
+        openInstructions();
       });
+    });
+
+    /* ============================================================
+       INSTRUCTIONS / "I am ready to begin" view
+    ============================================================ */
+    const instrTopTitle = document.getElementById('instrTopTitle');
+    const instrTitle = document.getElementById('instrTitle');
+    const instrAvatar = document.getElementById('instrAvatar');
+    const instrName = document.getElementById('instrName');
+    const instrLang = document.getElementById('instrLang');
+    const instrDeclare = document.getElementById('instrDeclare');
+    const instrReadyButton = document.getElementById('instrReadyButton');
+    const instrPreviousButton = document.getElementById('instrPreviousButton');
+    const instrBackButton = document.getElementById('instrBackButton');
+    const instrStatus = document.getElementById('instrStatus');
+
+    function openInstructions() {
+      const label = `SSC CGL ${selectedYear} \u2014 ${selectedTier}`;
+      instrTopTitle.textContent = label;
+      instrTitle.textContent = label;
+
+      if (currentUser.avatarUrl) {
+        instrAvatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = currentUser.avatarUrl;
+        img.alt = currentUser.username + '\u2019s profile photo';
+        instrAvatar.appendChild(img);
+      } else {
+        instrAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+      }
+      instrName.textContent = currentUser.username.toUpperCase();
+
+      instrLang.value = '';
+      instrDeclare.checked = false;
+      instrReadyButton.disabled = true;
+      instrStatus.textContent = '';
+
+      showView(viewInstructions);
+    }
+
+    instrDeclare.addEventListener('change', () => {
+      instrReadyButton.disabled = !instrDeclare.checked;
+    });
+
+    instrPreviousButton.addEventListener('click', () => {
+      showView(viewTier);
+    });
+
+    instrBackButton.addEventListener('click', () => {
+      showView(viewTier);
+    });
+
+    instrReadyButton.addEventListener('click', () => {
+      if (instrReadyButton.disabled) return;
+      // The actual mock test engine will be added later — this is where it launches from.
+      instrStatus.textContent = `Starting SSC CGL ${selectedYear} ${selectedTier} \u2014 the test itself is coming very soon!`;
     });
 
     loadUserAndGuardPage();
   </script>
 </body>
 </html>
+
