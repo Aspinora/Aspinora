@@ -110,23 +110,26 @@
   /* Fixed, non-scrollable full-page instructions screen (matches SSC-style mock exam UI) */
   .instr-fullpage{position:fixed;inset:0;background:#ffffff;z-index:1000;display:none;flex-direction:column;font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;}
   .instr-fullpage.active{display:flex;}
-  .instr-fp-top{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid #e5e7eb;background:#fff;}
-  .instr-fp-back{border:0;background:transparent;font-size:20px;color:#374151;cursor:pointer;padding:4px 6px;line-height:1;}
+  .instr-fp-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;border-bottom:1px solid #e5e7eb;background:#fff;}
+  .instr-fp-top-left{display:flex;align-items:center;gap:16px;min-width:0;}
+  .instr-fp-back{border:0;background:transparent;font-size:20px;color:#374151;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;}
   .instr-fp-back:hover{color:var(--orange-dark);}
-  .instr-fp-top-title{font-size:15px;font-weight:600;color:#1f2937;}
+  .instr-fp-top-title{font-size:15px;font-weight:600;color:#1f2937;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .instr-fp-fullscreen{flex-shrink:0;border:1px solid #d1d5db;background:#fff;color:#374151;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:8px;cursor:pointer;transition:background .15s ease, border-color .15s ease;}
+  .instr-fp-fullscreen:hover{background:#f3f4f6;border-color:#b7bcc4;}
 
-  .instr-fp-body{flex:1 1 auto;display:flex;padding:32px 40px;gap:24px;overflow:hidden;min-height:0;}
+  .instr-fp-body{flex:1 1 auto;position:relative;display:flex;padding:32px 40px;gap:24px;overflow:hidden;min-height:0;}
   .instr-fp-main{flex:1 1 auto;min-width:0;overflow:hidden;}
   .instr-fp-main h2{margin:0 0 20px;font-size:clamp(20px,2.6vw,30px);font-weight:800;color:#111827;line-height:1.25;}
-  .instr-fp-meta{display:flex;justify-content:space-between;max-width:640px;margin-bottom:22px;font-weight:700;font-size:14.5px;color:#1f2937;}
+  .instr-fp-meta{display:flex;gap:24px;flex-wrap:wrap;max-width:640px;margin-bottom:22px;font-weight:700;font-size:14.5px;color:#1f2937;}
   .instr-fp-lead{font-weight:700;margin:0 0 14px;color:#111827;font-size:15px;}
   .instr-fp-list{margin:0;padding-left:22px;color:#1f2937;font-size:14.5px;line-height:1.95;}
   .instr-fp-list li{margin-bottom:2px;}
 
-  .instr-fp-side{flex:0 0 170px;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:6px;}
-  .instr-fp-avatar{width:132px;height:132px;border-radius:50%;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;overflow:hidden;margin-bottom:14px;font-size:48px;font-weight:800;color:#ffffff;}
+  .instr-fp-side{flex:0 0 190px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 16px;background:#f3f4f6;border-radius:18px;height:fit-content;}
+  .instr-fp-avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;overflow:hidden;margin-bottom:14px;font-size:44px;font-weight:800;color:#ffffff;}
   .instr-fp-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-  .instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;}
+  .instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;word-break:break-word;}
 
   .instr-fp-footer{flex:0 0 auto;border-top:1px solid #e5e7eb;padding:18px 40px 22px;background:#fff;}
   .instr-fp-lang-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
@@ -144,11 +147,17 @@
   .instr-fp-btn:disabled{opacity:.5;cursor:not-allowed;}
   .instr-fp-status{min-height:18px;margin-top:10px;color:#dc2626;font-size:12.5px;font-weight:650;text-align:center;}
 
+  .instr-orientation-warning{position:absolute;inset:0;background:#ffffff;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:16px;}
+  .instr-orientation-warning.show{display:flex;}
+  .instr-orientation-icon{font-size:52px;line-height:1;}
+  .instr-orientation-warning p{max-width:320px;margin:0;font-size:15px;color:#1f2937;font-weight:650;line-height:1.6;}
+
   @media (max-width:700px){
     .instr-fp-body{flex-direction:column;padding:20px;}
-    .instr-fp-side{flex-direction:row;gap:14px;flex:0 0 auto;}
+    .instr-fp-side{flex-direction:row;gap:14px;flex:0 0 auto;padding:14px;}
     .instr-fp-avatar{width:64px;height:64px;margin-bottom:0;font-size:26px;}
     .instr-fp-footer{padding:14px 20px 18px;}
+    .instr-fp-top-title{max-width:140px;}
   }
 
   .footer{margin-top:20px;padding:42px 7%;text-align:center;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 86% 14%, #fff3e5 0%, transparent 33%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
@@ -297,8 +306,11 @@
 
 <div class="instr-fullpage" id="view-instructions">
   <div class="instr-fp-top">
-    <button class="instr-fp-back" id="instrBackButton" aria-label="Back">←</button>
-    <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
+    <div class="instr-fp-top-left">
+      <button class="instr-fp-back" id="instrBackButton" aria-label="Back">←</button>
+      <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
+    </div>
+    <button class="instr-fp-fullscreen" id="instrFullscreenButton" type="button" aria-pressed="false">⛶ Full Screen</button>
   </div>
   <div class="instr-fp-body">
     <div class="instr-fp-main">
@@ -306,6 +318,7 @@
       <div class="instr-fp-meta">
         <span>Duration: 60 Mins</span>
         <span>Maximum Marks: 200</span>
+        <span id="instrTierMeta">Tier: Tier 1</span>
       </div>
       <p class="instr-fp-lead">Read the following instructions carefully.</p>
       <ol class="instr-fp-list">
@@ -320,6 +333,10 @@
     <div class="instr-fp-side">
       <div class="instr-fp-avatar" id="instrAvatar">A</div>
       <div class="instr-fp-name" id="instrName">Aspirant</div>
+    </div>
+    <div class="instr-orientation-warning" id="instrOrientationWarning" role="alert">
+      <div class="instr-orientation-icon">📱↔️</div>
+      <p>Please rotate your device to <strong>landscape mode</strong> to continue with the exam.</p>
     </div>
   </div>
   <div class="instr-fp-footer">
@@ -355,6 +372,22 @@
 
   let currentUser = { username: 'Aspirant', avatarUrl: null };
 
+  const instrAvatar = document.getElementById('instrAvatar');
+  const instrName = document.getElementById('instrName');
+
+  function renderInstrIdentity() {
+    if (currentUser.avatarUrl) {
+      instrAvatar.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = currentUser.avatarUrl;
+      img.alt = `${currentUser.username}'s profile photo`;
+      instrAvatar.appendChild(img);
+    } else {
+      instrAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+    }
+    instrName.textContent = currentUser.username.toUpperCase();
+  }
+
   async function loadUserAndGuardPage() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) { window.location.href = '/auth'; return false; }
@@ -384,6 +417,7 @@
     document.getElementById('menuAccountDivider').style.display = 'block';
     document.getElementById('menuUpdateProfileButton').style.display = 'flex';
     document.getElementById('menuLogoutButton').style.display = 'flex';
+    renderInstrIdentity();
     return true;
   }
 
@@ -643,14 +677,15 @@
   // INSTRUCTIONS ("I am ready to begin" full-page view)
   const instrTopTitle = document.getElementById('instrTopTitle');
   const instrTitle = document.getElementById('instrTitle');
-  const instrAvatar = document.getElementById('instrAvatar');
-  const instrName = document.getElementById('instrName');
+  const instrTierMeta = document.getElementById('instrTierMeta');
   const instrLang = document.getElementById('instrLang');
   const instrDeclare = document.getElementById('instrDeclare');
   const instrReadyButton = document.getElementById('instrReadyButton');
   const instrPreviousButton = document.getElementById('instrPreviousButton');
   const instrBackButton = document.getElementById('instrBackButton');
   const instrStatus = document.getElementById('instrStatus');
+  const instrFullscreenButton = document.getElementById('instrFullscreenButton');
+  const instrOrientationWarning = document.getElementById('instrOrientationWarning');
 
   function formatHeldOnDate(dateStr) {
     const parts = dateStr.split(' ');
@@ -659,6 +694,34 @@
     if (mon === 'Sep') mon = 'Sept';
     return `${day} ${mon}, ${year}`;
   }
+
+  function checkOrientation() {
+    if (!viewInstructions.classList.contains('active')) return;
+    const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+    const isSmallScreen = window.innerWidth < 900;
+    if (isPortrait && isSmallScreen) {
+      instrOrientationWarning.classList.add('show');
+    } else {
+      instrOrientationWarning.classList.remove('show');
+    }
+  }
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', checkOrientation);
+
+  function updateFullscreenButton() {
+    const isFs = !!document.fullscreenElement;
+    instrFullscreenButton.textContent = isFs ? '⤢ Exit Full Screen' : '⛶ Full Screen';
+    instrFullscreenButton.setAttribute('aria-pressed', String(isFs));
+  }
+  instrFullscreenButton.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      const target = viewInstructions.requestFullscreen ? viewInstructions : document.documentElement;
+      target.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  });
+  document.addEventListener('fullscreenchange', updateFullscreenButton);
 
   function openInstructions() {
     let label = `SSC CGL ${selectedYear || 2014}`;
@@ -671,21 +734,15 @@
     }
     instrTopTitle.textContent = label;
     instrTitle.textContent = label;
-    if (currentUser.avatarUrl) {
-      instrAvatar.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = currentUser.avatarUrl;
-      img.alt = `${currentUser.username}'s profile photo`;
-      instrAvatar.appendChild(img);
-    } else {
-      instrAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
-    }
-    instrName.textContent = currentUser.username.toUpperCase();
+    instrTierMeta.textContent = `Tier: ${selectedTier || '—'}`;
+    renderInstrIdentity();
     instrLang.value = '';
     instrDeclare.checked = false;
     instrReadyButton.disabled = true;
     instrStatus.textContent = '';
     showView(viewInstructions);
+    checkOrientation();
+    updateFullscreenButton();
   }
 
   instrDeclare.addEventListener('change', () => { instrReadyButton.disabled = !instrDeclare.checked; });
@@ -693,6 +750,10 @@
   instrBackButton.addEventListener('click', () => showView(instrReturnView || viewTier));
   instrReadyButton.addEventListener('click', () => {
     if (instrReadyButton.disabled) return;
+    if (instrOrientationWarning.classList.contains('show')) {
+      instrStatus.textContent = 'Please rotate your device to landscape mode before starting the exam.';
+      return;
+    }
     if (!instrLang.value) {
       instrStatus.textContent = 'Please select your default language before you begin.';
       instrLang.focus();
