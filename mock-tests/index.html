@@ -14,20 +14,700 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aspinora Mock Tests</title>
 <style>
-  :root{--orange:#ff7800;--orange-dark:#e85d00;--ink:#172033;--muted:#6d7585;--line:#edf0f5;--shadow:0 18px 55px rgba(34,45,72,.12);--red:#e5484d;}
+  :root{
+    --orange:#ff7800;
+    --orange-dark:#e85d00;
+    --ink:#172033;
+    --muted:#6d7585;
+    --line:#edf0f5;
+    --surface:#ffffff;
+    --soft:#fff7ef;
+    --shadow:0 18px 55px rgba(34,45,72,.12);
+    --red:#e5484d;
+    --green:#3ecf7a;
+  }
   *{box-sizing:border-box;}
-  html.no-scroll,body.no-scroll{overflow:hidden!important;height:100%;}
-  body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(145deg,#fffaf5 0%,#fff 45%,#fff8ef 100%);}
-  button{font:inherit}.page{width:min(1180px,calc(100% - 36px));margin:0 auto;padding-bottom:40px}.topbar{height:86px;display:flex;align-items:center;justify-content:space-between;position:relative}.brand{display:inline-flex;align-items:center;gap:11px;border:0;background:transparent;color:var(--ink);cursor:pointer;padding:7px 10px 7px 3px;border-radius:14px}.brand img{width:43px;height:43px;object-fit:contain;border-radius:50%}.brand-name{font-size:22px;font-weight:800;letter-spacing:-.7px}.brand-name span{color:var(--orange)}.menu-wrap{position:relative}.menu-button{width:44px;height:44px;display:grid;place-items:center;border:1px solid transparent;border-radius:14px;color:#505b70;background:transparent;cursor:pointer}.menu-button:hover,.menu-button[aria-expanded=true]{color:var(--orange-dark);background:#fff0e3;border-color:#ffe2ca}.dots{display:flex;gap:4px}.dots i{width:4px;height:4px;border-radius:50%;background:currentColor}.menu-panel{position:absolute;top:53px;right:0;z-index:20;width:245px;padding:10px;background:#fff;border:1px solid #f0e9e2;border-radius:18px;box-shadow:var(--shadow);opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:.18s}.menu-panel.open{opacity:1;transform:none;pointer-events:auto}.menu-label{padding:8px 10px 7px;color:#a0a6b2;font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}.menu-item{width:100%;display:flex;align-items:center;gap:11px;padding:11px 10px;border:0;border-radius:12px;background:transparent;color:#394255;text-align:left;cursor:pointer;text-decoration:none}.menu-item:hover{background:#fff6ee;color:var(--orange-dark)}.menu-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;font-size:14px;flex-shrink:0}.orange{background:#fff0e1;color:#f16d00}.blue{background:#eaf4ff;color:#367dd7}.purple{background:#f2edff;color:#7957db}.green{background:#eaf9f1;color:#239363}.red{background:#ffe9e9;color:#e5484d}.menu-profile{margin-bottom:6px;cursor:default}.menu-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ff9a32,#f26400);color:white;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden}.menu-avatar img{width:100%;height:100%;object-fit:cover}.menu-profile-info{display:flex;flex-direction:column;gap:1px;overflow:hidden}.menu-profile-name{font-size:13.5px;font-weight:750;color:#273146;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.menu-profile-sub{font-size:11px;color:#a0a6b2;font-weight:650}.menu-divider{height:1px;background:#f0e9e2;margin:6px}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:99px;color:#e56b14;background:#fff0e2;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}.eyebrow:before{content:"●"}.page-hero{padding:46px 6%;border:1px solid #f8e6d6;border-radius:30px;background:linear-gradient(120deg,#fff,#fffaf6);box-shadow:0 16px 50px rgba(193,117,43,.07)}.page-hero h1{max-width:680px;margin:18px 0 14px;font-size:clamp(34px,4.6vw,56px);line-height:1.05;letter-spacing:-2.4px}.page-hero h1 em{color:var(--orange);font-style:normal}.intro{max-width:620px;margin:0;color:var(--muted);font-size:17px;line-height:1.65}.section{margin-top:20px;padding:34px 6%;border:1px solid #f8e6d6;border-radius:30px;background:linear-gradient(120deg,#fff,#fffaf6);box-shadow:0 16px 50px rgba(193,117,43,.07)}.section h2{margin:0 0 6px;font-size:24px}.section .lead{max-width:700px;margin:0 0 22px;color:var(--muted);font-size:14.5px;line-height:1.7}.flow-view{display:none}.flow-view.active{display:block}.back{border:1px solid #e8ebf0;border-radius:10px;padding:8px 11px;background:#fff;color:#687286;cursor:pointer;font-size:12px;font-weight:700;margin-bottom:18px}.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.choice-card{min-height:175px;padding:27px;border:1px solid var(--line);border-radius:20px;background:#fff;text-align:left;cursor:pointer;box-shadow:0 8px 25px rgba(44,54,78,.04);position:relative}.choice-icon{width:44px;height:44px;display:grid;place-items:center;margin-bottom:18px;border-radius:12px;background:#fff0e1;font-size:19px}.choice-card:nth-child(2) .choice-icon{background:#eaf4ff}.choice-card h3{margin:0 0 7px;font-size:20px}.choice-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.choice-arrow{position:absolute;right:24px;bottom:22px;color:#a1a8b5;font-size:20px}.year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.year-chip{padding:20px 10px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:center;cursor:pointer}.year-chip strong{display:block;font-size:19px}.year-chip span{font-size:11.5px;color:var(--muted);font-weight:650}.tier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:700px}.tier-card{min-height:150px;padding:25px;border:1px solid var(--line);border-radius:20px;background:#fff;text-align:left;cursor:pointer;position:relative}.tier-tag{display:inline-block;margin-bottom:14px;padding:6px 12px;border-radius:99px;background:#fff0e1;color:var(--orange-dark);font-size:11.5px;font-weight:800}.tier-card:nth-child(2) .tier-tag{background:#eaf4ff;color:#367dd7}.tier-card h3{margin:0 0 6px;font-size:18px}.tier-card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}.tier-arrow{position:absolute;right:22px;bottom:20px;color:#a1a8b5;font-size:18px}.status{min-height:22px;margin-top:20px;color:#e56b14;font-size:13px;font-weight:650}
-  .instr-fullpage{position:fixed;inset:0;background:#fff;z-index:1000;display:none;flex-direction:column}.instr-fullpage.active{display:flex}.instr-fp-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;border-bottom:1px solid #e5e7eb;background:#fff}.instr-fp-top-left{display:flex;align-items:center;gap:16px;min-width:0}.instr-fp-back{border:0;background:transparent;font-size:20px;color:#374151;cursor:pointer;padding:4px 6px}.instr-fp-top-title{font-size:15px;font-weight:600;color:#1f2937;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.instr-fp-fullscreen{border:1px solid #d1d5db;background:#fff;color:#374151;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:8px;cursor:pointer}.instr-fp-body{flex:1 1 auto;display:flex;align-items:stretch;overflow-y:auto;min-height:0}.instr-fp-main{flex:1 1 auto;min-width:0;padding:32px 40px}.instr-fp-main h2{margin:0 0 20px;font-size:clamp(20px,2.6vw,30px);font-weight:800;color:#111827}.instr-fp-meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;font-weight:700;font-size:14.5px;color:#1f2937}.instr-fp-lead{font-weight:700;margin:0 0 14px;color:#111827}.instr-fp-list{margin:0;padding-left:22px;color:#1f2937;font-size:14.5px;line-height:1.95}.instr-fp-list li{margin-bottom:2px}.instr-fp-side{flex:0 0 190px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 16px;background:#f3f4f6}.instr-fp-avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;overflow:hidden;margin-bottom:14px;font-size:44px;font-weight:800;color:#fff;flex-shrink:0}.instr-fp-avatar img{width:100%;height:100%;object-fit:cover}.instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;word-break:break-word}.instr-fp-footer{flex:0 0 auto;border-top:1px solid #e5e7eb;padding:18px 40px 22px;background:#fff}.instr-fp-lang-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}.instr-fp-lang-row label{font-weight:700;font-size:14px}.instr-fp-lang-row select{padding:7px 12px;border:1px solid #93c5fd;border-radius:8px;font-size:14px}.instr-fp-lang-note{margin:0 0 14px;color:#dc2626;font-size:12.5px}.instr-fp-divider{height:1px;background:#e5e7eb;margin:0 0 14px}.instr-fp-declare-label{display:block;font-weight:700;font-size:14px;margin-bottom:8px}.instr-fp-declare{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px;cursor:pointer;margin-bottom:18px}.instr-fp-declare input{width:17px;height:17px;margin-top:2px}.instr-fp-actions{display:flex;justify-content:center;align-items:center;gap:120px;flex-wrap:wrap}.instr-fp-btn{border:0;border-radius:8px;padding:11px 26px;font-size:14.5px;font-weight:700;color:#fff;cursor:pointer}.instr-fp-btn.secondary{background:#6f93c9}.instr-fp-btn.primary{background:#5fc3d6}.instr-fp-btn:disabled{opacity:.5;cursor:not-allowed}.instr-fp-status{min-height:18px;margin-top:10px;color:#dc2626;font-size:12.5px;font-weight:650;text-align:center}.instr-orientation-warning{position:absolute;inset:0;background:#fff;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:16px}.instr-orientation-warning.show{display:flex}.instr-orientation-icon{font-size:52px}
-  @media(max-width:700px){.instr-fp-body{flex-direction:column}.instr-fp-main{padding:18px 20px}.instr-fp-side{flex-direction:row;justify-content:center;gap:14px;padding:14px;flex:0 0 auto}.instr-fp-avatar{width:56px;height:56px;margin-bottom:0;font-size:22px}.instr-fp-footer{padding:14px 20px 18px}.instr-fp-top-title{max-width:140px}.instr-fp-actions{gap:16px;justify-content:space-between}}
-  @media(max-height:500px){.instr-fp-top{padding:8px 16px}.instr-fp-main{padding:14px 20px}.instr-fp-main h2{margin-bottom:10px;font-size:19px}.instr-fp-meta{margin-bottom:10px;gap:14px;font-size:12.5px}.instr-fp-lead{margin-bottom:6px;font-size:13px}.instr-fp-list{font-size:12.5px;line-height:1.6}.instr-fp-side{flex-direction:row;padding:8px 14px;gap:10px}.instr-fp-avatar{width:40px;height:40px;font-size:16px;margin-bottom:0}.instr-fp-name{font-size:12px}.instr-fp-footer{padding:10px 20px 12px}.instr-fp-lang-note{margin-bottom:8px;font-size:11px}.instr-fp-declare{margin-bottom:10px;font-size:12.5px}.instr-fp-actions{gap:14px}.instr-fp-btn{padding:8px 18px;font-size:13px}}
-  .footer{margin-top:20px;padding:42px 7%;text-align:center;border:1px solid #f8e6d6;border-radius:30px;background:#fffaf6}.footer-contact{font-size:14px;color:var(--muted)}.footer-contact a{color:var(--orange-dark);font-weight:750;text-decoration:none}.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin:22px 0;padding-top:22px;border-top:1px solid var(--line)}.footer-links a{color:#4e586b;font-size:13px;font-weight:750;text-decoration:none}.footer-copy{margin:0;color:#a0a6b2;font-size:12px}
-  @media(max-width:760px){.page{width:min(100% - 22px,590px)}.topbar{height:72px}.page-hero{padding:32px 24px}.section{padding:24px 18px}.choice-grid{grid-template-columns:1fr}.year-grid{grid-template-columns:repeat(3,1fr)}.tier-grid{grid-template-columns:1fr}}@media(max-width:460px){.year-grid{grid-template-columns:repeat(2,1fr)}}
+  html.no-scroll, body.no-scroll{overflow:hidden !important;height:100%;}
+  body{margin:0;min-height:100vh;font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;color:var(--ink);background:linear-gradient(145deg,#fffaf5 0%,#ffffff 45%,#fff8ef 100%);}
+  button{font:inherit;}
+  .page{width:min(1180px, calc(100% - 36px));margin:0 auto;padding-bottom:40px;}
+
+  .topbar{height:86px;display:flex;align-items:center;justify-content:space-between;position:relative;}
+  .brand{display:inline-flex;align-items:center;gap:11px;border:0;background:transparent;color:var(--ink);cursor:pointer;padding:7px 10px 7px 3px;border-radius:14px;transition:background .2s ease, transform .2s ease;}
+  .brand:hover{background:#fff0e3;transform:translateY(-1px);}
+  .brand img{width:43px;height:43px;object-fit:contain;border-radius:50%;box-shadow:0 5px 14px rgba(255,120,0,.2);}
+  .brand-name{font-size:22px;font-weight:800;letter-spacing:-.7px;}
+  .brand-name span{color:var(--orange);}
+  .menu-wrap{position:relative;}
+  .menu-button{width:44px;height:44px;display:grid;place-items:center;border:1px solid transparent;border-radius:14px;color:#505b70;background:transparent;cursor:pointer;transition:all .2s ease;}
+  .menu-button:hover,.menu-button[aria-expanded="true"]{color:var(--orange-dark);background:#fff0e3;border-color:#ffe2ca;}
+  .dots{display:flex;gap:4px;}
+  .dots i{width:4px;height:4px;border-radius:50%;background:currentColor;}
+  .menu-panel{position:absolute;top:53px;right:0;z-index:20;width:245px;padding:10px;background:white;border:1px solid #f0e9e2;border-radius:18px;box-shadow:var(--shadow);opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:opacity .18s ease, transform .18s ease;}
+  .menu-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+  .menu-label{padding:8px 10px 7px;color:#a0a6b2;font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;}
+  .menu-item{width:100%;display:flex;align-items:center;gap:11px;padding:11px 10px;border:0;border-radius:12px;background:transparent;color:#394255;text-align:left;cursor:pointer;text-decoration:none;transition:background .16s ease, color .16s ease;}
+  .menu-item:hover{background:#fff6ee;color:var(--orange-dark);}
+  .menu-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;font-size:14px;flex-shrink:0;}
+  .orange{background:#fff0e1;color:#f16d00;}
+  .blue{background:#eaf4ff;color:#367dd7;}
+  .purple{background:#f2edff;color:#7957db;}
+  .green{background:#eaf9f1;color:#239363;}
+  .red{background:#ffe9e9;color:#e5484d;}
+  .menu-profile{margin-bottom:6px;cursor:default;}
+  .menu-item.menu-profile:hover{background:transparent;color:#394255;}
+  .menu-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ff9a32,#f26400);color:white;font-size:13px;font-weight:800;flex-shrink:0;box-shadow:0 4px 10px rgba(238,108,8,.22);overflow:hidden;}
+  .menu-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .menu-profile-info{display:flex;flex-direction:column;gap:1px;overflow:hidden;}
+  .menu-profile-name{font-size:13.5px;font-weight:750;color:#273146;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .menu-profile-sub{font-size:11px;color:#a0a6b2;font-weight:650;}
+  .menu-divider{height:1px;background:#f0e9e2;margin:6px 6px;}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:99px;color:#e56b14;background:#fff0e2;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
+  .eyebrow::before{content:"●";font-size:13px;}
+  .page-hero{padding:46px 6%;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 90% 5%, #fff3e5 0%, transparent 34%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
+  .page-hero h1{max-width:680px;margin:18px 0 14px;font-size:clamp(34px,4.6vw,56px);line-height:1.05;letter-spacing:-2.4px;}
+  .page-hero h1 em{color:var(--orange);font-style:normal;}
+  .intro{max-width:620px;margin:0;color:var(--muted);font-size:17px;line-height:1.65;}
+
+  .section{scroll-margin-top:20px;margin-top:20px;padding:34px 6%;border:1px solid #f8e6d6;border-radius:30px;background:linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
+  .section h2{margin:0 0 6px;font-size:24px;letter-spacing:-.6px;}
+  .section .lead{max-width:700px;margin:0 0 22px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+  .flow-view{display:none;}
+  .flow-view.active{display:block;animation:fadeSwap .35s ease;}
+  @keyframes fadeSwap{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .back{border:1px solid #e8ebf0;border-radius:10px;padding:8px 11px;background:#fff;color:#687286;cursor:pointer;font-size:12px;font-weight:700;margin-bottom:18px;}
+  .back:hover{color:var(--orange-dark);border-color:#ffcc9e;background:#fffaf5;}
+
+  .choice-grid{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:18px;}
+  .choice-card{min-height:175px;padding:27px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.92);text-align:left;cursor:pointer;box-shadow:0 8px 25px rgba(44,54,78,.04);transition:all .2s ease;position:relative;}
+  .choice-card:hover{transform:translateY(-4px);border-color:#ffd0a8;box-shadow:0 16px 35px rgba(193,117,43,.12);}
+  .choice-icon{width:44px;height:44px;display:grid;place-items:center;margin-bottom:18px;border-radius:12px;background:#fff0e1;color:var(--orange-dark);font-weight:900;font-size:19px;}
+  .choice-card:nth-child(2) .choice-icon{background:#eaf4ff;color:#367dd7;}
+  .choice-card h3{margin:0 0 7px;font-size:20px;letter-spacing:-.4px;}
+  .choice-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;}
+  .choice-arrow{position:absolute;right:24px;bottom:22px;color:#a1a8b5;font-size:20px;transition:all .2s ease;}
+  .choice-card:hover .choice-arrow{color:var(--orange);transform:translateX(4px);}
+
+  .year-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;}
+  .year-chip{padding:20px 10px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.94);text-align:center;cursor:pointer;box-shadow:0 6px 18px rgba(44,54,78,.04);transition:all .2s ease;}
+  .year-chip:hover{transform:translateY(-3px);border-color:#ffd0a8;background:#fffaf5;box-shadow:0 12px 24px rgba(193,117,43,.1);}
+  .year-chip strong{display:block;font-size:19px;letter-spacing:-.4px;color:var(--ink);}
+  .year-chip span{font-size:11.5px;color:var(--muted);font-weight:650;}
+
+  .tier-grid{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:18px;max-width:700px;}
+  .tier-card{min-height:150px;padding:25px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.92);text-align:left;cursor:pointer;box-shadow:0 8px 25px rgba(44,54,78,.04);transition:all .2s ease;position:relative;}
+  .tier-card:hover{transform:translateY(-4px);border-color:#ffd0a8;box-shadow:0 16px 35px rgba(193,117,43,.12);}
+  .tier-tag{display:inline-block;margin-bottom:14px;padding:6px 12px;border-radius:99px;background:#fff0e1;color:var(--orange-dark);font-size:11.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
+  .tier-card:nth-child(2) .tier-tag{background:#eaf4ff;color:#367dd7;}
+  .tier-card h3{margin:0 0 6px;font-size:18px;letter-spacing:-.3px;}
+  .tier-card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5;}
+  .tier-arrow{position:absolute;right:22px;bottom:20px;color:#a1a8b5;font-size:18px;transition:all .2s ease;}
+  .tier-card:hover .tier-arrow{color:var(--orange);transform:translateX(3px);}
+
+  .status{min-height:22px;margin-top:20px;color:#e56b14;font-size:13px;font-weight:650;}
+
+  /* Fixed, non-scrollable full-page instructions screen (matches SSC-style mock exam UI) */
+  .instr-fullpage{position:fixed;inset:0;background:#ffffff;z-index:1000;display:none;flex-direction:column;font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;}
+  .instr-fullpage.active{display:flex;}
+  .instr-fp-top{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid #e5e7eb;background:#fff;}
+  .instr-fp-back{border:0;background:transparent;font-size:20px;color:#374151;cursor:pointer;padding:4px 6px;line-height:1;}
+  .instr-fp-back:hover{color:var(--orange-dark);}
+  .instr-fp-top-title{font-size:15px;font-weight:600;color:#1f2937;}
+
+  .instr-fp-body{flex:1 1 auto;display:flex;padding:32px 40px;gap:24px;overflow:hidden;min-height:0;}
+  .instr-fp-main{flex:1 1 auto;min-width:0;overflow:hidden;}
+  .instr-fp-main h2{margin:0 0 20px;font-size:clamp(20px,2.6vw,30px);font-weight:800;color:#111827;line-height:1.25;}
+  .instr-fp-meta{display:flex;justify-content:space-between;max-width:640px;margin-bottom:22px;font-weight:700;font-size:14.5px;color:#1f2937;}
+  .instr-fp-lead{font-weight:700;margin:0 0 14px;color:#111827;font-size:15px;}
+  .instr-fp-list{margin:0;padding-left:22px;color:#1f2937;font-size:14.5px;line-height:1.95;}
+  .instr-fp-list li{margin-bottom:2px;}
+
+  .instr-fp-side{flex:0 0 170px;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:6px;}
+  .instr-fp-avatar{width:132px;height:132px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;overflow:hidden;margin-bottom:14px;}
+  .instr-fp-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .instr-fp-avatar svg{width:62px;height:62px;fill:#ffffff;}
+  .instr-fp-name{font-size:15px;font-weight:800;color:#1f2937;letter-spacing:.4px;text-transform:uppercase;}
+
+  .instr-fp-footer{flex:0 0 auto;border-top:1px solid #e5e7eb;padding:18px 40px 22px;background:#fff;}
+  .instr-fp-lang-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .instr-fp-lang-row label{font-weight:700;font-size:14px;color:#111827;}
+  .instr-fp-lang-row select{padding:7px 12px;border:1px solid #93c5fd;border-radius:8px;font-size:14px;color:#111827;background:#fff;}
+  .instr-fp-lang-note{margin:0 0 14px;color:#dc2626;font-size:12.5px;line-height:1.5;}
+  .instr-fp-divider{height:1px;background:#e5e7eb;margin:0 0 14px;}
+  .instr-fp-declare-label{display:block;font-weight:700;font-size:14px;color:#111827;margin-bottom:8px;}
+  .instr-fp-declare{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px;color:#1f2937;cursor:pointer;margin-bottom:18px;}
+  .instr-fp-declare input{width:17px;height:17px;margin-top:2px;cursor:pointer;}
+  .instr-fp-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .instr-fp-btn{border:0;border-radius:8px;padding:11px 26px;font-size:14.5px;font-weight:700;color:#fff;cursor:pointer;transition:opacity .15s ease;}
+  .instr-fp-btn.secondary{background:#6f93c9;}
+  .instr-fp-btn.primary{background:#5fc3d6;}
+  .instr-fp-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .instr-fp-status{min-height:18px;margin-top:10px;color:#dc2626;font-size:12.5px;font-weight:650;text-align:center;}
+
+  @media (max-width:700px){
+    .instr-fp-body{flex-direction:column;padding:20px;}
+    .instr-fp-side{flex-direction:row;gap:14px;flex:0 0 auto;}
+    .instr-fp-avatar{width:64px;height:64px;margin-bottom:0;}
+    .instr-fp-avatar svg{width:32px;height:32px;}
+    .instr-fp-footer{padding:14px 20px 18px;}
+  }
+
+  .footer{margin-top:20px;padding:42px 7%;text-align:center;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 86% 14%, #fff3e5 0%, transparent 33%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
+  .footer-contact{font-size:14px;color:var(--muted);}
+  .footer-contact a{color:var(--orange-dark);font-weight:750;text-decoration:none;}
+  .footer-contact a:hover{text-decoration:underline;}
+  .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin:22px 0;padding-top:22px;border-top:1px solid var(--line);}
+  .footer-links a{color:#4e586b;font-size:13px;font-weight:750;text-decoration:none;transition:color .16s ease;}
+  .footer-links a:hover{color:var(--orange-dark);}
+  .footer-copy{margin:0;color:#a0a6b2;font-size:12px;}
+
+  @media (max-width:760px){
+    .page{width:min(100% - 22px, 590px);}
+    .topbar{height:72px;}
+    .page-hero{padding:32px 24px;}
+    .page-hero h1{letter-spacing:-1.6px;}
+    .section{padding:24px 18px;}
+    .choice-grid{grid-template-columns:1fr;}
+    .year-grid{grid-template-columns:repeat(3, 1fr);}
+    .tier-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:460px){
+    .year-grid{grid-template-columns:repeat(2, 1fr);}
+  }
 </style>
 </head>
 <body>
-<!-- Full existing page markup and JavaScript retained; only the corrected key and responsive layout are applied. -->
+<main class="page">
+<header class="topbar">
+  <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+    <img src="/aspinora-logo.png" alt="Aspinora logo">
+    <span class="brand-name">Aspi<span>nora</span></span>
+  </button>
+  <div class="menu-wrap">
+    <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+      <span class="dots"><i></i><i></i><i></i></span>
+    </button>
+    <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+      <button class="menu-item menu-profile" id="menuProfileItem" style="display:none">
+        <span class="menu-avatar" id="menuAvatar">A</span>
+        <span class="menu-profile-info">
+          <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+          <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+        </span>
+      </button>
+      <div class="menu-label">Explore Aspinora</div>
+      <a class="menu-item" href="/dashboard"><span class="menu-icon orange">🏠</span>Dashboard</a>
+      <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">🗓️</span>Study planner</button>
+      <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">📰</span>Current affairs</button>
+      <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">📝</span>Saved notes</button>
+      <a class="menu-item" href="/mock-tests"><span class="menu-icon orange">🧪</span>Mock tests</a>
+      <a class="menu-item" href="/score-calculator"><span class="menu-icon blue">🧮</span>Calculators</a>
+      <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">📊</span>Rank/Score tools</button>
+      <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">🔗</span>Important links</button>
+      <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">🧰</span>Other useful utilities</button>
+      <div class="menu-divider" id="menuAccountDivider" style="display:none"></div>
+      <button class="menu-item" id="menuUpdateProfileButton" style="display:none"><span class="menu-icon blue">👤</span>Update Profile</button>
+      <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none"><span class="menu-icon red">🚪</span>Log Out</button>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="eyebrow">Mock tests</div>
+  <h1>Test yourself, <em>the real way.</em></h1>
+  <p class="intro">SSC CGL previous year question mocks — practice a random paper, or pick the exact year and tier you want to attempt.</p>
+</section>
+
+<section class="section">
+  <div class="flow-view active" id="view-choice">
+    <h2>How do you want to practice?</h2>
+    <p class="lead">Choose a random previous year paper, or pick a specific year and tier yourself.</p>
+    <div class="choice-grid">
+      <button class="choice-card" id="randomChoiceButton">
+        <div class="choice-icon">🎲</div>
+        <h3>Random PYQ Mock</h3>
+        <p>We'll pick a previous year paper for you at random — a quick way to jump straight into practice.</p>
+        <span class="choice-arrow">→</span>
+      </button>
+      <button class="choice-card" id="selectYearButton">
+        <div class="choice-icon">📅</div>
+        <h3>Choose a Specific Year</h3>
+        <p>Pick the exact year you want to attempt, from 2015 all the way up to 2025.</p>
+        <span class="choice-arrow">→</span>
+      </button>
+    </div>
+    <div class="status" id="choiceStatus" aria-live="polite"></div>
+  </div>
+
+  <div class="flow-view" id="view-year">
+    <button class="back" id="backToChoiceButton">← Back</button>
+    <h2>Choose a year</h2>
+    <p class="lead">Select the SSC CGL exam year you'd like to practice.</p>
+    <div class="year-grid" id="yearGrid"></div>
+  </div>
+
+  <div class="flow-view" id="view-tier">
+    <button class="back" id="backToYearButton">← Back</button>
+    <h2>SSC CGL <span id="tierYearLabel">2025</span> — choose a tier</h2>
+    <p class="lead">Tier 1 is the preliminary objective paper. Tier 2 is the mains stage.</p>
+    <div class="tier-grid">
+      <button class="tier-card" data-tier="Tier 1">
+        <span class="tier-tag">Preliminary</span>
+        <h3>Tier 1</h3>
+        <p>General Intelligence &amp; Reasoning, Quantitative Aptitude, English, and General Awareness.</p>
+        <span class="tier-arrow">→</span>
+      </button>
+      <button class="tier-card" data-tier="Tier 2">
+        <span class="tier-tag">Mains</span>
+        <h3>Tier 2</h3>
+        <p>Advanced Quant &amp; Reasoning, English Comprehension, and Computer Knowledge.</p>
+        <span class="tier-arrow">→</span>
+      </button>
+    </div>
+    <div class="status" id="tierStatus" aria-live="polite"></div>
+  </div>
+
+  <div class="flow-view" id="view-date">
+    <button class="back" id="backToTierFromDateButton">← Back</button>
+    <h2>SSC CGL <span id="dateYearLabel">2025</span> <span id="dateTierLabel">Tier 1</span> — choose the exact date</h2>
+    <p class="lead">Pick the exam date you'd like to practice, based on the official SSC CGL exam schedule.</p>
+    <div class="year-grid" id="dateGrid"></div>
+    <div class="status" id="dateStatus" aria-live="polite"></div>
+  </div>
+
+  <div class="flow-view" id="view-shift">
+    <button class="back" id="backToDateFromShiftButton">← Back</button>
+    <h2>SSC CGL <span id="shiftYearLabel">2025</span> <span id="shiftTierLabel">Tier 1</span> — <span id="shiftDateLabel">12 Sep 2025</span></h2>
+    <p class="lead">This date had multiple shifts. Choose the exact shift you'd like to practice.</p>
+    <div class="year-grid" id="shiftGrid"></div>
+    <div class="status" id="shiftStatus" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+  <nav class="footer-links" aria-label="Legal and support links">
+    <a href="/legal/privacy-policy">Privacy Policy</a>
+    <a href="/legal/terms-of-use">Terms of Use</a>
+    <a href="/legal/disclaimer">Disclaimer</a>
+    <a href="/legal/contact-us">Contact Us</a>
+  </nav>
+  <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+</footer>
+</main>
+
+<div class="instr-fullpage" id="view-instructions">
+  <div class="instr-fp-top">
+    <button class="instr-fp-back" id="instrBackButton" aria-label="Back">←</button>
+    <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
+  </div>
+  <div class="instr-fp-body">
+    <div class="instr-fp-main">
+      <h2 id="instrTitle">SSC CGL</h2>
+      <div class="instr-fp-meta">
+        <span>Duration: 60 Mins</span>
+        <span>Maximum Marks: 200</span>
+      </div>
+      <p class="instr-fp-lead">Read the following instructions carefully.</p>
+      <ol class="instr-fp-list">
+        <li>The test contains 4 sections having 100 questions.</li>
+        <li>Each question has 4 options out of which only one is correct.</li>
+        <li>You have to finish the test in 60 minutes.</li>
+        <li>You will be given 15 minutes to complete each section.</li>
+        <li>You will be awarded 2 marks for each correct answer and 0.5 will be deducted for each wrong answer.</li>
+        <li>There is no negative marking for the questions that you have not attempted.</li>
+      </ol>
+    </div>
+    <div class="instr-fp-side">
+      <div class="instr-fp-avatar" id="instrAvatar">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>
+      </div>
+      <div class="instr-fp-name" id="instrName">Aspirant</div>
+    </div>
+  </div>
+  <div class="instr-fp-footer">
+    <div class="instr-fp-lang-row">
+      <label for="instrLang">Choose your default language:</label>
+      <select id="instrLang">
+        <option value="">-- Select --</option>
+        <option value="english">English</option>
+        <option value="hindi">Hindi</option>
+      </select>
+    </div>
+    <p class="instr-fp-lang-note">Please note all questions will appear in your default language. This language can be changed for a particular question later on.</p>
+    <div class="instr-fp-divider"></div>
+    <span class="instr-fp-declare-label">Declaration:</span>
+    <label class="instr-fp-declare">
+      <input type="checkbox" id="instrDeclare">
+      I have understood and agree to all the instructions.
+    </label>
+    <div class="instr-fp-actions">
+      <button class="instr-fp-btn secondary" id="instrPreviousButton">Previous</button>
+      <button class="instr-fp-btn primary" id="instrReadyButton" disabled>I am ready to begin</button>
+    </div>
+    <div class="instr-fp-status" id="instrStatus" aria-live="polite"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // SUPABASE — this page requires a logged-in session
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qwmZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  let currentUser = { username: 'Aspirant', avatarUrl: null };
+
+  async function loadUserAndGuardPage() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { window.location.href = '/auth'; return false; }
+    const user = session.user;
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('username, created_at, avatar_url')
+      .eq('id', user.id)
+      .single();
+    const username = profile?.username || user.email.split('@')[0];
+    const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
+    const options = { month: 'long', year: 'numeric' };
+    currentUser = { username, avatarUrl: profile?.avatar_url || null };
+    const menuAvatar = document.getElementById('menuAvatar');
+    if (profile?.avatar_url) {
+      menuAvatar.innerHTML = '';
+      const avatarImg = document.createElement('img');
+      avatarImg.src = profile.avatar_url;
+      avatarImg.alt = `${username}'s profile photo`;
+      menuAvatar.appendChild(avatarImg);
+    } else {
+      menuAvatar.textContent = username.charAt(0).toUpperCase();
+    }
+    document.getElementById('menuProfileName').textContent = username;
+    document.getElementById('menuProfileSub').textContent = `Joined ${joinedDate.toLocaleDateString('en-US', options)}`;
+    document.getElementById('menuProfileItem').style.display = 'flex';
+    document.getElementById('menuAccountDivider').style.display = 'block';
+    document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+    document.getElementById('menuLogoutButton').style.display = 'flex';
+    return true;
+  }
+
+  // TOPBAR MENU shared behaviour
+  const menuButton = document.getElementById('menuButton');
+  const menuPanel = document.getElementById('menuPanel');
+  const statusHolder = { timeout: null };
+
+  function flashMessage(message) {
+    let el = document.getElementById('toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'toast';
+      el.style.cssText = 'position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:1100;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    requestAnimationFrame(() => { el.style.opacity = 1; });
+    clearTimeout(statusHolder.timeout);
+    statusHolder.timeout = setTimeout(() => { el.style.opacity = 0; }, 2400);
+  }
+
+  menuButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const isOpen = menuPanel.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.menu-wrap')) {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.querySelectorAll('[data-message]').forEach(button => {
+    button.addEventListener('click', () => {
+      flashMessage(button.dataset.message);
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.getElementById('homeButton').addEventListener('click', () => { window.location.href = '/'; });
+  document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+    menuPanel.classList.remove('open');
+    menuButton.setAttribute('aria-expanded', 'false');
+    window.location.href = '/edit-profile';
+  });
+  document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+    menuPanel.classList.remove('open');
+    menuButton.setAttribute('aria-expanded', 'false');
+    flashMessage('Logging out...');
+    await supabaseClient.auth.signOut();
+    setTimeout(() => { window.location.href = '/'; }, 600);
+  });
+
+  // MOCK TEST FLOW: choice -> year -> tier -> date -> (shift) -> instructions
+  // Random flow: choice -> tier -> instructions (random year/date/shift auto-picked)
+  const viewChoice = document.getElementById('view-choice');
+  const viewYear = document.getElementById('view-year');
+  const viewTier = document.getElementById('view-tier');
+  const viewDate = document.getElementById('view-date');
+  const viewShift = document.getElementById('view-shift');
+  const viewInstructions = document.getElementById('view-instructions');
+  const choiceStatus = document.getElementById('choiceStatus');
+  const tierStatus = document.getElementById('tierStatus');
+  const dateStatus = document.getElementById('dateStatus');
+  const shiftStatus = document.getElementById('shiftStatus');
+  const yearGrid = document.getElementById('yearGrid');
+  const dateGrid = document.getElementById('dateGrid');
+  const shiftGrid = document.getElementById('shiftGrid');
+  const tierYearLabel = document.getElementById('tierYearLabel');
+  const dateYearLabel = document.getElementById('dateYearLabel');
+  const dateTierLabel = document.getElementById('dateTierLabel');
+  const shiftYearLabel = document.getElementById('shiftYearLabel');
+  const shiftTierLabel = document.getElementById('shiftTierLabel');
+  const shiftDateLabel = document.getElementById('shiftDateLabel');
+  let selectedYear = null;
+  let selectedTier = null;
+  let selectedDate = null;
+  let selectedShift = null;
+  let instrReturnView = null;
+  let isRandomFlow = false;
+
+  // SSC CGL Tier 1 / Tier 2 exam dates and shifts, 2015-2025
+  const examSchedule = {
+    2025: {
+      tier1: { dates: ["12 Sep 2025","13 Sep 2025","14 Sep 2025","15 Sep 2025","16 Sep 2025","17 Sep 2025","18 Sep 2025","19 Sep 2025","20 Sep 2025","21 Sep 2025","22 Sep 2025","23 Sep 2025","24 Sep 2025","25 Sep 2025","26 Sep 2025"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["18 Jan 2026","19 Jan 2026"], shifts: ["Single Shift"] }
+    },
+    2024: {
+      tier1: { dates: ["9 Sep 2024","10 Sep 2024","11 Sep 2024","12 Sep 2024","13 Sep 2024","17 Sep 2024","18 Sep 2024","19 Sep 2024","23 Sep 2024","24 Sep 2024","25 Sep 2024","26 Sep 2024"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["18 Jan 2025","19 Jan 2025","20 Jan 2025","31 Jan 2025"], shifts: ["Single Shift"] }
+    },
+    2023: {
+      tier1: { dates: ["14 Jul 2023","17 Jul 2023","18 Jul 2023","19 Jul 2023","20 Jul 2023","21 Jul 2023","24 Jul 2023","25 Jul 2023","26 Jul 2023","27 Jul 2023"], shifts: ["Shift 1","Shift 2","Shift 3","Shift 4"] },
+      tier2: { dates: ["2 Mar 2023","3 Mar 2023","6 Mar 2023","7 Mar 2023"], shifts: ["Single Shift"] }
+    },
+    2022: {
+      tier1: { dates: ["1 Dec 2022","2 Dec 2022","3 Dec 2022","5 Dec 2022","6 Dec 2022","7 Dec 2022","8 Dec 2022","9 Dec 2022","12 Dec 2022","13 Dec 2022"], shifts: ["Shift 1","Shift 2","Shift 3","Shift 4"] },
+      tier2: { dates: ["2 Mar 2023","3 Mar 2023","6 Mar 2023","7 Mar 2023"], shifts: ["Single Shift"] }
+    },
+    2021: {
+      tier1: { dates: ["13 Aug 2021","16 Aug 2021","17 Aug 2021","23 Aug 2021"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["8 Aug 2022","10 Aug 2022"], shifts: ["Single Shift"] }
+    },
+    2020: {
+      tier1: { dates: ["3 Mar 2020","4 Mar 2020","5 Mar 2020","6 Mar 2020","7 Mar 2020","9 Mar 2020"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["28 Jan 2022","29 Jan 2022"], shifts: ["Single Shift"] }
+    },
+    2019: {
+      tier1: { dates: ["4 Jun 2019","6 Jun 2019","7 Jun 2019","10 Jun 2019","11 Jun 2019","12 Jun 2019","13 Jun 2019","19 Jun 2019"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["11 Sep 2019","12 Sep 2019","13 Sep 2019","14 Sep 2019"], shifts: ["Single Shift"] }
+    },
+    2018: {
+      tier1: { dates: ["4 Jun 2018","6 Jun 2018","7 Jun 2018","11 Jun 2018","12 Jun 2018","13 Jun 2018","14 Jun 2018"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["11 Sep 2019","12 Sep 2019","13 Sep 2019"], shifts: ["Single Shift"] }
+    },
+    2017: {
+      tier1: { dates: ["5 Aug 2017","6 Aug 2017","8 Aug 2017","9 Aug 2017","10 Aug 2017","11 Aug 2017","12 Aug 2017","16 Aug 2017","17 Aug 2017","18 Aug 2017","19 Aug 2017","20 Aug 2017","21 Aug 2017","22 Aug 2017","23 Aug 2017"], shifts: ["Shift 1 (10:00 AM)","Shift 2 (1:15 PM)","Shift 3 (4:15 PM)"] },
+      tier2: { dates: ["17 Feb 2018","18 Feb 2018","19 Feb 2018","20 Feb 2018","21 Feb 2018","22 Feb 2018"], shifts: ["Single Shift"] }
+    },
+    2016: {
+      tier1: { dates: ["27 Aug 2016","28 Aug 2016","29 Aug 2016","30 Aug 2016","31 Aug 2016","1 Sep 2016","2 Sep 2016","3 Sep 2016","4 Sep 2016","5 Sep 2016","6 Sep 2016","7 Sep 2016","8 Sep 2016","9 Sep 2016","10 Sep 2016","11 Sep 2016"], shifts: ["Shift 1 (10:00 AM)","Shift 2 (1:15 PM)","Shift 3 (4:15 PM)"] },
+      tier2: { dates: ["30 Nov 2016","1 Dec 2016","2 Dec 2016"], shifts: ["Single Shift"] }
+    },
+    2015: {
+      tier1: { dates: ["9 Aug 2015","16 Aug 2015"], shifts: ["Morning Shift","Evening Shift"] },
+      tier2: { dates: ["25 Oct 2015"], shifts: ["Single Shift"] }
+    }
+  };
+
+  function showView(view) {
+    [viewChoice, viewYear, viewTier, viewDate, viewShift, viewInstructions].forEach(v => v.classList.remove('active'));
+    view.classList.add('active');
+    if (view === viewInstructions) {
+      document.body.classList.add('no-scroll');
+      document.documentElement.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+      document.documentElement.classList.remove('no-scroll');
+      view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Build year grid: 2025 down to 2015
+  for (let year = 2025; year >= 2015; year--) {
+    const chip = document.createElement('button');
+    chip.className = 'year-chip';
+    chip.innerHTML = `<strong>${year}</strong><span>SSC CGL</span>`;
+    chip.addEventListener('click', () => {
+      isRandomFlow = false;
+      selectedYear = year;
+      tierYearLabel.textContent = year;
+      tierStatus.textContent = '';
+      showView(viewTier);
+    });
+    yearGrid.appendChild(chip);
+  }
+
+  document.getElementById('randomChoiceButton').addEventListener('click', () => {
+    isRandomFlow = true;
+    choiceStatus.textContent = '';
+    tierStatus.textContent = '';
+    tierYearLabel.textContent = 'Random Mock';
+    showView(viewTier);
+  });
+  document.getElementById('selectYearButton').addEventListener('click', () => {
+    isRandomFlow = false;
+    choiceStatus.textContent = '';
+    showView(viewYear);
+  });
+  document.getElementById('backToChoiceButton').addEventListener('click', () => showView(viewChoice));
+  document.getElementById('backToYearButton').addEventListener('click', () => showView(viewYear));
+  document.getElementById('backToTierFromDateButton').addEventListener('click', () => showView(viewTier));
+  document.getElementById('backToDateFromShiftButton').addEventListener('click', () => showView(viewDate));
+
+  document.querySelectorAll('.tier-card').forEach(card => {
+    card.addEventListener('click', () => {
+      selectedTier = card.dataset.tier;
+      tierStatus.textContent = '';
+      if (isRandomFlow) {
+        pickRandomAndOpenInstructions();
+      } else {
+        openDateView();
+      }
+    });
+  });
+
+  function pickRandomAndOpenInstructions() {
+    const key = selectedTier === 'Tier 2' ? 'tier2' : 'tier1';
+    const years = Object.keys(examSchedule).filter(y => examSchedule[y][key]);
+    if (!years.length) {
+      tierStatus.textContent = 'No exam date data available for this tier yet.';
+      return;
+    }
+    const year = years[Math.floor(Math.random() * years.length)];
+    const info = examSchedule[year][key];
+    const date = info.dates[Math.floor(Math.random() * info.dates.length)];
+    const shift = info.shifts[Math.floor(Math.random() * info.shifts.length)];
+    selectedYear = year;
+    selectedDate = date;
+    selectedShift = shift;
+    instrReturnView = viewTier;
+    openInstructions();
+  }
+
+  function openDateView() {
+    const key = selectedTier === 'Tier 2' ? 'tier2' : 'tier1';
+    const info = (examSchedule[selectedYear] || {})[key];
+    dateYearLabel.textContent = selectedYear;
+    dateTierLabel.textContent = selectedTier;
+    dateGrid.innerHTML = '';
+    dateStatus.textContent = '';
+    if (!info) {
+      dateStatus.textContent = 'Exam date data for this year/tier is not available yet.';
+      showView(viewDate);
+      return;
+    }
+    info.dates.forEach(date => {
+      const chip = document.createElement('button');
+      chip.className = 'year-chip';
+      chip.innerHTML = `<strong>${date}</strong><span>Select date</span>`;
+      chip.addEventListener('click', () => {
+        selectedDate = date;
+        if (info.shifts.length === 1) {
+          selectedShift = info.shifts[0];
+          instrReturnView = viewDate;
+          openInstructions();
+        } else {
+          openShiftView(info.shifts);
+        }
+      });
+      dateGrid.appendChild(chip);
+    });
+    showView(viewDate);
+  }
+
+  function openShiftView(shifts) {
+    shiftYearLabel.textContent = selectedYear;
+    shiftTierLabel.textContent = selectedTier;
+    shiftDateLabel.textContent = selectedDate;
+    shiftGrid.innerHTML = '';
+    shiftStatus.textContent = '';
+    shifts.forEach(shift => {
+      const chip = document.createElement('button');
+      chip.className = 'year-chip';
+      chip.innerHTML = `<strong>${shift}</strong><span>Select shift</span>`;
+      chip.addEventListener('click', () => {
+        selectedShift = shift;
+        instrReturnView = viewShift;
+        openInstructions();
+      });
+      shiftGrid.appendChild(chip);
+    });
+    showView(viewShift);
+  }
+
+  // INSTRUCTIONS ("I am ready to begin" full-page view)
+  const instrTopTitle = document.getElementById('instrTopTitle');
+  const instrTitle = document.getElementById('instrTitle');
+  const instrAvatar = document.getElementById('instrAvatar');
+  const instrName = document.getElementById('instrName');
+  const instrLang = document.getElementById('instrLang');
+  const instrDeclare = document.getElementById('instrDeclare');
+  const instrReadyButton = document.getElementById('instrReadyButton');
+  const instrPreviousButton = document.getElementById('instrPreviousButton');
+  const instrBackButton = document.getElementById('instrBackButton');
+  const instrStatus = document.getElementById('instrStatus');
+  const defaultAvatarSVG = '<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg>';
+
+  function formatHeldOnDate(dateStr) {
+    const parts = dateStr.split(' ');
+    if (parts.length !== 3) return dateStr;
+    let [day, mon, year] = parts;
+    if (mon === 'Sep') mon = 'Sept';
+    return `${day} ${mon}, ${year}`;
+  }
+
+  function openInstructions() {
+    let label = `SSC CGL ${selectedYear || 2014}`;
+    if (selectedDate) {
+      label += ` (Held On: ${formatHeldOnDate(selectedDate)}`;
+      if (selectedShift && selectedShift !== 'Single Shift') label += ` ${selectedShift}`;
+      label += ')';
+    } else {
+      label += ` — ${selectedTier}`;
+    }
+    instrTopTitle.textContent = label;
+    instrTitle.textContent = label;
+    if (currentUser.avatarUrl) {
+      instrAvatar.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = currentUser.avatarUrl;
+      img.alt = `${currentUser.username}'s profile photo`;
+      instrAvatar.appendChild(img);
+    } else {
+      instrAvatar.innerHTML = defaultAvatarSVG;
+    }
+    instrName.textContent = currentUser.username.toUpperCase();
+    instrLang.value = '';
+    instrDeclare.checked = false;
+    instrReadyButton.disabled = true;
+    instrStatus.textContent = '';
+    showView(viewInstructions);
+  }
+
+  instrDeclare.addEventListener('change', () => { instrReadyButton.disabled = !instrDeclare.checked; });
+  instrPreviousButton.addEventListener('click', () => showView(instrReturnView || viewTier));
+  instrBackButton.addEventListener('click', () => showView(instrReturnView || viewTier));
+  instrReadyButton.addEventListener('click', () => {
+    if (instrReadyButton.disabled) return;
+    if (!instrLang.value) {
+      instrStatus.textContent = 'Please select your default language before you begin.';
+      instrLang.focus();
+      return;
+    }
+    // The actual mock test engine will be added later; this is where it launches from.
+    instrStatus.textContent = 'Loading your test — this is coming very soon!';
+  });
+
+  loadUserAndGuardPage();
+</script>
 </body>
 </html>
