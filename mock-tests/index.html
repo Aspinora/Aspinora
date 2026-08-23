@@ -2,7 +2,102 @@
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF">
+  const fullscreenButton =
+    document.getElementById('instrFullscreenButton');
+
+  const orientationWarning =
+    document.getElementById('instrOrientationWarning');
+
+  const rotateButton =
+    document.getElementById('instrRotateButton');
+
+  function isPortraitMobile() {
+    return window.matchMedia(
+      '(max-width: 700px) and (orientation: portrait)'
+    ).matches;
+  }
+
+  function updateOrientationWarning() {
+    if (orientationWarning) {
+      orientationWarning.classList.toggle(
+        'visible',
+        isPortraitMobile()
+      );
+    }
+  }
+
+  function updateFullscreenButton() {
+    const active = Boolean(document.fullscreenElement);
+
+    if (fullscreenButton) {
+      fullscreenButton.textContent = active
+        ? '⛶ Exit full screen'
+        : '⛶ Full screen';
+
+      fullscreenButton.setAttribute(
+        'aria-pressed',
+        String(active)
+      );
+    }
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (!document.fullscreenElement) {
+        await document
+          .getElementById('view-instructions')
+          .requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      if (instrStatus) {
+        instrStatus.textContent =
+          'Full-screen mode is not available in this browser.';
+      }
+    }
+
+    updateFullscreenButton();
+  }
+
+  if (fullscreenButton) {
+    fullscreenButton.addEventListener(
+      'click',
+      toggleFullscreen
+    );
+  }
+
+  if (rotateButton) {
+    rotateButton.addEventListener('click', async () => {
+      try {
+        if (screen.orientation?.lock) {
+          await screen.orientation.lock('landscape');
+        }
+      } catch (error) {
+        orientationWarning.querySelector('span').textContent =
+          'Please rotate your phone manually to landscape mode before beginning.';
+      }
+
+      updateOrientationWarning();
+    });
+  }
+
+  window.addEventListener('resize', updateOrientationWarning);
+  window.addEventListener(
+    'orientationchange',
+    () => setTimeout(updateOrientationWarning, 150)
+  );
+
+  document.addEventListener(
+    'fullscreenchange',
+    updateFullscreenButton
+  );
+
+  updateOrientationWarning();
+  updateFullscreenButton();
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -175,6 +270,147 @@
   @media (max-width:460px){
     .year-grid{grid-template-columns:repeat(2, 1fr);}
   }
+
+.instr-fp-toolbar {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instr-fp-fullscreen {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instr-fp-fullscreen:hover {
+  background: #f3f4f6;
+}
+
+.instr-orientation-warning {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: #fff7ed;
+  border-bottom: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.instr-orientation-warning.visible {
+  display: flex;
+}
+
+.instr-orientation-warning button {
+  border: 0;
+  border-radius: 6px;
+  background: #ea580c;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instr-fp-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(245px, 31vw);
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.instr-fp-main {
+  min-width: 0;
+  overflow: auto;
+  padding: 32px 42px 32px 40px;
+}
+
+.instr-fp-side {
+  border-left: 2px solid #d1d5db;
+  background: #f5f7f8;
+  padding: 92px 20px 0;
+}
+
+.instr-fp-actions {
+  min-height: 48px;
+  position: relative;
+}
+
+.instr-fp-btn.primary {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 700px) {
+  .instr-fp-top {
+    padding: 10px 14px;
+  }
+
+  .instr-fp-fullscreen {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .instr-fp-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0 14px 12px;
+  }
+
+  .instr-fp-main {
+    padding: 0;
+    overflow: auto;
+  }
+
+  .instr-fp-side {
+    order: -1;
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    border-left: 0;
+    border-bottom: 2px solid #d1d5db;
+    padding: 12px 0;
+    margin-bottom: 16px;
+  }
+
+  .instr-fp-footer {
+    padding: 12px 14px 14px;
+  }
+
+  .instr-fp-btn.primary {
+    position: static;
+    transform: none;
+  }
+
+  .instr-fp-declare {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .instr-fp-body,
+  .instr-fp-footer {
+    display: none;
+  }
+
+  .instr-fullpage {
+    background: #f8fafc;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -301,6 +537,24 @@
   <div class="instr-fp-top">
     <button class="instr-fp-back" id="instrBackButton" aria-label="Back">←</button>
     <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
+    <div class="instr-fp-toolbar">
+      <button
+        class="instr-fp-fullscreen"
+        id="instrFullscreenButton"
+        type="button"
+        aria-pressed="false">
+        ⛶ Full screen
+      </button>
+    </div>
+  </div>
+  <div
+    class="instr-orientation-warning"
+    id="instrOrientationWarning"
+    role="status">
+    <span>Rotate your phone to landscape mode before the exam begins.</span>
+    <button id="instrRotateButton" type="button">
+      Try landscape
+    </button>
   </div>
   <div class="instr-fp-body">
     <div class="instr-fp-main">
@@ -697,6 +951,12 @@
   instrPreviousButton.addEventListener('click', () => showView(instrReturnView || viewTier));
   instrBackButton.addEventListener('click', () => showView(instrReturnView || viewTier));
   instrReadyButton.addEventListener('click', () => {
+    if (isPortraitMobile()) {
+      instrStatus.textContent =
+        'Please rotate your phone to landscape mode before beginning the exam.';
+      updateOrientationWarning();
+      return;
+    }
     if (instrReadyButton.disabled) return;
     if (!instrLang.value) {
       instrStatus.textContent = 'Please select your default language before you begin.';
