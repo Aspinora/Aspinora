@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -411,6 +411,61 @@ DOCTYPE html>
   @media (max-width:460px){
     .year-grid{grid-template-columns:repeat(2, 1fr);}
   }
+
+  /* Cross-platform SVG UI icons: avoids inconsistent Unicode glyphs on iPad/iPhone. */
+  .ui-icon {
+    width: 1.15em;
+    height: 1.15em;
+    display: inline-block;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -0.18em;
+  }
+
+  .instr-fp-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .instr-fp-back .ui-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .instr-fp-fullscreen {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .instr-fp-fullscreen .ui-icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .ui-icon-back-small {
+    width: 17px;
+    height: 17px;
+    margin-right: 5px;
+  }
+
+  .tier-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ui-icon-arrow {
+    width: 19px;
+    height: 19px;
+  }
+
 </style>
 </head>
 <body>
@@ -477,14 +532,14 @@ DOCTYPE html>
   </div>
 
   <div class="flow-view" id="view-year">
-    <button class="back" id="backToChoiceButton">â Back</button>
+    <button class="back" id="backToChoiceButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
     <h2>Choose a year</h2>
     <p class="lead">Select the SSC CGL exam year you'd like to practice.</p>
     <div class="year-grid" id="yearGrid"></div>
   </div>
 
   <div class="flow-view" id="view-tier">
-    <button class="back" id="backToYearButton">â Back</button>
+    <button class="back" id="backToYearButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
     <h2>SSC CGL <span id="tierYearLabel">2025</span> â choose a tier</h2>
     <p class="lead">Tier 1 is the preliminary objective paper. Tier 2 is the mains stage.</p>
     <div class="tier-grid">
@@ -492,20 +547,28 @@ DOCTYPE html>
         <span class="tier-tag">Preliminary</span>
         <h3>Tier 1</h3>
         <p>General Intelligence &amp; Reasoning, Quantitative Aptitude, English, and General Awareness.</p>
-        <span class="tier-arrow">â</span>
+        <span class="tier-arrow" aria-hidden="true">
+          <svg class="ui-icon ui-icon-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h13M13 6l6 6-6 6"></path>
+          </svg>
+        </span>
       </button>
       <button class="tier-card" data-tier="Tier 2">
         <span class="tier-tag">Mains</span>
         <h3>Tier 2</h3>
         <p>Advanced Quant &amp; Reasoning, English Comprehension, and Computer Knowledge.</p>
-        <span class="tier-arrow">â</span>
+        <span class="tier-arrow" aria-hidden="true">
+          <svg class="ui-icon ui-icon-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h13M13 6l6 6-6 6"></path>
+          </svg>
+        </span>
       </button>
     </div>
     <div class="status" id="tierStatus" aria-live="polite"></div>
   </div>
 
   <div class="flow-view" id="view-date">
-    <button class="back" id="backToTierFromDateButton">â Back</button>
+    <button class="back" id="backToTierFromDateButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
     <h2>SSC CGL <span id="dateYearLabel">2025</span> <span id="dateTierLabel">Tier 1</span> â choose the exact date</h2>
     <p class="lead">Pick the exam date you'd like to practice, based on the official SSC CGL exam schedule.</p>
     <div class="year-grid" id="dateGrid"></div>
@@ -513,7 +576,7 @@ DOCTYPE html>
   </div>
 
   <div class="flow-view" id="view-shift">
-    <button class="back" id="backToDateFromShiftButton">â Back</button>
+    <button class="back" id="backToDateFromShiftButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
     <h2>SSC CGL <span id="shiftYearLabel">2025</span> <span id="shiftTierLabel">Tier 1</span> â <span id="shiftDateLabel">12 Sep 2025</span></h2>
     <p class="lead">This date had multiple shifts. Choose the exact shift you'd like to practice.</p>
     <div class="year-grid" id="shiftGrid"></div>
@@ -538,7 +601,7 @@ DOCTYPE html>
     <button class="instr-fp-back" id="instrBackButton" aria-label="Back">â¹</button>
     <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
     <div class="instr-fp-toolbar">
-      <button class="instr-fp-fullscreen" id="instrFullscreenButton" type="button" aria-pressed="false">â¶ Full screen</button>
+      <button class="instr-fp-fullscreen" id="instrFullscreenButton" type="button" aria-pressed="false">Full screen</button>
     </div>
   </div>
 
@@ -976,7 +1039,7 @@ DOCTYPE html>
   function updateFullscreenButton() {
     const active = Boolean(document.fullscreenElement) || instructionScreen.classList.contains('css-fullscreen');
     if (fullscreenButton) {
-      fullscreenButton.textContent = active ? 'â¶ Exit full screen' : 'â¶ Full screen';
+      fullscreenButton.textContent = active ? 'Exit full screen' : 'Full screen';
       fullscreenButton.setAttribute('aria-pressed', String(active));
     }
   }
