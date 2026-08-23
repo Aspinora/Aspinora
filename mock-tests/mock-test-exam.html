@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Aspinora Mock Test</title>
+<style>
+:root{
+  --blue:#0756c9;--deep:#073c91;--green:#078b2d;--ink:#172033;--line:#d9e0ea;
+  --yellow:#fff200;--orange:#ff7800;--red:#d11212;--muted:#6d7585;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter,ui-sans-serif,Arial,Helvetica,sans-serif;background:#e7eaf0;color:var(--ink)}
+button{font:inherit;cursor:pointer;border:0;background:none}
+.app{height:100dvh;display:flex;flex-direction:column;background:#fff}
+
+/* ===== Top bar ===== */
+.topbar{display:flex;align-items:center;gap:16px;padding:10px 20px;border-bottom:1px solid #d3d8df;flex:0 0 auto}
+.exit-btn{width:34px;height:34px;border-radius:50%;background:#eef1f5;color:#505b70;display:grid;place-items:center;flex:0 0 auto;font-size:18px;line-height:1}
+.exit-btn:hover{background:#e2e6ec;color:#1f2937}
+.brand{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.brand-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:16px}
+.brand-name{color:#172033;font-size:19px;font-weight:800;letter-spacing:-.4px}
+.brand-name span{color:var(--orange)}
+.exam-title{flex:1;min-width:0;text-align:center;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-box{flex:0 0 auto;text-align:center}
+.timer-label{font-size:11px;font-weight:700;color:#505b70;line-height:1.25}
+.timer{color:var(--red);background:var(--yellow);padding:3px 9px;font-size:18px;font-weight:800;display:inline-block;margin-top:2px;border-radius:3px}
+.user-pics{display:flex;gap:10px;flex:0 0 auto}
+.user-card{text-align:center;font-size:9px;color:#666;font-weight:600}
+.avatar-ph{width:38px;height:38px;border-radius:50%;background:#dfe3e9;display:grid;place-items:center;margin:0 auto 3px;color:#9aa3b2}
+.avatar-ph svg{width:22px;height:22px}
+.fs-btn{width:34px;height:34px;border-radius:8px;border:1px solid #d3d8df;color:#505b70;display:grid;place-items:center;flex:0 0 auto}
+.fs-btn:hover{background:#f8fafc}
+.fs-btn svg{width:18px;height:18px}
+
+/* ===== Link bar ===== */
+.linkbar{display:flex;align-items:center;gap:22px;padding:9px 20px;border-bottom:1px solid #e4e7ec;flex:0 0 auto;flex-wrap:wrap}
+.linkitem{color:var(--blue);font-size:12.5px;font-weight:800;letter-spacing:.3px;text-decoration:underline;text-underline-offset:3px}
+.linkitem:hover{color:var(--deep)}
+.answered-total-top{margin-left:auto;font-size:13.5px;font-weight:700;white-space:nowrap}
+.count{background:var(--yellow);padding:3px 8px;margin-left:5px;border-radius:2px;font-weight:800}
+
+/* ===== Control bar: part tabs + action buttons ===== */
+.controlbar{display:flex;align-items:center;gap:9px;padding:10px 18px;border-bottom:1px solid var(--line);overflow-x:auto;flex:0 0 auto}
+.parts{display:flex;gap:7px;flex:0 0 auto}
+.part{padding:10px 18px;border-radius:5px;background:#e9edf3;color:#8b95a2;font-weight:800;white-space:nowrap;font-size:13px}
+.part.active{background:var(--green);color:#fff}
+.part.unlocked{background:#d7e6ff;color:var(--deep)}
+.part.locked{cursor:not-allowed}
+.part.submitted{background:#c9cfd9;color:#5b6474}
+.controls-right{display:flex;gap:8px;margin-left:auto;flex:0 0 auto}
+.action{background:var(--blue);color:#fff;border-radius:5px;padding:10px 15px;font-weight:700;font-size:13px;white-space:nowrap}
+.action:disabled{opacity:.5;cursor:not-allowed}
+.action.secondary{background:#64748b}
+.action.mark{background:#8a4fd6}
+.action.submit{background:var(--orange)}
+
+/* ===== Main content ===== */
+.main{min-height:0;flex:1;display:flex;flex-direction:column}
+.content{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px}
+.question-scroll{min-height:0;flex:1;overflow:auto;padding-right:8px}
+.question-number{font-size:19px;font-weight:800;margin-bottom:16px}
+.qtext{font-size:18px;line-height:1.6;margin-bottom:20px;white-space:pre-line}
+.option{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:#fff;border:1px solid #e2e6ec;border-radius:5px;padding:15px 16px;margin:10px 0;font-size:16.5px;line-height:1.4}
+.option:hover{background:#f5f9ff;border-color:#9ab8e8}
+.option.selected{background:#e8f2ff;border:2px solid var(--blue)}
+.radio{width:20px;height:20px;border:2px solid #929ba8;border-radius:50%;flex:none;margin-top:1px;position:relative}
+.selected .radio{border-color:var(--blue)}
+.selected .radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--blue)}
+
+/* ===== Side panel ===== */
+.side{min-height:0;overflow:auto;border-left:1px solid #d5dbe4;padding:18px 18px 24px;background:#fafbfd}
+.side-title{font-size:15.5px;font-weight:800;margin:0 0 16px;color:var(--deep);display:flex;align-items:center;gap:7px}
+.side-title::before{content:"";width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--deep)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:10.5px;color:#556;margin-bottom:14px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:11px 10px}
+.num{height:36px;background:#1726d8;color:#fff;display:grid;place-items:center;font-weight:700;border-radius:4px;font-size:13px}
+.num.answered{background:var(--green)}
+.num.review{background:#8a4fd6}
+.num.answered.review{background:linear-gradient(135deg,var(--green) 50%,#8a4fd6 50%)}
+.num.current{outline:3px solid var(--orange);outline-offset:2px}
+.analysis{margin-top:26px;border:1px solid #c7cdd6;border-radius:6px;overflow:hidden}
+.analysis h3{margin:0;padding:9px;text-align:center;background:#dde2ea;font-size:13.5px}
+.analysis p{display:flex;justify-content:space-between;margin:0;padding:8px 12px;border-top:1px solid #e3e7ee;font-size:13px}
+.analysis b{background:var(--yellow);padding:2px 8px;border-radius:2px}
+
+/* ===== Modals ===== */
+.modal{position:fixed;inset:0;background:#0007;display:none;place-items:center;padding:20px;z-index:50}
+.modal.show{display:grid}
+.dialog{max-width:520px;width:100%;background:#fff;border-radius:16px;padding:26px;max-height:85vh;overflow:auto}
+.dialog h2{margin:0 0 14px;font-size:20px}
+.dialog p,.dialog li{font-size:14.5px;line-height:1.65;color:#374151}
+.dialog ul{padding-left:20px;margin:0 0 14px}
+.dialog table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.dialog td,.dialog th{border:1px solid var(--line);padding:8px 10px;font-size:13.5px;text-align:left}
+.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.dialog-actions .action{padding:10px 18px}
+
+/* ===== Final submitted screen ===== */
+.finished{position:fixed;inset:0;background:linear-gradient(135deg,#061b46,#087ca0);display:none;place-items:center;padding:24px;z-index:60}
+.finished.show{display:grid}
+.finished-card{max-width:560px;width:100%;background:#fff;border-radius:20px;padding:36px;text-align:center}
+.finished-card h1{color:var(--deep);margin:0 0 8px}
+.finished-card p{color:#536070;line-height:1.6}
+.finished-table{width:100%;border-collapse:collapse;margin:18px 0;text-align:left}
+.finished-table th,.finished-table td{border:1px solid var(--line);padding:8px 10px;font-size:13.5px}
+.finished-table th{background:#f1f4f9}
+.finished-btn{background:var(--green);color:#fff;padding:14px 26px;border-radius:8px;font-size:16px;font-weight:700;margin-top:6px}
+
+/* ===== Responsive ===== */
+@media(max-width:900px){
+  .content{grid-template-columns:minmax(0,1fr) 250px}
+  .numbers{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:700px){
+  .topbar{padding:8px 12px;gap:10px}
+  .brand-name{font-size:15px}
+  .exam-title{display:none}
+  .user-pics{display:none}
+  .linkbar{padding:7px 12px;gap:14px}
+  .linkitem{font-size:11px}
+  .answered-total-top{font-size:12px}
+  .controlbar{padding:8px 10px}
+  .action{padding:8px 11px;font-size:12px}
+  .part{padding:8px 12px;font-size:12px}
+  .content{grid-template-columns:1fr}
+  .side{border-left:0;border-top:1px solid var(--line);max-height:300px}
+  .question-area{padding:14px 16px}
+  .qtext{font-size:16px}
+  .option{font-size:15px;padding:12px 13px}
+  .numbers{grid-template-columns:repeat(5,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <button class="exit-btn" id="exitBtn" aria-label="Exit test" title="Exit test">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span></div></div>
+    <div class="exam-title" id="examTitle">SSC CGL Mock Test</div>
+    <div class="timer-box">
+      <div class="timer-label">Section<br>Time</div>
+      <div class="timer" id="timer">15:00</div>
+    </div>
+    <div class="user-pics">
+      <div class="user-card"><div class="avatar-ph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg></div>Registration Photo</div>
+      <div class="user-card"><div class="avatar-ph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.3 0-9.8 1.6-9.8 4.9v2.5h19.6v-2.5c0-3.3-6.5-4.9-9.8-4.9z"/></svg></div>Captured Photo</div>
+    </div>
+    <button class="fs-btn" id="fullscreenBtn" title="Full screen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    </button>
+  </header>
+
+  <nav class="linkbar">
+    <button class="linkitem" id="symbolsBtn">SYMBOLS</button>
+    <button class="linkitem" id="instructionsBtn">INSTRUCTIONS</button>
+    <button class="linkitem" id="summaryBtn">OVERALL TEST SUMMARY</button>
+    <div class="answered-total-top">Total Questions Answered: <span class="count" id="answeredTotalTop">0</span></div>
+  </nav>
+
+  <nav class="controlbar">
+    <div class="parts" id="parts"></div>
+    <div class="controls-right">
+      <button class="action secondary" id="prevBtn">Previous</button>
+      <button class="action mark" id="markBtn">Mark for Review</button>
+      <button class="action" id="saveNextBtn">Save &amp; Next</button>
+      <button class="action submit" id="submitSectionBtn">Submit Section</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+      <section class="question-area">
+        <div class="question-scroll">
+          <div class="question-number" id="questionNumber"></div>
+          <div class="qtext" id="qtext"></div>
+          <div id="options"></div>
+        </div>
+      </section>
+      <aside class="side">
+        <div class="side-title" id="sideTitle"></div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i>Answered</span>
+          <span><i style="background:#1726d8"></i>Not answered</span>
+          <span><i style="background:#8a4fd6"></i>Marked for review</span>
+          <span><i style="background:#fff;outline:2px solid var(--orange)"></i>Current</span>
+        </div>
+        <div class="numbers" id="numbers"></div>
+        <div class="analysis">
+          <h3 id="analysisPartTitle">PART-A Analysis</h3>
+          <p>Answered <b id="aCount">0</b></p>
+          <p>Not Answered <b id="naCount">0</b></p>
+          <p>Marked for Review <b id="rCount">0</b></p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- SYMBOLS modal -->
+<div class="modal" id="symbolsModal">
+  <div class="dialog">
+    <h2>Symbols</h2>
+    <table>
+      <tr><td style="width:60px"><div class="num" style="background:#1726d8">1</div></td><td>You have not answered this question yet.</td></tr>
+      <tr><td><div class="num answered">2</div></td><td>You have answered this question.</td></tr>
+      <tr><td><div class="num review">3</div></td><td>You have marked this question for review, but have not answered it.</td></tr>
+      <tr><td><div class="num answered review">4</div></td><td>You have answered this question and marked it for review.</td></tr>
+      <tr><td><div class="num current" style="background:#1726d8">5</div></td><td>This is the question you are currently viewing.</td></tr>
+    </table>
+    <div class="dialog-actions"><button class="action secondary" data-close="symbolsModal">Close</button></div>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS modal -->
+<div class="modal" id="instructionsModal">
+  <div class="dialog">
+    <h2>Instructions</h2>
+    <ul>
+      <li>The test contains 4 sections having 100 questions.</li>
+      <li>Each question has 4 options out of which only one is correct.</li>
+      <li>You have to finish the test in 60 minutes.</li>
+      <li>You will be given 15 minutes to complete each section.</li>
+      <li>You will be awarded 2 marks for each correct answer and 0.5 will be deducted for each wrong answer.</li>
+      <li>There is no negative marking for the questions that you have not attempted.</li>
+      <li>Once you submit a section, you cannot go back and change your answers in that section.</li>
+    </ul>
+    <div class="dialog-actions"><button class="action secondary" data-close="instructionsModal">Close</button></div>
+  </div>
+</div>
+
+<!-- OVERALL TEST SUMMARY modal -->
+<div class="modal" id="summaryModal">
+  <div class="dialog">
+    <h2>Overall Test Summary</h2>
+    <table id="summaryTable"></table>
+    <div class="dialog-actions"><button class="action secondary" data-close="summaryModal">Close</button></div>
+  </div>
+</div>
+
+<!-- SUBMIT SECTION confirm modal -->
+<div class="modal" id="submitConfirmModal">
+  <div class="dialog">
+    <h2 id="submitConfirmTitle">Submit this section?</h2>
+    <p id="submitConfirmText">Once you submit this section, you will not be able to change your answers in it. Are you sure you want to continue?</p>
+    <div class="dialog-actions">
+      <button class="action secondary" id="submitCancelBtn">Cancel</button>
+      <button class="action submit" id="submitConfirmBtn">Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINISHED screen -->
+<div class="finished" id="finishedScreen">
+  <div class="finished-card">
+    <h1>Test Submitted</h1>
+    <p>Your responses have been recorded. Here's a quick summary of how you did.</p>
+    <table class="finished-table" id="finishedTable"></table>
+    <button class="finished-btn" id="finishedBackBtn">Back to Mock Tests</button>
+  </div>
+</div>
+
+<script>
+/* ================== QUESTION DATA ================== */
+const sections = [
+{name:'General Intelligence and Reasoning', questions:[
+["Choose the term that completes the analogy: Watt is to Power as Pascal is to ___",["Temperature","Energy","Pressure","Force"],2],
+["Complete the analogy: Mekong River originates in Tibet, similarly Amazon River originates in ___",["Brazil","Peru","Colombia","Ecuador"],1],
+["Find the missing term in the series: CGK, GKO, KOS, OSW, ___",["QSW","RTV","SWA","TVX"],2],
+["What comes next in this pattern: MIN, NJM, OKL, PLK, ___",["PNI","ROK","QMJ","SNL"],2],
+["Identify the next letter group: BRF, EUH, HXJ, KAL, ___",["KDN","LCM","MEO","NDN"],3],
+["Complete the sequence: WZWT, WVOH, WRGV, WNYJ, ___",["WJQX","WIRY","WKQZ","WJPW"],0],
+["Find the next term: MCFI, NEKP, OGPW, PIUD, ___",["PKZJ","QLAK","QKZK","RLYL"],2],
+["What number follows: 3, 12, 7, 16, 11, 20, 15, ___",["22","24","19","28"],1],
+["Arrange all letters of STUDENT alphabetically. How many letters lie between the 2nd from left and 4th from right in the English alphabet?",["12","13","14","11"],1],
+["Four addresses are given below:\n1. 12, Lake View Apartments, Sector 9, Pune, 411001\n2. B-204, Rosewood Enclave, MG Road, Bengaluru, 560001\n3. 12, Lakeview Apartments, Sector 9, Pune, 411001\n4. B-204, Rosewood Enclave, MG Road, Bengaluru, 560001\n\nWhich two addresses above are exactly the same?",["1 and 2","1 and 3","2 and 4","3 and 4"],2],
+["Which option below matches exactly: \"Meenal Gupta, 102 Silver Oaks, Sector 12, Noida, 201301\"?",["Meenal Gupta, 102 Silver Oaks, Sector 12, Noida, 201301","Meenal Gupta, 102 Silver Oak, Sector 12, Noida, 201301","Meenal Gupta, 102 Silver Oaks, Sector 21, Noida, 201301","Meenal Gupta, 120 Silver Oaks, Sector 12, Noida, 201301"],0],
+["If AG relates to IO in the same way, CM relates to ___",["JW","KU","LV","MT"],1],
+["Person A faces North. Person B sits second to A's right. Who sits immediately left of B?",["A","C","D","Cannot be determined"],3],
+["TIME becomes VJOG following a certain pattern. WORD becomes ___",["YPTF","XQSE","ZRUG","WQSD"],0],
+["GNIDAER is READING written backwards. NOITULOS backwards is ___",["SOLUTION","SOLUTON","SOLOTION","SOLUTIION"],0],
+["Find the odd one out.",["Triangle","Square","Pentagon","Circle"],3],
+["In a certain code language, 'SUN' is written as 'UWP'. How is 'MOON' written in that code?",["OQQP","NPPO","OPQP","PQQO"],0],
+["Pointing to a photograph, Rita said, 'He is the son of my grandfather's only son.' How is the man in the photo related to Rita?",["Father","Brother","Cousin","Uncle"],1],
+["If 'A + B' means 'A is father of B', 'A - B' means 'A is wife of B', and 'A × B' means 'A is brother of B', which expression shows 'P is uncle of Q'?",["P + R × Q","P × R + Q","P - R + Q","P × R - Q"],1],
+["Which number will replace the question mark? 5, 10, 20, 40, 80, ?",["120","150","160","180"],2],
+["In a certain code, EAST is written as TSAE. How will WEST be written in that code?",["TSEW","WTSE","ETSW","SEWT"],0],
+["Statement: All pens are pencils. All pencils are erasers.\nConclusion I: All pens are erasers.\nConclusion II: Some erasers are pens.\nWhich conclusions follow?",["Only I follows","Only II follows","Both I and II follow","Neither follows"],2],
+["A is the mother of B. B is the sister of C. C is the father of D. How is A related to D?",["Grandmother","Aunt","Mother","Sister"],0],
+["Find the next number in the series: 2, 6, 12, 20, 30, ?",["40","42","44","36"],1],
+["In a row of children, Neha is 7th from the left and Raj is 9th from the right. If they interchange positions, Neha becomes 11th from the left. Find the total number of children in the row.",["17","18","19","20"],2]
+]},
+{name:'Quantitative Aptitude', questions:[
+["What is 15% of 240?",["30","32","34","36"],3],
+["If a shirt costs ₹800 after a 20% discount on the marked price, what was the marked price?",["₹900","₹950","₹1000","₹1050"],2],
+["The average of 12, 15, 18, 21, and 24 is?",["16","17","18","19"],2],
+["A train covers 300 km in 5 hours. What is its speed in km/h?",["50","55","60","65"],2],
+["Simplify: 45 ÷ 9 × 3 − 5",["8","9","10","12"],2],
+["If the ratio of two numbers is 3:5 and their sum is 64, find the smaller number.",["20","22","24","26"],2],
+["A sum of ₹5000 amounts to ₹5750 in 3 years at simple interest. Find the rate of interest per annum.",["4%","5%","6%","7%"],1],
+["What is the compound interest on ₹2000 for 2 years at 10% per annum, compounded annually?",["₹380","₹400","₹420","₹440"],2],
+["Find the value of x: 3x − 7 = 20",["7","8","9","10"],2],
+["The perimeter of a square is 48 cm. Find its area.",["121 cm²","132 cm²","144 cm²","156 cm²"],2],
+["A can complete a work in 12 days and B in 18 days. Working together, how many days will they take?",["6.5 days","7 days","7.2 days","8 days"],2],
+["If 20 men can build a wall in 15 days, how many days will 25 men take to build the same wall?",["10","11","12","13"],2],
+["Find the LCM of 12 and 18.",["24","30","36","42"],2],
+["Find the HCF of 24 and 36.",["6","9","12","18"],2],
+["A number increased by 25% becomes 100. Find the original number.",["75","78","80","82"],2],
+["The cost price of an article is ₹400. It is sold at a profit of 15%. Find the selling price.",["₹440","₹450","₹460","₹470"],2],
+["What is 3/4 expressed as a percentage?",["65%","70%","75%","80%"],2],
+["Find the next number in the series: 2, 4, 8, 16, 32, ?",["48","56","60","64"],3],
+["A car travels 240 km using 20 litres of petrol. What is its mileage in km per litre?",["10","11","12","13"],2],
+["If x:y = 2:3 and y:z = 4:5, find x:y:z.",["6:9:15","8:12:15","4:6:9","2:3:5"],1],
+["The sum of three consecutive even numbers is 90. Find the largest number.",["28","30","32","34"],2],
+["A shopkeeper marks an item 40% above cost price and gives a discount of 10%. Find his profit percentage.",["24%","26%","28%","30%"],1],
+["Find the value of √225.",["13","14","15","16"],2],
+["A sum doubles itself in 8 years at simple interest. Find the rate of interest per annum.",["10%","12.5%","15%","20%"],1],
+["If the area of a circle is 154 cm² (use π = 22/7), find its radius.",["6 cm","7 cm","8 cm","9 cm"],1]
+]},
+{name:'English Comprehension', questions:[
+["Choose the synonym of 'Happy'.",["Joyful","Sad","Angry","Tired"],0],
+["Choose the antonym of 'Ancient'.",["Old","Modern","Historic","Ruined"],1],
+["Choose the correctly spelled word.",["Recieve","Receive","Receeve","Receve"],1],
+["Fill in the blank: She ___ to the market every day.",["go","goes","going","gone"],1],
+["One-word substitution: A person who studies birds.",["Ornithologist","Zoologist","Botanist","Entomologist"],0],
+["Choose the correct passive voice of: 'He wrote a letter.'",["A letter is written by him","A letter was written by him","A letter was wrote by him","A letter has write by him"],1],
+["Choose the antonym of 'Generous'.",["Kind","Stingy","Wealthy","Polite"],1],
+["Choose the synonym of 'Rapid'.",["Slow","Quick","Steady","Calm"],1],
+["Choose the idiom meaning 'to reveal a secret'.",["Spill the beans","Beat around the bush","Break the ice","Under the weather"],0],
+["Choose the correctly punctuated sentence.",["Wheres my book","Where's my book?","Wheres my book?","Where's, my book"],1],
+["Fill in the blank with the correct preposition: She is good ___ mathematics.",["at","in","on","with"],0],
+["Choose the plural of 'Child'.",["Childs","Children","Childes","Childrens"],1],
+["One-word substitution: One who cannot read or write.",["Illiterate","Illegal","Immoral","Impatient"],0],
+["Choose the correct comparative form: This box is ___ than that one.",["heavy","heavier","heaviest","more heavy"],1],
+["Choose the antonym of 'Victory'.",["Success","Triumph","Defeat","Win"],2],
+["Choose the synonym of 'Enormous'.",["Tiny","Huge","Average","Narrow"],1],
+["Choose the grammatically correct sentence.",["He don't know the answer","He doesn't knows the answer","He doesn't know the answer","He not knows the answer"],2],
+["Fill in the blank: Neither the manager nor the employees ___ present.",["was","is","were","be"],2],
+["Choose the correct article: He is ___ honest man.",["a","an","the","no article"],1],
+["Choose the idiom meaning 'very easy'.",["A piece of cake","A hard nut to crack","Once in a blue moon","Costs an arm and a leg"],0],
+["Choose the synonym of 'Brave'.",["Cowardly","Fearless","Timid","Anxious"],1],
+["Choose the correct indirect speech: He said, 'I am tired.'",["He said that he is tired","He said that he was tired","He said that I was tired","He says that he was tired"],1],
+["Choose the antonym of 'Transparent'.",["Clear","Opaque","Visible","Bright"],1],
+["One-word substitution: A place where books are kept.",["Library","Museum","Gallery","Archive"],0],
+["Choose the correctly spelled word.",["Definately","Definitely","Definitly","Difinitely"],1]
+]},
+{name:'General Awareness', questions:[
+["Who is known as the Father of the Indian Constitution?",["Mahatma Gandhi","B. R. Ambedkar","Jawaharlal Nehru","Sardar Patel"],1],
+["What is the capital of Australia?",["Sydney","Melbourne","Canberra","Perth"],2],
+["The chemical symbol for Gold is:",["Ag","Au","Gd","Go"],1],
+["Which is the largest planet in our solar system?",["Earth","Saturn","Jupiter","Neptune"],2],
+["The Sun rises in the:",["North","South","East","West"],2],
+["Who wrote the national anthem of India, 'Jana Gana Mana'?",["Bankim Chandra Chatterjee","Rabindranath Tagore","Sarojini Naidu","Muhammad Iqbal"],1],
+["The Great Wall is located in which country?",["India","China","Japan","Egypt"],1],
+["Which gas do plants absorb from the atmosphere for photosynthesis?",["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],2],
+["The currency of Japan is:",["Won","Yuan","Yen","Ringgit"],2],
+["Who was the first Prime Minister of India?",["Jawaharlal Nehru","Lal Bahadur Shastri","Indira Gandhi","Rajendra Prasad"],0],
+["The human heart has how many chambers?",["2","3","4","5"],2],
+["Mount Everest is located in:",["India","Nepal","China","Bhutan"],1],
+["The longest river in the world is:",["Amazon","Nile","Ganges","Yangtze"],1],
+["Which vitamin is produced when skin is exposed to sunlight?",["Vitamin A","Vitamin C","Vitamin D","Vitamin K"],2],
+["The Taj Mahal is located in which Indian city?",["Delhi","Agra","Jaipur","Lucknow"],1],
+["Which is the smallest continent by area?",["Europe","Australia","Antarctica","South America"],1],
+["The study of earthquakes is called:",["Seismology","Geology","Meteorology","Volcanology"],0],
+["India's national animal is the:",["Lion","Tiger","Elephant","Peacock"],1],
+["The freezing point of water in Celsius is:",["0°C","-1°C","32°C","100°C"],0],
+["Who painted the Mona Lisa?",["Vincent van Gogh","Pablo Picasso","Leonardo da Vinci","Michelangelo"],2],
+["The headquarters of the United Nations is located in:",["Geneva","Paris","New York","London"],2],
+["Which planet is known as the Red Planet?",["Venus","Mars","Jupiter","Mercury"],1],
+["The Indian Parliament consists of the Lok Sabha and the:",["Vidhan Sabha","Rajya Sabha","Panchayat","Municipal Council"],1],
+["The metal that is liquid at room temperature is:",["Iron","Mercury","Lead","Zinc"],1],
+["The number of continents in the world is:",["5","6","7","8"],2]
+]}
+];
+
+/* ================== STATE ================== */
+let currentPart = 0;
+let currentQ = 0;
+let unlockedPart = 0;
+const submittedParts = sections.map(()=>false);
+const answers = sections.map(s=>new Array(s.questions.length).fill(null));
+const review = sections.map(s=>new Array(s.questions.length).fill(false));
+
+const SECTION_SECONDS = 15*60;
+let secondsLeft = SECTION_SECONDS;
+let timerInterval = null;
+
+/* ================== EXAM TITLE FROM QUERY PARAMS ================== */
+(function setTitleFromParams(){
+  const params = new URLSearchParams(window.location.search);
+  const year = params.get('year');
+  const dateStr = params.get('date');
+  const shift = params.get('shift');
+  let label = 'SSC CGL Mock Test';
+  if (year) {
+    label = `SSC CGL ${year}`;
+    if (dateStr) {
+      let d = dateStr;
+      const parts = d.split(' ');
+      if (parts.length === 3) {
+        let [day, mon, yr] = parts;
+        if (mon === 'Sep') mon = 'Sept';
+        d = `${day} ${mon}, ${yr}`;
+      }
+      label += ` (Held On: ${d}`;
+      if (shift && shift !== 'Single Shift') label += ` ${shift}`;
+      label += ')';
+    }
+  }
+  document.getElementById('examTitle').textContent = label;
+  document.title = label + ' — Aspinora';
+})();
+
+/* ================== RENDER: PART TABS ================== */
+const partsEl = document.getElementById('parts');
+function renderParts(){
+  partsEl.innerHTML = '';
+  sections.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'part';
+    if (i === currentPart) btn.classList.add('active');
+    else if (submittedParts[i]) btn.classList.add('submitted');
+    else if (i <= unlockedPart) btn.classList.add('unlocked');
+    else btn.classList.add('locked');
+    btn.textContent = `PART-${String.fromCharCode(65+i)}`;
+    btn.disabled = i > unlockedPart;
+    btn.addEventListener('click', () => {
+      if (i > unlockedPart || i === currentPart) return;
+      currentPart = i;
+      currentQ = 0;
+      resetTimer();
+      renderParts();
+      loadQuestion();
+    });
+    partsEl.appendChild(btn);
+  });
+}
+
+/* ================== RENDER: QUESTION ================== */
+const questionNumberEl = document.getElementById('questionNumber');
+const qtextEl = document.getElementById('qtext');
+const optionsEl = document.getElementById('options');
+const sideTitleEl = document.getElementById('sideTitle');
+const numbersEl = document.getElementById('numbers');
+const analysisPartTitleEl = document.getElementById('analysisPartTitle');
+const aCountEl = document.getElementById('aCount');
+const naCountEl = document.getElementById('naCount');
+const rCountEl = document.getElementById('rCount');
+const answeredTotalTopEl = document.getElementById('answeredTotalTop');
+const prevBtn = document.getElementById('prevBtn');
+const markBtn = document.getElementById('markBtn');
+const saveNextBtn = document.getElementById('saveNextBtn');
+
+function loadQuestion(){
+  const section = sections[currentPart];
+  const [qtext, opts] = section.questions[currentQ];
+  questionNumberEl.textContent = `Question No. ${currentQ+1}`;
+  qtextEl.textContent = qtext;
+  optionsEl.innerHTML = '';
+  opts.forEach((opt, idx) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    if (answers[currentPart][currentQ] === idx) b.classList.add('selected');
+    b.innerHTML = `<span class="radio"></span><span>${opt}</span>`;
+    b.addEventListener('click', () => {
+      answers[currentPart][currentQ] = idx;
+      loadQuestion();
+    });
+    optionsEl.appendChild(b);
+  });
+  prevBtn.disabled = currentQ === 0;
+  renderNumbers();
+  renderAnalysis();
+}
+
+function renderNumbers(){
+  const section = sections[currentPart];
+  sideTitleEl.textContent = section.name;
+  numbersEl.innerHTML = '';
+  section.questions.forEach((_, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'num';
+    if (answers[currentPart][idx] !== null) btn.classList.add('answered');
+    if (review[currentPart][idx]) btn.classList.add('review');
+    if (idx === currentQ) btn.classList.add('current');
+    btn.textContent = idx+1;
+    btn.addEventListener('click', () => { currentQ = idx; loadQuestion(); });
+    numbersEl.appendChild(btn);
+  });
+}
+
+function renderAnalysis(){
+  const total = sections[currentPart].questions.length;
+  const answeredCount = answers[currentPart].filter(a => a !== null).length;
+  const reviewCount = review[currentPart].filter(Boolean).length;
+  analysisPartTitleEl.textContent = `PART-${String.fromCharCode(65+currentPart)} Analysis`;
+  aCountEl.textContent = answeredCount;
+  naCountEl.textContent = total - answeredCount;
+  rCountEl.textContent = reviewCount;
+  const grandTotal = answers.reduce((sum, arr) => sum + arr.filter(a => a !== null).length, 0);
+  answeredTotalTopEl.textContent = grandTotal;
+}
+
+/* ================== NAVIGATION ================== */
+prevBtn.addEventListener('click', () => {
+  if (currentQ > 0) { currentQ--; loadQuestion(); }
+});
+saveNextBtn.addEventListener('click', () => {
+  const total = sections[currentPart].questions.length;
+  if (currentQ < total-1) { currentQ++; loadQuestion(); }
+  else { renderAnalysis(); }
+});
+markBtn.addEventListener('click', () => {
+  review[currentPart][currentQ] = true;
+  const total = sections[currentPart].questions.length;
+  if (currentQ < total-1) currentQ++;
+  loadQuestion();
+});
+
+/* ================== TIMER ================== */
+const timerEl = document.getElementById('timer');
+function formatTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+function resetTimer(){
+  clearInterval(timerInterval);
+  secondsLeft = SECTION_SECONDS;
+  timerEl.textContent = formatTime(secondsLeft);
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0){
+      clearInterval(timerInterval);
+      timerEl.textContent = '00:00';
+      submitSection(true);
+      return;
+    }
+    timerEl.textContent = formatTime(secondsLeft);
+  }, 1000);
+}
+
+/* ================== SUBMIT SECTION / FINISH ================== */
+const submitConfirmModal = document.getElementById('submitConfirmModal');
+const submitConfirmTitle = document.getElementById('submitConfirmTitle');
+const submitConfirmText = document.getElementById('submitConfirmText');
+let pendingAutoSubmit = false;
+
+document.getElementById('submitSectionBtn').addEventListener('click', () => {
+  pendingAutoSubmit = false;
+  const isLast = currentPart === sections.length-1;
+  submitConfirmTitle.textContent = isLast ? 'Submit the test?' : 'Submit this section?';
+  submitConfirmText.textContent = isLast
+    ? 'This is the last section. Once submitted, the entire test will end and you cannot make further changes. Are you sure you want to continue?'
+    : 'Once you submit this section, you will not be able to change your answers in it. Are you sure you want to continue?';
+  submitConfirmModal.classList.add('show');
+});
+document.getElementById('submitCancelBtn').addEventListener('click', () => {
+  submitConfirmModal.classList.remove('show');
+});
+document.getElementById('submitConfirmBtn').addEventListener('click', () => {
+  submitConfirmModal.classList.remove('show');
+  submitSection(false);
+});
+
+function submitSection(auto){
+  clearInterval(timerInterval);
+  submittedParts[currentPart] = true;
+  if (currentPart < sections.length-1){
+    unlockedPart = currentPart+1;
+    currentPart++;
+    currentQ = 0;
+    renderParts();
+    loadQuestion();
+    resetTimer();
+  } else {
+    finishExam();
+  }
+}
+
+function finishExam(){
+  clearInterval(timerInterval);
+  const table = document.getElementById('finishedTable');
+  let rows = '<tr><th>Part</th><th>Answered</th><th>Not Answered</th><th>Marked for Review</th></tr>';
+  sections.forEach((s, i) => {
+    const ansCount = answers[i].filter(a => a !== null).length;
+    const revCount = review[i].filter(Boolean).length;
+    rows += `<tr><td>Part-${String.fromCharCode(65+i)}: ${s.name}</td><td>${ansCount}</td><td>${s.questions.length-ansCount}</td><td>${revCount}</td></tr>`;
+  });
+  table.innerHTML = rows;
+  document.getElementById('finishedScreen').classList.add('show');
+}
+
+document.getElementById('finishedBackBtn').addEventListener('click', () => {
+  window.location.href = 'mock-tests.html';
+});
+
+/* ================== MODALS ================== */
+document.getElementById('symbolsBtn').addEventListener('click', () => document.getElementById('symbolsModal').classList.add('show'));
+document.getElementById('instructionsBtn').addEventListener('click', () => document.getElementById('instructionsModal').classList.add('show'));
+document.getElementById('summaryBtn').addEventListener('click', () => {
+  const table = document.getElementById('summaryTable');
+  let rows = '<tr><th>Part</th><th>Answered</th><th>Not Answered</th><th>Marked</th><th>Status</th></tr>';
+  sections.forEach((s, i) => {
+    const ansCount = answers[i].filter(a => a !== null).length;
+    const revCount = review[i].filter(Boolean).length;
+    const status = submittedParts[i] ? 'Submitted' : (i === currentPart ? 'In progress' : (i <= unlockedPart ? 'Unlocked' : 'Locked'));
+    rows += `<tr><td>Part-${String.fromCharCode(65+i)}</td><td>${ansCount}</td><td>${s.questions.length-ansCount}</td><td>${revCount}</td><td>${status}</td></tr>`;
+  });
+  table.innerHTML = rows;
+  document.getElementById('summaryModal').classList.add('show');
+});
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => document.getElementById(btn.dataset.close).classList.remove('show'));
+});
+
+/* ================== EXIT ================== */
+document.getElementById('exitBtn').addEventListener('click', () => {
+  if (confirm('Are you sure you want to exit the test? Your progress will be lost.')){
+    window.location.href = 'mock-tests.html';
+  }
+});
+
+/* ================== FULLSCREEN ================== */
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+fullscreenBtn.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+  } catch(e){ /* no-op */ }
+});
+
+/* ================== INIT ================== */
+renderParts();
+loadQuestion();
+resetTimer();
+</script>
+</body>
+</html>
