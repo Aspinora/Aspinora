@@ -394,6 +394,18 @@
     .instr-orientation-warning{grid-row:3;align-self:start;min-height:64px;}
   }
 
+  /* Tablets and phones (touch devices) in LANDSCAPE: shrink the side
+     panel's top padding and avatar so the empty gray space beneath the
+     avatar/name doesn't stretch so far down. hover:none + pointer:coarse
+     targets touchscreens only, leaving mouse/desktop landscape browsers
+     untouched. */
+  @media (orientation:landscape) and (hover:none) and (pointer:coarse){
+    .instr-fp-side{padding:24px 16px 16px;}
+    .instr-fp-avatar{width:84px;height:84px;flex:0 0 84px;margin-bottom:12px;}
+    .instr-fp-avatar svg{width:46px;height:46px;}
+    .instr-fp-name{font-size:16px;}
+  }
+
   /* Phones in LANDSCAPE: keep the same two-column grid as desktop/tablet
      (top bar, main content + side avatar panel, footer below main) so the
      whole layout and all fields stay visible and behave identically to
@@ -1062,8 +1074,17 @@
       instrLang.focus();
       return;
     }
-    // The actual mock test engine will be added later; this is where it launches from.
-    instrStatus.textContent = 'Loading your test — this is coming very soon!';
+    instrStatus.style.color = '#374151';
+    instrStatus.textContent = 'Loading your test…';
+    const params = new URLSearchParams();
+    if (selectedYear) params.set('year', selectedYear);
+    if (selectedTier) params.set('tier', selectedTier);
+    if (selectedDate) params.set('date', selectedDate);
+    if (selectedShift) params.set('shift', selectedShift);
+    params.set('lang', instrLang.value);
+    setTimeout(() => {
+      window.location.href = `mock-test-exam.html?${params.toString()}`;
+    }, 350);
   });
 
   const fullscreenButton = document.getElementById('instrFullscreenButton');
