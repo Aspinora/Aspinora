@@ -64,7 +64,7 @@
   .menu-divider{height:1px;background:#f0e9e2;margin:6px 6px;}
 
   .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:99px;color:#e56b14;background:#fff0e2;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
-  .eyebrow::before{content:"â";font-size:13px;}
+  .eyebrow::before{content:"\2728";font-size:13px;}
   .page-hero{padding:46px 6%;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 90% 5%, #fff3e5 0%, transparent 34%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
   .page-hero h1{max-width:680px;margin:18px 0 14px;font-size:clamp(34px,4.6vw,56px);line-height:1.05;letter-spacing:-2.4px;}
   .page-hero h1 em{color:var(--orange);font-style:normal;}
@@ -208,7 +208,8 @@
     grid-row:3;
     min-width:0;
     min-height:0;
-    overflow:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
     padding:68px 48px 30px 42px;
     box-sizing:border-box;
   }
@@ -250,6 +251,8 @@
     grid-row:3 / 5;
     min-width:0;
     min-height:0;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
     border-left:1px solid #d1d5db;
     background:#f5f7f8;
     display:flex;
@@ -358,18 +361,20 @@
   /* Browser-fullscreen fallback for browsers that do not expose the Fullscreen API. */
   .instr-fullpage.css-fullscreen{position:fixed;inset:0;}
 
-  @media (max-width:700px){
+  /* Stacked single-column layout: phones in PORTRAIT only.
+     Landscape phones keep the real two-column desktop-style grid below. */
+  @media (max-width:700px) and (orientation:portrait){
     .instr-fp-top{min-height:58px;padding:0 12px;gap:10px;}
     .instr-fp-back{width:32px;height:32px;font-size:29px;}
     .instr-fp-top-title{font-size:14px;}
     .instr-fp-fullscreen{padding:7px 9px;font-size:12px;}
     .instr-fullpage{grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;}
-    .instr-fp-main{grid-column:1;grid-row:3;padding:26px 20px 20px;overflow:auto;}
+    .instr-fp-main{grid-column:1;grid-row:3;padding:26px 20px 20px;overflow-y:auto;}
     .instr-fp-main h2{font-size:25px;margin-bottom:28px;}
     .instr-fp-meta{font-size:14px;margin-bottom:24px;}
     .instr-fp-lead{font-size:15px;}
     .instr-fp-list{font-size:14px;line-height:1.8;}
-    .instr-fp-side{grid-column:1;grid-row:2;border-left:0;border-bottom:1px solid #d1d5db;display:flex;flex-direction:row;justify-content:flex-start;gap:14px;padding:10px 20px;}
+    .instr-fp-side{grid-column:1;grid-row:2;border-left:0;border-bottom:1px solid #d1d5db;display:flex;flex-direction:row;justify-content:flex-start;gap:14px;padding:10px 20px;overflow-y:visible;}
     .instr-fp-avatar{width:54px;height:54px;flex-basis:54px;margin:0;}
     .instr-fp-avatar svg{width:31px;height:31px;}
     .instr-fp-name{font-size:16px;}
@@ -387,6 +392,44 @@
     .instr-fp-footer{display:none;}
     .instr-fullpage{grid-template-rows:auto auto 1fr;grid-template-columns:1fr;background:#f8fafc;}
     .instr-orientation-warning{grid-row:3;align-self:start;min-height:64px;}
+  }
+
+  /* Phones in LANDSCAPE: keep the same two-column grid as desktop/tablet
+     (top bar, main content + side avatar panel, footer below main) so the
+     whole layout and all fields stay visible and behave identically to
+     desktop. Screen height is short here, so everything is scaled down
+     and both the main column and the side panel scroll independently
+     rather than anything being clipped or hidden. */
+  @media (orientation:landscape) and (max-height:520px){
+    .instr-fullpage{grid-template-columns:minmax(0,1fr) minmax(150px,22vw);}
+    .instr-fp-top{min-height:44px;padding:0 14px;gap:10px;}
+    .instr-fp-back{width:26px;height:26px;}
+    .instr-fp-back .ui-icon{width:18px;height:18px;}
+    .instr-fp-top-title{font-size:12px;}
+    .instr-fp-fullscreen{padding:5px 9px;font-size:11px;}
+    .instr-fp-fullscreen .ui-icon{width:15px;height:15px;}
+    .instr-orientation-warning{padding:5px 12px;font-size:11px;}
+    .instr-fp-main{padding:16px 22px 14px;}
+    .instr-fp-main h2{font-size:17px;margin-bottom:10px;}
+    .instr-fp-meta{font-size:12px;margin-bottom:10px;}
+    .instr-fp-lead{font-size:12px;margin-bottom:6px;}
+    .instr-fp-list{font-size:11.5px;line-height:1.5;padding-left:18px;}
+    .instr-fp-side{padding:12px 10px 10px;}
+    .instr-fp-avatar{width:52px;height:52px;flex-basis:52px;margin-bottom:8px;}
+    .instr-fp-avatar svg{width:30px;height:30px;}
+    .instr-fp-name{font-size:12px;}
+    .instr-fp-footer{padding:8px 14px 10px;}
+    .instr-fp-lang-row{gap:8px;margin-bottom:5px;}
+    .instr-fp-lang-row label{font-size:12px;}
+    .instr-fp-lang-row select{font-size:12px;padding:4px 7px;min-width:100px;}
+    .instr-fp-lang-note{font-size:10px;margin-bottom:6px;line-height:1.3;}
+    .instr-fp-divider{margin-bottom:6px;}
+    .instr-fp-declare-label{font-size:12px;margin-bottom:5px;}
+    .instr-fp-declare{font-size:11px;margin-bottom:8px;gap:7px;}
+    .instr-fp-declare input{width:14px;height:14px;}
+    .instr-fp-actions{min-height:34px;}
+    .instr-fp-btn{font-size:12px;padding:7px 12px;}
+    .instr-fp-btn.primary{min-width:130px;}
   }
 
   .footer{margin-top:20px;padding:42px 7%;text-align:center;border:1px solid #f8e6d6;border-radius:30px;background:radial-gradient(circle at 86% 14%, #fff3e5 0%, transparent 33%), linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:0 16px 50px rgba(193,117,43,.07);}
@@ -488,18 +531,18 @@
         </span>
       </button>
       <div class="menu-label">Explore Aspinora</div>
-      <a class="menu-item" href="/dashboard"><span class="menu-icon orange">ð </span>Dashboard</a>
-      <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">ðï¸</span>Study planner</button>
-      <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">ð°</span>Current affairs</button>
-      <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">ð</span>Saved notes</button>
-      <a class="menu-item" href="/mock-tests"><span class="menu-icon orange">ð§ª</span>Mock tests</a>
-      <a class="menu-item" href="/score-calculator"><span class="menu-icon blue">ð§®</span>Calculators</a>
-      <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">ð</span>Rank/Score tools</button>
-      <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">ð</span>Important links</button>
-      <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">ð§°</span>Other useful utilities</button>
+      <a class="menu-item" href="/dashboard"><span class="menu-icon orange">&#127968;</span>Dashboard</a>
+      <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">&#128197;</span>Study planner</button>
+      <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">&#128240;</span>Current affairs</button>
+      <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">&#128204;</span>Saved notes</button>
+      <a class="menu-item" href="/mock-tests"><span class="menu-icon orange">&#129514;</span>Mock tests</a>
+      <a class="menu-item" href="/score-calculator"><span class="menu-icon blue">&#129518;</span>Calculators</a>
+      <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">&#127942;</span>Rank/Score tools</button>
+      <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">&#128279;</span>Important links</button>
+      <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">&#129520;</span>Other useful utilities</button>
       <div class="menu-divider" id="menuAccountDivider" style="display:none"></div>
-      <button class="menu-item" id="menuUpdateProfileButton" style="display:none"><span class="menu-icon blue">ð¤</span>Update Profile</button>
-      <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none"><span class="menu-icon red">ðª</span>Log Out</button>
+      <button class="menu-item" id="menuUpdateProfileButton" style="display:none"><span class="menu-icon blue">&#128100;</span>Update Profile</button>
+      <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none"><span class="menu-icon red">&#128682;</span>Log Out</button>
     </nav>
   </div>
 </header>
@@ -507,7 +550,7 @@
 <section class="page-hero">
   <div class="eyebrow">Mock tests</div>
   <h1>Test yourself, <em>the real way.</em></h1>
-  <p class="intro">SSC CGL previous year question mocks â practice a random paper, or pick the exact year and tier you want to attempt.</p>
+  <p class="intro">SSC CGL previous year question mocks &mdash; practice a random paper, or pick the exact year and tier you want to attempt.</p>
 </section>
 
 <section class="section">
@@ -516,16 +559,16 @@
     <p class="lead">Choose a random previous year paper, or pick a specific year and tier yourself.</p>
     <div class="choice-grid">
       <button class="choice-card" id="randomChoiceButton">
-        <div class="choice-icon">ð²</div>
+        <div class="choice-icon">&#127922;</div>
         <h3>Random PYQ Mock</h3>
-        <p>We'll pick a previous year paper for you at random â a quick way to jump straight into practice.</p>
-        <span class="choice-arrow">â</span>
+        <p>We'll pick a previous year paper for you at random &mdash; a quick way to jump straight into practice.</p>
+        <span class="choice-arrow">&rarr;</span>
       </button>
       <button class="choice-card" id="selectYearButton">
-        <div class="choice-icon">ð</div>
+        <div class="choice-icon">&#128197;</div>
         <h3>Choose a Specific Year</h3>
         <p>Pick the exact year you want to attempt, from 2015 all the way up to 2025.</p>
-        <span class="choice-arrow">â</span>
+        <span class="choice-arrow">&rarr;</span>
       </button>
     </div>
     <div class="status" id="choiceStatus" aria-live="polite"></div>
@@ -540,7 +583,7 @@
 
   <div class="flow-view" id="view-tier">
     <button class="back" id="backToYearButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
-    <h2>SSC CGL <span id="tierYearLabel">2025</span> â choose a tier</h2>
+    <h2>SSC CGL <span id="tierYearLabel">2025</span> &mdash; choose a tier</h2>
     <p class="lead">Tier 1 is the preliminary objective paper. Tier 2 is the mains stage.</p>
     <div class="tier-grid">
       <button class="tier-card" data-tier="Tier 1">
@@ -569,7 +612,7 @@
 
   <div class="flow-view" id="view-date">
     <button class="back" id="backToTierFromDateButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
-    <h2>SSC CGL <span id="dateYearLabel">2025</span> <span id="dateTierLabel">Tier 1</span> â choose the exact date</h2>
+    <h2>SSC CGL <span id="dateYearLabel">2025</span> <span id="dateTierLabel">Tier 1</span> &mdash; choose the exact date</h2>
     <p class="lead">Pick the exam date you'd like to practice, based on the official SSC CGL exam schedule.</p>
     <div class="year-grid" id="dateGrid"></div>
     <div class="status" id="dateStatus" aria-live="polite"></div>
@@ -577,7 +620,7 @@
 
   <div class="flow-view" id="view-shift">
     <button class="back" id="backToDateFromShiftButton"><svg class="ui-icon ui-icon-back-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span>Back</span></button>
-    <h2>SSC CGL <span id="shiftYearLabel">2025</span> <span id="shiftTierLabel">Tier 1</span> â <span id="shiftDateLabel">12 Sep 2025</span></h2>
+    <h2>SSC CGL <span id="shiftYearLabel">2025</span> <span id="shiftTierLabel">Tier 1</span> &mdash; <span id="shiftDateLabel">12 Sep 2025</span></h2>
     <p class="lead">This date had multiple shifts. Choose the exact shift you'd like to practice.</p>
     <div class="year-grid" id="shiftGrid"></div>
     <div class="status" id="shiftStatus" aria-live="polite"></div>
@@ -592,13 +635,15 @@
     <a href="/legal/disclaimer">Disclaimer</a>
     <a href="/legal/contact-us">Contact Us</a>
   </nav>
-  <p class="footer-copy">Â© 2026 Aspinora. All rights reserved.</p>
+  <p class="footer-copy">&copy; 2026 Aspinora. All rights reserved.</p>
 </footer>
 </main>
 
 <div class="instr-fullpage" id="view-instructions">
   <div class="instr-fp-top">
-    <button class="instr-fp-back" id="instrBackButton" aria-label="Back">â¹</button>
+    <button class="instr-fp-back" id="instrBackButton" aria-label="Back">
+      <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
     <span class="instr-fp-top-title" id="instrTopTitle">SSC CGL</span>
     <div class="instr-fp-toolbar">
       <button class="instr-fp-fullscreen" id="instrFullscreenButton" type="button" aria-pressed="false">Full screen</button>
@@ -660,7 +705,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // SUPABASE â this page requires a logged-in session
+  // SUPABASE — this page requires a logged-in session
   const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -980,7 +1025,7 @@
       if (selectedShift && selectedShift !== 'Single Shift') label += ` ${selectedShift}`;
       label += ')';
     } else {
-      label += ` â ${selectedTier}`;
+      label += ` \u2014 ${selectedTier}`;
     }
     instrTopTitle.textContent = label;
     instrTitle.textContent = label;
@@ -1018,7 +1063,7 @@
       return;
     }
     // The actual mock test engine will be added later; this is where it launches from.
-    instrStatus.textContent = 'Loading your test â this is coming very soon!';
+    instrStatus.textContent = 'Loading your test — this is coming very soon!';
   });
 
   const fullscreenButton = document.getElementById('instrFullscreenButton');
