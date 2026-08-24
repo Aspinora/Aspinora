@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="/aspinora-logo.png">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
 <script>
@@ -146,6 +145,80 @@
     .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
     .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
 
+    /* ============================================================
+       SSC ANSWER KEY SCORE CALCULATOR
+    ============================================================ */
+    .tier-tabs { display: inline-flex; padding: 4px; border-radius: 14px; background: #fff1e4; gap: 4px; margin-bottom: 22px; }
+    .tier-tab { border: 0; background: transparent; padding: 10px 20px; border-radius: 10px; font-weight: 750; font-size: 13.5px; color: #a56a2c; cursor: pointer; transition: all .18s ease; }
+    .tier-tab.active { background: white; color: var(--orange-dark); box-shadow: 0 4px 12px rgba(193,117,43,.14); }
+
+    .akc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 18px; }
+    .field select {
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px;
+      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .field select:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+
+    .source-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .source-tab { flex: 1; border: 1px solid var(--line); background: white; border-radius: 12px; padding: 10px 14px; font-weight: 700; font-size: 13px; color: #6d7585; cursor: pointer; transition: all .18s ease; text-align: center; }
+    .source-tab.active { border-color: #ffb46b; background: #fff7ef; color: var(--orange-dark); }
+    .source-pane { display: none; }
+    .source-pane.active { display: block; }
+
+    .dropzone {
+      border: 2px dashed #ffcc9e; border-radius: 16px; padding: 28px 18px; text-align: center;
+      background: #fffaf5; cursor: pointer; transition: all .18s ease;
+    }
+    .dropzone:hover, .dropzone.drag { border-color: var(--orange); background: #fff3e5; }
+    .dropzone .dz-icon { font-size: 26px; margin-bottom: 8px; }
+    .dropzone .dz-title { font-weight: 750; font-size: 14px; color: #394255; margin-bottom: 4px; }
+    .dropzone .dz-sub { font-size: 12px; color: #a0a6b2; }
+    .dropzone.has-file { border-style: solid; border-color: var(--green); background: #f2fbf6; }
+    .dz-filename { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--green); }
+
+    .link-row { display: flex; gap: 10px; }
+    .link-row input { flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; }
+    .link-row input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+
+    .parse-status { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: #fff7ef; border: 1px solid #ffe2ca; color: #a56a2c; font-size: 13.5px; font-weight: 650; align-items: center; gap: 10px; }
+    .parse-status.show { display: flex; }
+    .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #ffd7ac; border-top-color: var(--orange-dark); animation: spin .8s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .info-note { margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: #eaf4ff; border: 1px solid #d3e8ff; color: #2e5f96; font-size: 12.5px; line-height: 1.6; }
+
+    .section-results { display: grid; gap: 14px; margin-top: 6px; }
+    .section-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(44,54,78,.04); }
+    .section-card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+    .section-card-head h4 { margin: 0; font-size: 14.5px; color: var(--ink); }
+    .section-card-head .sc-score { font-size: 15px; font-weight: 800; color: var(--orange-dark); }
+    .sc-tags { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); font-weight: 650; }
+    .sc-tags b { color: var(--ink); }
+
+    .bar-chart { display: grid; gap: 12px; margin-top: 6px; }
+    .bar-row { display: grid; grid-template-columns: 140px 1fr 56px; align-items: center; gap: 10px; }
+    .bar-row .bar-label { font-size: 12.5px; font-weight: 700; color: #394255; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { height: 16px; border-radius: 8px; background: #f2f0ee; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 8px; width: 0%; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width 1s cubic-bezier(.22,.9,.3,1); }
+    .bar-fill.neg { background: linear-gradient(90deg, #e5484d, #c0323a); }
+    .bar-row .bar-val { font-size: 12.5px; font-weight: 800; color: var(--ink); text-align: right; }
+
+    .roll-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .roll-chip { padding: 12px 14px; border-radius: 12px; background: #fff7ef; border: 1px solid #ffe2ca; }
+    .roll-chip span { display: block; font-size: 11px; color: #a56a2c; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+    .roll-chip strong { font-size: 14px; color: var(--ink); }
+
+    .save-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .save-status { font-size: 13px; font-weight: 650; }
+    .save-status.ok { color: var(--green); }
+    .save-status.err { color: var(--red); }
+
+    @media (max-width: 760px) {
+      .akc-grid { grid-template-columns: 1fr; }
+      .roll-summary { grid-template-columns: 1fr 1fr; }
+      .bar-row { grid-template-columns: 100px 1fr 46px; }
+    }
+
     @media (max-width: 900px) {
       .visual-grid { grid-template-columns: 1fr; }
     }
@@ -202,6 +275,155 @@
       <h1>Know your exact score, <em>before the results do.</em></h1>
       <p class="intro">Enter your exam details and get an instant breakdown of your score, accuracy, and how negative marking affected your final result.</p>
     </section>
+
+    <section class="section" id="akcSection">
+      <h2>SSC answer key score calculator</h2>
+      <p class="lead">Upload your downloaded answer-key PDF (or paste the DigiAlm link) and we'll read your responses, cross-check every question against the marked correct answer, and calculate your exact score — Tier I and Tier II supported.</p>
+
+      <div class="tier-tabs" role="tablist">
+        <button class="tier-tab active" data-tier="tier1" id="tabTier1">Tier I <span style="opacity:.7;font-weight:600;">(+2 / −1)</span></button>
+        <button class="tier-tab" data-tier="tier2" id="tabTier2">Tier II <span style="opacity:.7;font-weight:600;">(+3 / −1)</span></button>
+      </div>
+
+      <div class="akc-grid">
+        <div class="field">
+          <label for="akcCategory">Category</label>
+          <select id="akcCategory">
+            <option value="UR">UR (General)</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="EWS">EWS</option>
+          </select>
+          <span class="hint">Your reservation category</span>
+        </div>
+        <div class="field">
+          <label for="akcHorizontal">Horizontal category</label>
+          <select id="akcHorizontal">
+            <option value="None">None</option>
+            <option value="PWD">PWD</option>
+            <option value="ESM">ESM (Ex-Servicemen)</option>
+            <option value="OH">OH (Orthopaedically Handicapped)</option>
+            <option value="VH">VH (Visually Handicapped)</option>
+            <option value="HH">HH (Hearing Handicapped)</option>
+          </select>
+          <span class="hint">Leave as None if not applicable</span>
+        </div>
+      </div>
+
+      <div class="source-tabs">
+        <button class="source-tab active" data-source="upload" id="tabUpload">Upload PDF</button>
+        <button class="source-tab" data-source="link" id="tabLink">Paste answer key link</button>
+      </div>
+
+      <div class="source-pane active" id="paneUpload">
+        <div class="dropzone" id="dropzone">
+          <div class="dz-icon">📄</div>
+          <div class="dz-title">Tap to upload your answer key PDF</div>
+          <div class="dz-sub">Downloaded / printed from the DigiAlm response sheet page</div>
+          <div class="dz-filename" id="dzFilename" style="display:none;"></div>
+        </div>
+        <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" />
+      </div>
+
+      <div class="source-pane" id="paneLink">
+        <div class="link-row">
+          <input type="url" id="akcLinkInput" placeholder="https://ssc.digialm.com/.../....html" />
+        </div>
+        <div class="info-note">These links are usually tied to your login session, so a direct fetch often gets blocked by the exam portal. If it fails, download the page as PDF (Ctrl/Cmd+P → Save as PDF) and use the Upload tab instead — that always works.</div>
+      </div>
+
+      <div class="parse-status" id="parseStatus"><span class="spinner"></span><span id="parseStatusText">Reading your answer key…</span></div>
+      <div class="error-msg" id="akcErrorMsg"></div>
+
+      <div class="form-actions">
+        <button class="primary" id="akcCalculateButton">Calculate my score&nbsp; →</button>
+        <button class="secondary" id="akcResetButton">Reset</button>
+      </div>
+    </section>
+
+    <div class="results-wrap" id="akcResultsWrap">
+      <section class="section">
+        <h2>Your details</h2>
+        <div class="roll-summary">
+          <div class="roll-chip"><span>Roll number</span><strong id="sumRoll">—</strong></div>
+          <div class="roll-chip"><span>Exam</span><strong id="sumExam">—</strong></div>
+          <div class="roll-chip"><span>Year</span><strong id="sumYear">—</strong></div>
+          <div class="roll-chip"><span>Tier</span><strong id="sumTier">—</strong></div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(3,1fr);">
+          <div class="field"><label for="editRoll">Roll number</label><input type="text" id="editRoll" /></div>
+          <div class="field"><label for="editExam">Exam name</label><input type="text" id="editExam" /></div>
+          <div class="field"><label for="editYear">Year</label><input type="text" id="editYear" /></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Overall result</h2>
+        <p class="lead">Combined across all sections of the paper.</p>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="icon">✅</div><strong id="akcCorrect">0</strong><span>Correct answers</span></div>
+          <div class="stat-card"><div class="icon">❌</div><strong id="akcWrong">0</strong><span>Wrong answers</span></div>
+          <div class="stat-card"><div class="icon">⭕</div><strong id="akcUnattempted">0</strong><span>Unattempted</span></div>
+          <div class="stat-card positive"><div class="icon">📊</div><strong id="akcMarksBefore">0</strong><span>Marks before negative</span></div>
+          <div class="stat-card negative"><div class="icon">➖</div><strong id="akcNegative">0</strong><span>Negative marks</span></div>
+          <div class="stat-card final"><div class="icon">🏆</div><strong id="akcFinal">0</strong><span>Final score</span></div>
+        </div>
+        <div class="info-note" id="unresolvedNote" style="display:none;"></div>
+      </section>
+
+      <section class="section">
+        <h2>Visual breakdown</h2>
+        <p class="lead">Overall attempt split and score gauge.</p>
+        <div class="visual-grid">
+          <div class="donut-wrap">
+            <div class="donut" id="akcDonutChart"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="akcLCorrect">0</strong></div>
+              <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="akcLWrong">0</strong></div>
+              <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="akcLUnattempted">0</strong></div>
+            </div>
+          </div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="akcGaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff8c1a" />
+                  <stop offset="100%" stop-color="#f06400" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-track" cx="100" cy="100" r="85" />
+              <circle class="gauge-fill" id="akcGaugeFill" cx="100" cy="100" r="85" style="stroke:url(#akcGaugeGradient);" />
+            </svg>
+            <div class="gauge-center">
+              <strong id="akcGaugePct">0%</strong>
+              <span>Overall score</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Section-wise score</h2>
+        <p class="lead">How each module of the paper contributed to your final score.</p>
+        <div class="bar-chart" id="sectionBarChart"></div>
+      </section>
+
+      <section class="section">
+        <h2>Section-wise details</h2>
+        <p class="lead">Full breakdown per module.</p>
+        <div class="section-results" id="sectionResults"></div>
+      </section>
+
+      <section class="section">
+        <h2>Save this result</h2>
+        <p class="lead">Save your roll number, category, exam, year and final score to your Aspinora account.</p>
+        <div class="save-row">
+          <button class="primary" id="akcSaveButton">Save to my account</button>
+          <span class="save-status" id="saveStatus"></span>
+        </div>
+      </section>
+    </div>
 
     <section class="section">
       <h2>Enter your exam details</h2>
@@ -551,6 +773,455 @@
 
     stickyCta.addEventListener('click', () => {
       window.location.href = '/start-learning/';
+    });
+  </script>
+
+  <!-- ============================================================
+       SSC ANSWER KEY SCORE CALCULATOR
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    /* ---------- Tier tabs ---------- */
+    let currentTier = 'tier1';
+    const TIER_MARKS = { tier1: { plus: 2, minus: 1 }, tier2: { plus: 3, minus: 1 } };
+
+    document.getElementById('tabTier1').addEventListener('click', () => setTier('tier1'));
+    document.getElementById('tabTier2').addEventListener('click', () => setTier('tier2'));
+    function setTier(tier) {
+      currentTier = tier;
+      document.getElementById('tabTier1').classList.toggle('active', tier === 'tier1');
+      document.getElementById('tabTier2').classList.toggle('active', tier === 'tier2');
+    }
+
+    /* ---------- Source tabs (upload vs link) ---------- */
+    let currentSource = 'upload';
+    document.getElementById('tabUpload').addEventListener('click', () => setSource('upload'));
+    document.getElementById('tabLink').addEventListener('click', () => setSource('link'));
+    function setSource(src) {
+      currentSource = src;
+      document.getElementById('tabUpload').classList.toggle('active', src === 'upload');
+      document.getElementById('tabLink').classList.toggle('active', src === 'link');
+      document.getElementById('paneUpload').classList.toggle('active', src === 'upload');
+      document.getElementById('paneLink').classList.toggle('active', src === 'link');
+    }
+
+    /* ---------- File upload UI ---------- */
+    const dropzone = document.getElementById('dropzone');
+    const pdfInput = document.getElementById('pdfInput');
+    let selectedFile = null;
+
+    dropzone.addEventListener('click', () => pdfInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    pdfInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+    function handleFile(file) {
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        showAkcError('Please upload a PDF file.');
+        return;
+      }
+      selectedFile = file;
+      dropzone.classList.add('has-file');
+      const fn = document.getElementById('dzFilename');
+      fn.style.display = 'block';
+      fn.textContent = '✓ ' + file.name;
+      clearAkcError();
+    }
+
+    /* ---------- Error / status helpers ---------- */
+    const akcErrorMsg = document.getElementById('akcErrorMsg');
+    const akcResultsWrap = document.getElementById('akcResultsWrap');
+    const parseStatus = document.getElementById('parseStatus');
+    const parseStatusText = document.getElementById('parseStatusText');
+
+    function showAkcError(message) {
+      akcErrorMsg.textContent = message;
+      akcErrorMsg.classList.add('show');
+      akcResultsWrap.classList.remove('show');
+    }
+    function clearAkcError() {
+      akcErrorMsg.classList.remove('show');
+      akcErrorMsg.textContent = '';
+    }
+    function showParsing(text) {
+      parseStatusText.textContent = text;
+      parseStatus.classList.add('show');
+    }
+    function hideParsing() {
+      parseStatus.classList.remove('show');
+    }
+
+    /* ---------- Color classification ---------- */
+    function classifyColor(r, g, b, a) {
+      if (a < 180) return 'other';
+      if (r > 195 && g < 115 && b < 115) return 'red';
+      if (g > 195 && r < 175 && b < 195 && (g - r) > 55) return 'green';
+      return 'other';
+    }
+
+    function sampleColorNear(imgData, w, h, cx, cy) {
+      for (let dy = -4; dy <= 4; dy++) {
+        for (let dx = -4; dx <= 4; dx++) {
+          const x = Math.round(cx + dx), y = Math.round(cy + dy);
+          if (x < 0 || y < 0 || x >= w || y >= h) continue;
+          const idx = (y * w + x) * 4;
+          const cls = classifyColor(imgData[idx], imgData[idx + 1], imgData[idx + 2], imgData[idx + 3]);
+          if (cls !== 'other') return cls;
+        }
+      }
+      return 'other';
+    }
+
+    /* ---------- Core PDF parser (mirrors validated color-marker logic) ---------- */
+    async function parseAnswerKeyPdf(arrayBuffer, onProgress) {
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const scale = 1.6;
+      const bufOptions = []; // { digit, color } in document order
+      const fullTextParts = [];
+
+      for (let p = 1; p <= pdf.numPages; p++) {
+        if (onProgress) onProgress(p, pdf.numPages);
+        const page = await pdf.getPage(p);
+        const viewport = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+        const textContent = await page.getTextContent();
+        let pageText = '';
+        for (const item of textContent.items) {
+          pageText += item.str + '\n';
+          const trimmed = item.str.trim();
+          if (/^[1-4]\.$/.test(trimmed)) {
+            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+            const x0 = tx[4];
+            const y0 = tx[5];
+            const wpx = Math.max((item.width || 6) * scale, 6);
+            const hpx = Math.max((item.height || 9) * scale, 9);
+            const sx = x0 + wpx * 0.3;
+            const sy = y0 - hpx * 0.45;
+            const col = sampleColorNear(imgData, canvas.width, canvas.height, sx, sy);
+            if (col === 'red' || col === 'green') {
+              bufOptions.push({ digit: trimmed[0], color: col });
+            }
+          }
+        }
+        fullTextParts.push(pageText);
+      }
+
+      const fullText = fullTextParts.join('\n');
+
+      // Section headers, in order
+      const sectionRe = /Section\s*:\s*([^\n]+)/g;
+      const sections = [];
+      let sm;
+      while ((sm = sectionRe.exec(fullText))) {
+        sections.push({ pos: sm.index, name: sm[1].trim() });
+      }
+      function sectionFor(pos) {
+        let cur = sections.length ? sections[0].name : 'Section 1';
+        for (const s of sections) { if (s.pos <= pos) cur = s.name; else break; }
+        return cur;
+      }
+
+      // Question blocks: Question ID -> Status -> Chosen Option, in order
+      const blockRe = /Question ID\s*:\s*(\d+)[\s\S]*?Status\s*:\s*([A-Za-z ]+?)\s*Chosen Option\s*:\s*(\d+|--)/g;
+      const questions = [];
+      let optIdx = 0;
+      let bm;
+      while ((bm = blockRe.exec(fullText))) {
+        const qid = bm[1], status = bm[2].trim(), chosen = bm[3];
+        const opts = bufOptions.slice(optIdx, optIdx + 4);
+        optIdx += 4;
+        questions.push({ section: sectionFor(bm.index), qid, opts, status, chosen });
+      }
+
+      // Header fields
+      const rollMatch = fullText.match(/Roll Number\s*\n?\s*(\S+)/);
+      const subjectMatch = fullText.match(/Subject\s*\n?\s*([^\n]+)/);
+      const dateMatch = fullText.match(/Exam Date\s*\n?\s*([\d\/\-]+)/);
+      const nameMatch = fullText.match(/Candidate Name\s*\n?\s*([^\n]+)/);
+
+      let year = '';
+      if (dateMatch) {
+        const yMatch = dateMatch[1].match(/(\d{4})/);
+        if (yMatch) year = yMatch[1];
+      }
+      if (!year && subjectMatch) {
+        const yMatch = subjectMatch[1].match(/(\d{4})/);
+        if (yMatch) year = yMatch[1];
+      }
+
+      let detectedTier = null;
+      if (subjectMatch) {
+        if (/tier\s*i(?!i)/i.test(subjectMatch[1]) || /tier\s*1(?!\d)/i.test(subjectMatch[1])) detectedTier = 'tier1';
+        if (/tier\s*ii/i.test(subjectMatch[1]) || /tier\s*2/i.test(subjectMatch[1])) detectedTier = 'tier2';
+      }
+
+      if (questions.length === 0) {
+        throw new Error('Could not find any questions in this PDF. Make sure it is the DigiAlm answer key / response sheet page saved as PDF.');
+      }
+
+      return {
+        questions,
+        rollNumber: rollMatch ? rollMatch[1] : '',
+        candidateName: nameMatch ? nameMatch[1].trim() : '',
+        examName: subjectMatch ? subjectMatch[1].trim() : '',
+        year,
+        detectedTier
+      };
+    }
+
+    /* ---------- Scoring ---------- */
+    function computeScore(questions, tier) {
+      const { plus, minus } = TIER_MARKS[tier];
+      const bySection = {};
+      for (const q of questions) {
+        (bySection[q.section] = bySection[q.section] || []).push(q);
+      }
+      const sectionResults = [];
+      const grand = { correct: 0, wrong: 0, unattempted: 0, unresolved: 0, score: 0, max: 0, total: 0 };
+
+      for (const [sec, qs] of Object.entries(bySection)) {
+        let correct = 0, wrong = 0, unattempted = 0, unresolved = 0;
+        for (const q of qs) {
+          const green = q.opts.find((o) => o.color === 'green');
+          const correctOpt = green ? green.digit : null;
+          if (q.chosen === '--') {
+            unattempted++;
+          } else if (!correctOpt) {
+            unresolved++;
+            correct++; // benefit of the doubt: answer key not marked for this question (SSC bonus-question convention)
+          } else if (q.chosen === correctOpt) {
+            correct++;
+          } else {
+            wrong++;
+          }
+        }
+        const score = correct * plus - wrong * minus;
+        const max = qs.length * plus;
+        sectionResults.push({ section: sec, total: qs.length, correct, wrong, unattempted, unresolved, score, max, plus, minus });
+        grand.correct += correct; grand.wrong += wrong; grand.unattempted += unattempted;
+        grand.unresolved += unresolved; grand.score += score; grand.max += max; grand.total += qs.length;
+      }
+      return { sectionResults, grand };
+    }
+
+    /* ---------- Rendering ---------- */
+    function akcFmt(num) {
+      return Number.isInteger(num) ? String(num) : num.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    let lastResult = null;
+
+    function renderAkcResults(parsed, tier) {
+      const { sectionResults, grand } = computeScore(parsed.questions, tier);
+      lastResult = { parsed, tier, sectionResults, grand };
+
+      document.getElementById('sumRoll').textContent = parsed.rollNumber || '—';
+      document.getElementById('sumExam').textContent = parsed.examName || '—';
+      document.getElementById('sumYear').textContent = parsed.year || '—';
+      document.getElementById('sumTier').textContent = tier === 'tier1' ? 'Tier I' : 'Tier II';
+      document.getElementById('editRoll').value = parsed.rollNumber || '';
+      document.getElementById('editExam').value = parsed.examName || '';
+      document.getElementById('editYear').value = parsed.year || '';
+
+      const marksBefore = grand.correct * TIER_MARKS[tier].plus;
+      const negative = grand.wrong * TIER_MARKS[tier].minus;
+
+      document.getElementById('akcCorrect').textContent = akcFmt(grand.correct);
+      document.getElementById('akcWrong').textContent = akcFmt(grand.wrong);
+      document.getElementById('akcUnattempted').textContent = akcFmt(grand.unattempted);
+      document.getElementById('akcMarksBefore').textContent = akcFmt(marksBefore);
+      document.getElementById('akcNegative').textContent = '-' + akcFmt(negative);
+      document.getElementById('akcFinal').textContent = akcFmt(grand.score) + ' / ' + akcFmt(grand.max);
+
+      const noteEl = document.getElementById('unresolvedNote');
+      if (grand.unresolved > 0) {
+        noteEl.style.display = 'block';
+        noteEl.textContent = `${grand.unresolved} question(s) didn't have a correct option marked in the answer key (likely a pending/bonus question) — attempted ones were counted as correct, following SSC's usual bonus-question policy.`;
+      } else {
+        noteEl.style.display = 'none';
+      }
+
+      document.getElementById('akcLCorrect').textContent = akcFmt(grand.correct);
+      document.getElementById('akcLWrong').textContent = akcFmt(grand.wrong);
+      document.getElementById('akcLUnattempted').textContent = akcFmt(grand.unattempted);
+
+      const total = grand.total || 1;
+      const correctPct = (grand.correct / total) * 100;
+      const wrongPct = (grand.wrong / total) * 100;
+      document.getElementById('akcDonutChart').style.background =
+        `conic-gradient(#f16d00 0 ${correctPct}%, #e5484d ${correctPct}% ${correctPct + wrongPct}%, #d8dee8 ${correctPct + wrongPct}% 100%)`;
+
+      const overallPct = grand.max > 0 ? (grand.score / grand.max) * 100 : 0;
+      const clampedPct = Math.max(0, Math.min(100, overallPct));
+      const circumference = 534;
+      const offset = circumference - (circumference * clampedPct) / 100;
+      const gaugeFill = document.getElementById('akcGaugeFill');
+      requestAnimationFrame(() => { gaugeFill.style.strokeDashoffset = offset; });
+      const gaugePctEl = document.getElementById('akcGaugePct');
+      gaugePctEl.textContent = akcFmt(overallPct) + '%';
+      gaugePctEl.classList.toggle('negative', overallPct < 0);
+
+      // Bar chart: section-wise score
+      const barChart = document.getElementById('sectionBarChart');
+      barChart.innerHTML = '';
+      const maxAbsScore = Math.max(1, ...sectionResults.map((s) => Math.abs(s.score)), ...sectionResults.map((s) => s.max));
+      sectionResults.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        const widthPct = Math.min(100, (Math.abs(s.score) / maxAbsScore) * 100);
+        row.innerHTML = `
+          <div class="bar-label" title="${s.section}">${s.section}</div>
+          <div class="bar-track"><div class="bar-fill ${s.score < 0 ? 'neg' : ''}" style="width:0%"></div></div>
+          <div class="bar-val">${akcFmt(s.score)}</div>
+        `;
+        barChart.appendChild(row);
+        requestAnimationFrame(() => { row.querySelector('.bar-fill').style.width = widthPct + '%'; });
+      });
+
+      // Section detail cards
+      const sectionResultsEl = document.getElementById('sectionResults');
+      sectionResultsEl.innerHTML = '';
+      sectionResults.forEach((s) => {
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        card.innerHTML = `
+          <div class="section-card-head">
+            <h4>${s.section}</h4>
+            <span class="sc-score">${akcFmt(s.score)} / ${akcFmt(s.max)}</span>
+          </div>
+          <div class="sc-tags">
+            <span>Total: <b>${s.total}</b></span>
+            <span>Correct: <b>${s.correct}</b></span>
+            <span>Wrong: <b>${s.wrong}</b></span>
+            <span>Unattempted: <b>${s.unattempted}</b></span>
+            <span>Marking: <b>+${s.plus} / −${s.minus}</b></span>
+          </div>
+        `;
+        sectionResultsEl.appendChild(card);
+      });
+
+      akcResultsWrap.classList.add('show');
+      akcResultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ---------- Calculate button ---------- */
+    document.getElementById('akcCalculateButton').addEventListener('click', async () => {
+      clearAkcError();
+      document.getElementById('saveStatus').textContent = '';
+
+      try {
+        let arrayBuffer = null;
+
+        if (currentSource === 'upload') {
+          if (!selectedFile) { showAkcError('Please upload your answer key PDF first.'); return; }
+          showParsing('Reading your PDF…');
+          arrayBuffer = await selectedFile.arrayBuffer();
+        } else {
+          const url = document.getElementById('akcLinkInput').value.trim();
+          if (!url) { showAkcError('Please paste the answer key link.'); return; }
+          showParsing('Trying to fetch the answer key link…');
+          try {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error('bad status ' + resp.status);
+            const contentType = resp.headers.get('content-type') || '';
+            if (contentType.includes('pdf')) {
+              arrayBuffer = await resp.arrayBuffer();
+            } else {
+              hideParsing();
+              showAkcError('That link returned a webpage, not a PDF, and this exam portal blocks direct reading from other websites. Please download/print the page as PDF and use the "Upload PDF" tab instead — it works reliably.');
+              return;
+            }
+          } catch (fetchErr) {
+            hideParsing();
+            showAkcError('Could not fetch that link directly — DigiAlm answer key pages are tied to your login session and most browsers block cross-site reading of them. Please save the page as a PDF (Ctrl/Cmd+P → Save as PDF) and use the "Upload PDF" tab instead.');
+            return;
+          }
+        }
+
+        showParsing('Analyzing pages and matching correct answers…');
+        const parsed = await parseAnswerKeyPdf(arrayBuffer, (p, total) => {
+          showParsing(`Analyzing page ${p} of ${total}…`);
+        });
+
+        hideParsing();
+
+        const tierToUse = parsed.detectedTier || currentTier;
+        setTier(tierToUse);
+        renderAkcResults(parsed, tierToUse);
+      } catch (err) {
+        hideParsing();
+        showAkcError(err.message || 'Something went wrong while reading that PDF. Please make sure it is the DigiAlm answer key page saved/printed as a PDF.');
+      }
+    });
+
+    document.getElementById('akcResetButton').addEventListener('click', () => {
+      selectedFile = null;
+      pdfInput.value = '';
+      dropzone.classList.remove('has-file');
+      document.getElementById('dzFilename').style.display = 'none';
+      document.getElementById('akcLinkInput').value = '';
+      clearAkcError();
+      hideParsing();
+      akcResultsWrap.classList.remove('show');
+      document.getElementById('saveStatus').textContent = '';
+      lastResult = null;
+      window.scrollTo({ top: document.getElementById('akcSection').offsetTop - 20, behavior: 'smooth' });
+    });
+
+    /* ---------- Save to Supabase ---------- */
+    document.getElementById('akcSaveButton').addEventListener('click', async () => {
+      const saveStatus = document.getElementById('saveStatus');
+      if (!lastResult) { return; }
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        saveStatus.textContent = 'Please log in to save this result.';
+        saveStatus.className = 'save-status err';
+        return;
+      }
+
+      saveStatus.textContent = 'Saving…';
+      saveStatus.className = 'save-status';
+
+      const { grand, tier, sectionResults } = lastResult;
+      const row = {
+        user_id: session.user.id,
+        roll_number: document.getElementById('editRoll').value.trim(),
+        exam_name: document.getElementById('editExam').value.trim(),
+        year: document.getElementById('editYear').value.trim(),
+        tier: tier === 'tier1' ? 'Tier I' : 'Tier II',
+        category: document.getElementById('akcCategory').value,
+        horizontal_category: document.getElementById('akcHorizontal').value,
+        total_correct: grand.correct,
+        total_wrong: grand.wrong,
+        total_unattempted: grand.unattempted,
+        total_score: grand.score,
+        max_marks: grand.max,
+        section_breakdown: sectionResults
+      };
+
+      const { error } = await supabaseClient.from('score_calculator_results').insert(row);
+      if (error) {
+        saveStatus.textContent = 'Could not save: ' + error.message;
+        saveStatus.className = 'save-status err';
+      } else {
+        saveStatus.textContent = '✓ Saved to your account.';
+        saveStatus.className = 'save-status ok';
+      }
     });
   </script>
 </body>
