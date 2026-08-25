@@ -298,284 +298,242 @@
     <section class="page-hero">
       <div class="eyebrow">Score calculator</div>
       <h1>Know your exact score, <em>before the results do.</em></h1>
-      <p class="intro">Enter your exam details and get an instant breakdown of your score, accuracy, and how negative marking affected your final result.</p>
+      <p class="intro">Pick a tool below — read your official DigiAlm answer key automatically, or enter your attempt manually.</p>
     </section>
 
-    <section class="section" id="akcSection">
-      <h2>SSC answer key score calculator</h2>
-      <p class="lead">Upload your downloaded answer-key PDF (or paste the DigiAlm link) and we'll read your responses, cross-check every question against the marked correct answer, and calculate your exact score — Tier I and Tier II supported.</p>
-
-      <div class="tier-tabs" role="tablist">
-        <button class="tier-tab active" data-tier="tier1" id="tabTier1">Tier I <span style="opacity:.7;font-weight:600;">(+2 / −1)</span></button>
-        <button class="tier-tab" data-tier="tier2" id="tabTier2">Tier II <span style="opacity:.7;font-weight:600;">(+3 / −1)</span></button>
-      </div>
-
-      <div class="akc-grid">
-        <div class="field">
-          <label for="akcCategory">Category</label>
-          <select id="akcCategory">
-            <option value="UR">UR (General)</option>
-            <option value="OBC">OBC</option>
-            <option value="SC">SC</option>
-            <option value="ST">ST</option>
-            <option value="EWS">EWS</option>
-          </select>
-          <span class="hint">Your reservation category</span>
-        </div>
-        <div class="field">
-          <label for="akcHorizontal">Horizontal category</label>
-          <select id="akcHorizontal">
-            <option value="None">None</option>
-            <option value="PWD">PWD</option>
-            <option value="ESM">ESM (Ex-Servicemen)</option>
-            <option value="OH">OH (Orthopaedically Handicapped)</option>
-            <option value="VH">VH (Visually Handicapped)</option>
-            <option value="HH">HH (Hearing Handicapped)</option>
-          </select>
-          <span class="hint">Leave as None if not applicable</span>
-        </div>
-      </div>
-
-      <div class="source-tabs">
-        <button class="source-tab active" data-source="upload" id="tabUpload">Upload PDF</button>
-        <button class="source-tab" data-source="link" id="tabLink">Paste answer key link</button>
-      </div>
-
-      <div class="source-pane active" id="paneUpload">
-        <div class="dropzone" id="dropzone">
-          <div class="dz-icon">📄</div>
-          <div class="dz-title">Tap to upload your answer key PDF</div>
-          <div class="dz-sub">Downloaded / printed from the DigiAlm response sheet page</div>
-          <div class="dz-filename" id="dzFilename" style="display:none;"></div>
-        </div>
-        <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" />
-      </div>
-
-      <div class="source-pane" id="paneLink">
-        <div class="link-row">
-          <input type="url" id="akcLinkInput" placeholder="https://ssc.digialm.com/.../....html" />
-        </div>
-        <div class="info-note">These links are usually tied to your login session, so a direct fetch often gets blocked by the exam portal. If it fails, download the page as PDF (Ctrl/Cmd+P → Save as PDF) and use the Upload tab instead — that always works.</div>
-      </div>
-
-      <div class="parse-status" id="parseStatus"><span class="spinner"></span><span id="parseStatusText">Reading your answer key…</span></div>
-      <div class="error-msg" id="akcErrorMsg"></div>
-
-      <div class="form-actions">
-        <button class="primary" id="akcCalculateButton">Calculate my score&nbsp; →</button>
-        <button class="secondary" id="akcResetButton">Reset</button>
-      </div>
-    </section>
-
-    <div class="results-wrap" id="akcResultsWrap">
-      <section class="section">
-        <h2>Your details</h2>
-        <div class="roll-summary">
-          <div class="roll-chip"><span>Roll number</span><strong id="sumRoll">—</strong></div>
-          <div class="roll-chip"><span>Exam</span><strong id="sumExam">—</strong></div>
-          <div class="roll-chip"><span>Year</span><strong id="sumYear">—</strong></div>
-          <div class="roll-chip"><span>Tier</span><strong id="sumTier">—</strong></div>
-        </div>
-        <div class="form-grid" style="grid-template-columns: repeat(3,1fr);">
-          <div class="field"><label for="editRoll">Roll number</label><input type="text" id="editRoll" /></div>
-          <div class="field"><label for="editExam">Exam name</label><input type="text" id="editExam" /></div>
-          <div class="field"><label for="editYear">Year</label><input type="text" id="editYear" /></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Overall result</h2>
-        <p class="lead" id="overallLead">Combined across Maths, Reasoning, English &amp; General Awareness (Computer Knowledge is shown separately below).</p>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="icon">✅</div><strong id="akcCorrect">0</strong><span>Correct answers</span></div>
-          <div class="stat-card"><div class="icon">❌</div><strong id="akcWrong">0</strong><span>Wrong answers</span></div>
-          <div class="stat-card"><div class="icon">⭕</div><strong id="akcUnattempted">0</strong><span>Unattempted</span></div>
-          <div class="stat-card positive"><div class="icon">📊</div><strong id="akcMarksBefore">0</strong><span>Marks before negative</span></div>
-          <div class="stat-card negative"><div class="icon">➖</div><strong id="akcNegative">0</strong><span>Negative marks</span></div>
-          <div class="stat-card final"><div class="icon">🏆</div><strong id="akcFinal">0</strong><span>Final score</span></div>
-        </div>
-        <div class="info-note" id="unresolvedNote" style="display:none;"></div>
-      </section>
-
-      <section class="section" id="computerSection" style="display:none;">
-        <h2>Computer Knowledge Module</h2>
-        <p class="lead">Shown separately — not added into the total above.</p>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="icon">✅</div><strong id="cptCorrect">0</strong><span>Correct answers</span></div>
-          <div class="stat-card"><div class="icon">❌</div><strong id="cptWrong">0</strong><span>Wrong answers</span></div>
-          <div class="stat-card"><div class="icon">⭕</div><strong id="cptUnattempted">0</strong><span>Unattempted</span></div>
-          <div class="stat-card final"><div class="icon">🏆</div><strong id="cptFinal">0</strong><span>Computer score</span></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Visual breakdown</h2>
-        <p class="lead">Overall attempt split and score gauge (excludes Computer Knowledge).</p>
-        <div class="visual-grid">
-          <div class="donut-wrap">
-            <div class="donut" id="akcDonutChart"></div>
-            <div class="legend">
-              <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="akcLCorrect">0</strong></div>
-              <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="akcLWrong">0</strong></div>
-              <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="akcLUnattempted">0</strong></div>
-            </div>
-          </div>
-          <div class="gauge-wrap">
-            <svg class="gauge-svg" viewBox="0 0 200 200">
-              <defs>
-                <linearGradient id="akcGaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#ff8c1a" />
-                  <stop offset="100%" stop-color="#f06400" />
-                </linearGradient>
-              </defs>
-              <circle class="gauge-track" cx="100" cy="100" r="85" />
-              <circle class="gauge-fill" id="akcGaugeFill" cx="100" cy="100" r="85" style="stroke:url(#akcGaugeGradient);" />
-            </svg>
-            <div class="gauge-center">
-              <strong id="akcGaugePct">0%</strong>
-              <span>Overall score</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Section-wise score</h2>
-        <p class="lead">How each module of the paper contributed (Computer Knowledge included here for reference only).</p>
-        <div class="bar-chart" id="sectionBarChart"></div>
-      </section>
-
-      <section class="section">
-        <h2>Section-wise details</h2>
-        <p class="lead">Full breakdown per module — Computer Knowledge is a qualifying section and isn't added to the Total row.</p>
-        <div class="result-table-wrap">
-          <table class="result-table" id="resultTable">
-            <thead>
-              <tr>
-                <th>Section</th>
-                <th class="num">Total</th>
-                <th class="num">Right</th>
-                <th class="num">Wrong</th>
-                <th class="num">Marks</th>
-              </tr>
-            </thead>
-            <tbody id="resultTableBody"></tbody>
-            <tfoot id="resultTableFoot"></tfoot>
-          </table>
-        </div>
-        <div class="info-note" id="saveStatus" style="display:none;"></div>
-      </section>
+    <div class="tier-tabs" role="tablist" style="margin-top:20px;">
+      <button class="tier-tab active" id="modeTabAkc">SSC answer key score calculator</button>
+      <button class="tier-tab" id="modeTabManual">Enter your exam details</button>
     </div>
 
-    <section class="section">
-      <h2>Enter your exam details</h2>
-      <p class="lead">Fill in all five fields, then hit calculate.</p>
+    <div id="akcModeWrap">
+      <section class="section" id="akcSection">
+        <h2>SSC answer key score calculator</h2>
+        <p class="lead">Upload your downloaded answer-key PDF (or paste the DigiAlm link) and we'll read your responses, cross-check every question against the marked correct answer, and calculate your exact score — Tier I and Tier II detected automatically.</p>
 
-      <div class="form-grid">
-        <div class="field">
-          <label for="totalQuestions">Total Questions</label>
-          <input type="number" id="totalQuestions" min="0" placeholder="e.g. 100" inputmode="numeric" />
-          <span class="hint">Total number of questions in the exam</span>
+        <div class="akc-grid">
+          <div class="field">
+            <label for="akcCategory">Category</label>
+            <select id="akcCategory">
+              <option value="UR">UR (General)</option>
+              <option value="OBC">OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="EWS">EWS</option>
+            </select>
+            <span class="hint">Your reservation category</span>
+          </div>
+          <div class="field">
+            <label for="akcHorizontal">Horizontal category</label>
+            <select id="akcHorizontal">
+              <option value="None">None</option>
+              <option value="PWD">PWD</option>
+              <option value="ESM">ESM (Ex-Servicemen)</option>
+              <option value="OH">OH (Orthopaedically Handicapped)</option>
+              <option value="VH">VH (Visually Handicapped)</option>
+              <option value="HH">HH (Hearing Handicapped)</option>
+            </select>
+            <span class="hint">Leave as None if not applicable</span>
+          </div>
         </div>
-        <div class="field">
-          <label for="attempted">Questions Attempted</label>
-          <input type="number" id="attempted" min="0" placeholder="e.g. 85" inputmode="numeric" />
-          <span class="hint">How many you actually answered</span>
+
+        <div class="source-tabs">
+          <button class="source-tab active" data-source="upload" id="tabUpload">Upload PDF</button>
+          <button class="source-tab" data-source="link" id="tabLink">Paste answer key link</button>
         </div>
-        <div class="field">
-          <label for="wrong">Wrong Answers</label>
-          <input type="number" id="wrong" min="0" placeholder="e.g. 12" inputmode="numeric" />
-          <span class="hint">Out of the ones you attempted</span>
+
+        <div class="source-pane active" id="paneUpload">
+          <div class="dropzone" id="dropzone">
+            <div class="dz-icon">📄</div>
+            <div class="dz-title">Tap to upload your answer key PDF</div>
+            <div class="dz-sub">Downloaded / printed from the DigiAlm response sheet page</div>
+            <div class="dz-filename" id="dzFilename" style="display:none;"></div>
+          </div>
+          <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" />
         </div>
-        <div class="field">
-          <label for="marksPerQ">Marks per Question</label>
-          <input type="number" id="marksPerQ" min="0" step="0.25" placeholder="e.g. 2" inputmode="decimal" />
-          <span class="hint">Marks awarded for each correct answer</span>
+
+        <div class="source-pane" id="paneLink">
+          <div class="link-row">
+            <input type="url" id="akcLinkInput" placeholder="https://ssc.digialm.com/.../....html" />
+          </div>
+          <div class="info-note">These links are usually tied to your login session, so a direct fetch often gets blocked by the exam portal. If it fails, download the page as PDF (Ctrl/Cmd+P → Save as PDF) and use the Upload tab instead — that always works.</div>
         </div>
-        <div class="field">
-          <label for="negMarking">Negative Marking per Wrong Answer</label>
-          <input type="number" id="negMarking" min="0" step="0.25" placeholder="e.g. 0.5" inputmode="decimal" />
-          <span class="hint">Marks deducted for each wrong answer</span>
+
+        <div class="parse-status" id="parseStatus"><span class="spinner"></span><span id="parseStatusText">Reading your answer key…</span></div>
+        <div class="error-msg" id="akcErrorMsg"></div>
+
+        <div class="form-actions">
+          <button class="primary" id="akcCalculateButton">Calculate my score&nbsp; →</button>
+          <button class="secondary" id="akcResetButton">Reset</button>
         </div>
+      </section>
+
+      <div class="results-wrap" id="akcResultsWrap">
+        <section class="section">
+          <h2>Your details</h2>
+          <div class="roll-summary" id="detailsChips" style="grid-template-columns: repeat(4,1fr);">
+            <div class="roll-chip"><span>Roll number</span><strong id="sumRoll">—</strong></div>
+            <div class="roll-chip"><span>Candidate name</span><strong id="sumName">—</strong></div>
+            <div class="roll-chip"><span>Exam</span><strong id="sumExam">—</strong></div>
+            <div class="roll-chip"><span>Year</span><strong id="sumYear">—</strong></div>
+            <div class="roll-chip"><span>Tier</span><strong id="sumTier">—</strong></div>
+            <div class="roll-chip"><span>Venue</span><strong id="sumVenue">—</strong></div>
+            <div class="roll-chip"><span>Exam date</span><strong id="sumDate">—</strong></div>
+            <div class="roll-chip"><span>Exam time</span><strong id="sumTime">—</strong></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Section-wise details</h2>
+          <p class="lead">Full breakdown per module — Computer Knowledge is a qualifying section, shown separately, with an overall total including it below.</p>
+          <div class="result-table-wrap">
+            <table class="result-table" id="resultTable">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th class="num">Total</th>
+                  <th class="num">Right</th>
+                  <th class="num">Wrong</th>
+                  <th class="num">Marks</th>
+                </tr>
+              </thead>
+              <tbody id="resultTableBody"></tbody>
+              <tfoot id="resultTableFoot"></tfoot>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Overall result</h2>
+          <p class="lead" id="overallLead">Combined across Maths, Reasoning, English &amp; General Awareness (Computer Knowledge is qualifying and shown in the table above).</p>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="icon">✅</div><strong id="akcCorrect">0</strong><span>Correct answers</span></div>
+            <div class="stat-card"><div class="icon">❌</div><strong id="akcWrong">0</strong><span>Wrong answers</span></div>
+            <div class="stat-card"><div class="icon">⭕</div><strong id="akcUnattempted">0</strong><span>Unattempted</span></div>
+            <div class="stat-card positive"><div class="icon">📊</div><strong id="akcMarksBefore">0</strong><span>Marks before negative</span></div>
+            <div class="stat-card negative"><div class="icon">➖</div><strong id="akcNegative">0</strong><span>Negative marks</span></div>
+            <div class="stat-card final"><div class="icon">🏆</div><strong id="akcFinal">0</strong><span>Final score</span></div>
+          </div>
+          <div class="info-note" id="unresolvedNote" style="display:none;"></div>
+          <div class="form-actions">
+            <a class="primary" href="/analytics/" id="viewAnalyticsBtn" style="text-decoration:none;display:inline-block;">View analytics&nbsp; →</a>
+          </div>
+        </section>
       </div>
-
-      <div class="error-msg" id="errorMsg"></div>
-
-      <div class="form-actions">
-        <button class="primary" id="calculateButton">Calculate my score&nbsp; →</button>
-        <button class="secondary" id="resetButton">Reset</button>
-      </div>
-    </section>
-
-    <div class="results-wrap" id="resultsWrap">
-      <section class="section">
-        <h2>Your results</h2>
-        <p class="lead">Here's exactly what happened with your attempt.</p>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="icon">✅</div><strong id="rCorrect">0</strong><span>Correct answers</span></div>
-          <div class="stat-card"><div class="icon">❌</div><strong id="rWrong">0</strong><span>Wrong answers</span></div>
-          <div class="stat-card"><div class="icon">⭕</div><strong id="rUnattempted">0</strong><span>Unattempted</span></div>
-          <div class="stat-card positive"><div class="icon">📊</div><strong id="rMarksBefore">0</strong><span>Marks before negative</span></div>
-          <div class="stat-card negative"><div class="icon">➖</div><strong id="rNegative">0</strong><span>Negative marks</span></div>
-          <div class="stat-card final"><div class="icon">🏆</div><strong id="rFinal">0</strong><span>Final score</span></div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Visual breakdown</h2>
-        <p class="lead">How your attempt and your score break down at a glance.</p>
-        <div class="visual-grid">
-          <div class="donut-wrap">
-            <div class="donut" id="donutChart"></div>
-            <div class="legend">
-              <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="lCorrect">0</strong></div>
-              <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="lWrong">0</strong></div>
-              <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="lUnattempted">0</strong></div>
-            </div>
-          </div>
-
-          <div class="gauge-wrap">
-            <svg class="gauge-svg" id="gaugeSvg" viewBox="0 0 200 200">
-              <defs>
-                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#ff8c1a" />
-                  <stop offset="100%" stop-color="#f06400" />
-                </linearGradient>
-              </defs>
-              <circle class="gauge-track" cx="100" cy="100" r="85" />
-              <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="85" />
-            </svg>
-            <div class="gauge-center">
-              <strong id="gaugePct">0%</strong>
-              <span>Overall score</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Rate analysis</h2>
-        <p class="lead">A closer look at how you performed relative to the full exam.</p>
-        <div class="progress-list">
-          <div class="progress-item">
-            <div class="progress-head"><h4>Attempt Rate</h4><span class="pct" id="pAttempt">0%</span></div>
-            <div class="progress-track"><div class="progress-fill" id="fAttempt"></div></div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-head"><h4>Accuracy Rate (of attempted)</h4><span class="pct" id="pAccuracy">0%</span></div>
-            <div class="progress-track"><div class="progress-fill" id="fAccuracy"></div></div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-head"><h4>Incorrect Rate (of attempted)</h4><span class="pct" id="pIncorrect">0%</span></div>
-            <div class="progress-track"><div class="progress-fill" id="fIncorrect"></div></div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-head"><h4>Overall Percentage (of max marks)</h4><span class="pct" id="pOverall">0%</span></div>
-            <div class="progress-track"><div class="progress-fill" id="fOverall"></div></div>
-          </div>
-        </div>
-      </section>
     </div>
+
+    <div id="manualModeWrap" style="display:none;">
+      <section class="section">
+        <h2>Enter your exam details</h2>
+        <p class="lead">Fill in all five fields, then hit calculate.</p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="totalQuestions">Total Questions</label>
+            <input type="number" id="totalQuestions" min="0" placeholder="e.g. 100" inputmode="numeric" />
+            <span class="hint">Total number of questions in the exam</span>
+          </div>
+          <div class="field">
+            <label for="attempted">Questions Attempted</label>
+            <input type="number" id="attempted" min="0" placeholder="e.g. 85" inputmode="numeric" />
+            <span class="hint">How many you actually answered</span>
+          </div>
+          <div class="field">
+            <label for="wrong">Wrong Answers</label>
+            <input type="number" id="wrong" min="0" placeholder="e.g. 12" inputmode="numeric" />
+            <span class="hint">Out of the ones you attempted</span>
+          </div>
+          <div class="field">
+            <label for="marksPerQ">Marks per Question</label>
+            <input type="number" id="marksPerQ" min="0" step="0.25" placeholder="e.g. 2" inputmode="decimal" />
+            <span class="hint">Marks awarded for each correct answer</span>
+          </div>
+          <div class="field">
+            <label for="negMarking">Negative Marking per Wrong Answer</label>
+            <input type="number" id="negMarking" min="0" step="0.25" placeholder="e.g. 0.5" inputmode="decimal" />
+            <span class="hint">Marks deducted for each wrong answer</span>
+          </div>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="form-actions">
+          <button class="primary" id="calculateButton">Calculate my score&nbsp; →</button>
+          <button class="secondary" id="resetButton">Reset</button>
+        </div>
+      </section>
+
+      <div class="results-wrap" id="resultsWrap">
+        <section class="section">
+          <h2>Your results</h2>
+          <p class="lead">Here's exactly what happened with your attempt.</p>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="icon">✅</div><strong id="rCorrect">0</strong><span>Correct answers</span></div>
+            <div class="stat-card"><div class="icon">❌</div><strong id="rWrong">0</strong><span>Wrong answers</span></div>
+            <div class="stat-card"><div class="icon">⭕</div><strong id="rUnattempted">0</strong><span>Unattempted</span></div>
+            <div class="stat-card positive"><div class="icon">📊</div><strong id="rMarksBefore">0</strong><span>Marks before negative</span></div>
+            <div class="stat-card negative"><div class="icon">➖</div><strong id="rNegative">0</strong><span>Negative marks</span></div>
+            <div class="stat-card final"><div class="icon">🏆</div><strong id="rFinal">0</strong><span>Final score</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Visual breakdown</h2>
+          <p class="lead">How your attempt and your score break down at a glance.</p>
+          <div class="visual-grid">
+            <div class="donut-wrap">
+              <div class="donut" id="donutChart"></div>
+              <div class="legend">
+                <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="lCorrect">0</strong></div>
+                <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="lWrong">0</strong></div>
+                <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="lUnattempted">0</strong></div>
+              </div>
+            </div>
+
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" id="gaugeSvg" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff8c1a" />
+                    <stop offset="100%" stop-color="#f06400" />
+                  </linearGradient>
+                </defs>
+                <circle class="gauge-track" cx="100" cy="100" r="85" />
+                <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="85" />
+              </svg>
+              <div class="gauge-center">
+                <strong id="gaugePct">0%</strong>
+                <span>Overall score</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Rate analysis</h2>
+          <p class="lead">A closer look at how you performed relative to the full exam.</p>
+          <div class="progress-list">
+            <div class="progress-item">
+              <div class="progress-head"><h4>Attempt Rate</h4><span class="pct" id="pAttempt">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="fAttempt"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-head"><h4>Accuracy Rate (of attempted)</h4><span class="pct" id="pAccuracy">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="fAccuracy"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-head"><h4>Incorrect Rate (of attempted)</h4><span class="pct" id="pIncorrect">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="fIncorrect"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-head"><h4>Overall Percentage (of max marks)</h4><span class="pct" id="pOverall">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="fOverall"></div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
 
     <footer class="footer">
       <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
@@ -825,16 +783,26 @@
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    /* ---------- Tier tabs ---------- */
+    /* ---------- Page mode toggle (AKC calculator vs manual calculator) ---------- */
+    document.getElementById('modeTabAkc').addEventListener('click', () => setMode('akc'));
+    document.getElementById('modeTabManual').addEventListener('click', () => setMode('manual'));
+    function setMode(mode) {
+      document.getElementById('modeTabAkc').classList.toggle('active', mode === 'akc');
+      document.getElementById('modeTabManual').classList.toggle('active', mode === 'manual');
+      document.getElementById('akcModeWrap').style.display = mode === 'akc' ? '' : 'none';
+      document.getElementById('manualModeWrap').style.display = mode === 'manual' ? '' : 'none';
+    }
+
+    /* ---------- Tier marking (auto-detected, no manual tabs) ---------- */
     let currentTier = 'tier1';
     const TIER_MARKS = { tier1: { plus: 2, minus: 1 }, tier2: { plus: 3, minus: 1 } };
 
-    document.getElementById('tabTier1').addEventListener('click', () => setTier('tier1'));
-    document.getElementById('tabTier2').addEventListener('click', () => setTier('tier2'));
-    function setTier(tier) {
-      currentTier = tier;
-      document.getElementById('tabTier1').classList.toggle('active', tier === 'tier1');
-      document.getElementById('tabTier2').classList.toggle('active', tier === 'tier2');
+    // Detects tier from the paper's Subject text ("Tier I"/"Tier II"), falling back to
+    // whether a Computer Knowledge module is present (only Tier II papers have one).
+    function detectTier(parsed) {
+      if (parsed.detectedTier) return parsed.detectedTier;
+      const hasComputer = parsed.questions.some((q) => /computer/i.test(q.section));
+      return hasComputer ? 'tier2' : 'tier1';
     }
 
     /* ---------- Source tabs (upload vs link) ---------- */
@@ -1007,6 +975,8 @@
       const subjectMatch = fullText.match(/Subject\s*\n?\s*([^\n]+)/);
       const dateMatch = fullText.match(/Exam Date\s*\n?\s*([\d\/\-]+)/);
       const nameMatch = fullText.match(/Candidate Name\s*\n?\s*([^\n]+)/);
+      const venueMatch = fullText.match(/Venue Name\s*\n?\s*([^\n]+)/);
+      const timeMatch = fullText.match(/Exam Time\s*\n?\s*([^\n]+)/);
 
       let year = '';
       if (dateMatch) {
@@ -1033,6 +1003,9 @@
         rollNumber: rollMatch ? rollMatch[1] : '',
         candidateName: nameMatch ? nameMatch[1].trim() : '',
         examName: subjectMatch ? subjectMatch[1].trim() : '',
+        venueName: venueMatch ? venueMatch[1].trim() : '',
+        examDate: dateMatch ? dateMatch[1].trim() : '',
+        examTime: timeMatch ? timeMatch[1].trim() : '',
         year,
         detectedTier
       };
@@ -1103,12 +1076,13 @@
       lastResult = { parsed, tier, sectionResults, grand: main, computer };
 
       document.getElementById('sumRoll').textContent = parsed.rollNumber || '—';
+      document.getElementById('sumName').textContent = parsed.candidateName || '—';
       document.getElementById('sumExam').textContent = parsed.examName || '—';
       document.getElementById('sumYear').textContent = parsed.year || '—';
       document.getElementById('sumTier').textContent = tier === 'tier1' ? 'Tier I' : 'Tier II';
-      document.getElementById('editRoll').value = parsed.rollNumber || '';
-      document.getElementById('editExam').value = parsed.examName || '';
-      document.getElementById('editYear').value = parsed.year || '';
+      document.getElementById('sumVenue').textContent = parsed.venueName || '—';
+      document.getElementById('sumDate').textContent = parsed.examDate || '—';
+      document.getElementById('sumTime').textContent = parsed.examTime || '—';
 
       const marksBefore = main.correct * TIER_MARKS[tier].plus;
       const negative = main.wrong * TIER_MARKS[tier].minus;
@@ -1120,16 +1094,6 @@
       document.getElementById('akcNegative').textContent = '-' + akcFmt(negative);
       document.getElementById('akcFinal').textContent = akcFmt(main.score) + ' / ' + akcFmt(main.max);
 
-      const computerSectionEl = document.getElementById('computerSection');
-      if (computer) {
-        computerSectionEl.style.display = 'block';
-        document.getElementById('cptCorrect').textContent = akcFmt(computer.correct);
-        document.getElementById('cptWrong').textContent = akcFmt(computer.wrong);
-        document.getElementById('cptUnattempted').textContent = akcFmt(computer.unattempted);
-        document.getElementById('cptFinal').textContent = akcFmt(computer.score) + ' / ' + akcFmt(computer.max);
-      } else {
-        computerSectionEl.style.display = 'none';
-      }
 
       const noteEl = document.getElementById('unresolvedNote');
       const totalUnresolved = main.unresolved + (computer ? computer.unresolved : 0);
@@ -1139,44 +1103,6 @@
       } else {
         noteEl.style.display = 'none';
       }
-
-
-      document.getElementById('akcLCorrect').textContent = akcFmt(main.correct);
-      document.getElementById('akcLWrong').textContent = akcFmt(main.wrong);
-      document.getElementById('akcLUnattempted').textContent = akcFmt(main.unattempted);
-
-      const total = main.total || 1;
-      const correctPct = (main.correct / total) * 100;
-      const wrongPct = (main.wrong / total) * 100;
-      document.getElementById('akcDonutChart').style.background =
-        `conic-gradient(#f16d00 0 ${correctPct}%, #e5484d ${correctPct}% ${correctPct + wrongPct}%, #d8dee8 ${correctPct + wrongPct}% 100%)`;
-
-      const overallPct = main.max > 0 ? (main.score / main.max) * 100 : 0;
-      const clampedPct = Math.max(0, Math.min(100, overallPct));
-      const circumference = 534;
-      const offset = circumference - (circumference * clampedPct) / 100;
-      const gaugeFill = document.getElementById('akcGaugeFill');
-      requestAnimationFrame(() => { gaugeFill.style.strokeDashoffset = offset; });
-      const gaugePctEl = document.getElementById('akcGaugePct');
-      gaugePctEl.textContent = akcFmt(overallPct) + '%';
-      gaugePctEl.classList.toggle('negative', overallPct < 0);
-
-      // Bar chart: section-wise score
-      const barChart = document.getElementById('sectionBarChart');
-      barChart.innerHTML = '';
-      const maxAbsScore = Math.max(1, ...sectionResults.map((s) => Math.abs(s.score)), ...sectionResults.map((s) => s.max));
-      sectionResults.forEach((s) => {
-        const row = document.createElement('div');
-        row.className = 'bar-row';
-        const widthPct = Math.min(100, (Math.abs(s.score) / maxAbsScore) * 100);
-        row.innerHTML = `
-          <div class="bar-label" title="${s.section}">${s.section}</div>
-          <div class="bar-track"><div class="bar-fill ${s.score < 0 ? 'neg' : ''}" style="width:0%"></div></div>
-          <div class="bar-val">${akcFmt(s.score)}</div>
-        `;
-        barChart.appendChild(row);
-        requestAnimationFrame(() => { row.querySelector('.bar-fill').style.width = widthPct + '%'; });
-      });
 
       // Section-wise results table (matches SSC-style result sheet layout)
       function shortSectionName(name) {
@@ -1192,10 +1118,8 @@
       const tbody = document.getElementById('resultTableBody');
       const tfoot = document.getElementById('resultTableFoot');
       tbody.innerHTML = '';
-      sectionResults.forEach((s) => {
-        const isComputer = /computer/i.test(s.section);
+      sectionResults.filter((s) => !/computer/i.test(s.section)).forEach((s) => {
         const tr = document.createElement('tr');
-        if (isComputer) tr.className = 'qualifying';
         tr.innerHTML = `
           <td>${shortSectionName(s.section)}</td>
           <td class="num">${s.total}</td>
@@ -1205,7 +1129,8 @@
         `;
         tbody.appendChild(tr);
       });
-      tfoot.innerHTML = `
+
+      let footRows = `
         <tr>
           <td>TOTAL</td>
           <td class="num">${main.total}</td>
@@ -1214,6 +1139,31 @@
           <td class="num marks-col">${akcFmt(main.score)}</td>
         </tr>
       `;
+      if (computer) {
+        const overall = {
+          total: main.total + computer.total,
+          correct: main.correct + computer.correct,
+          wrong: main.wrong + computer.wrong,
+          score: main.score + computer.score,
+        };
+        footRows += `
+          <tr class="qualifying">
+            <td>Computer (Qualifying)</td>
+            <td class="num">${computer.total}</td>
+            <td class="num right-col">${computer.correct}</td>
+            <td class="num wrong-col">${computer.wrong}</td>
+            <td class="num marks-col">${akcFmt(computer.score)}</td>
+          </tr>
+          <tr>
+            <td>OVERALL TOTAL (incl. Computer)</td>
+            <td class="num">${overall.total}</td>
+            <td class="num right-col">${overall.correct}</td>
+            <td class="num wrong-col">${overall.wrong}</td>
+            <td class="num marks-col">${akcFmt(overall.score)}</td>
+          </tr>
+        `;
+      }
+      tfoot.innerHTML = footRows;
 
       akcResultsWrap.classList.add('show');
       akcResultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1250,10 +1200,8 @@
         }
 
         hideParsing();
-
-        hideParsing();
-        const tierToUse = parsed.detectedTier || currentTier;
-        setTier(tierToUse);
+        const tierToUse = detectTier(parsed);
+        currentTier = tierToUse;
         renderAkcResults(parsed, tierToUse);
         autoSaveSubmission();
       } catch (err) {
@@ -1279,14 +1227,17 @@
     async function autoSaveSubmission() {
       if (!lastResult) return;
       const { parsed, tier, grand, computer, sectionResults } = lastResult;
-      const rollNumber = document.getElementById('editRoll').value.trim();
+      const rollNumber = (parsed.rollNumber || '').trim();
       if (!rollNumber) return; // nothing reliable to key the record on
 
       const row = {
         roll_number: rollNumber,
         candidate_name: parsed.candidateName || null,
-        exam_name: document.getElementById('editExam').value.trim(),
-        year: document.getElementById('editYear').value.trim(),
+        venue_name: parsed.venueName || null,
+        exam_date: parsed.examDate || null,
+        exam_time: parsed.examTime || null,
+        exam_name: parsed.examName || '',
+        year: parsed.year || '',
         tier: tier === 'tier1' ? 'Tier I' : 'Tier II',
         category: document.getElementById('akcCategory').value,
         horizontal_category: document.getElementById('akcHorizontal').value,
@@ -1304,7 +1255,10 @@
       };
 
       try {
-        await supabaseClient.from('ssc_score_submissions').upsert(row, { onConflict: 'roll_number' });
+        // Requires a UNIQUE constraint on roll_number in the table (see setup notes).
+        // ignoreDuplicates means: insert if new, silently skip if that roll number
+        // already has a row — never overwrites an existing record.
+        await supabaseClient.from('ssc_score_submissions').upsert(row, { onConflict: 'roll_number', ignoreDuplicates: true });
       } catch (e) {
         // Silent by design — this background sync never interrupts the user's result view.
         console.warn('Background save failed:', e);
