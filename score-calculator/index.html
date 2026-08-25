@@ -1238,7 +1238,7 @@
           const url = document.getElementById('akcLinkInput').value.trim();
           if (!url) { showAkcError('Please paste the answer key link.'); return; }
           showParsing('Fetching and reading the answer key…');
-          const { data, error } = await supabaseClient.functions.invoke('parse-answer-key', { body: { url } });
+          const { data, error } = await supabaseClient.functions.invoke('bright-service', { body: { url } });
           if (error || !data || data.error) {
             hideParsing();
             const msg = (data && data.message) || (error && error.message) ||
