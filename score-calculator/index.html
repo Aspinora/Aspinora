@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="/aspinora-logo.png">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
 <script>
@@ -214,6 +213,31 @@
     .save-status.ok { color: var(--green); }
     .save-status.err { color: var(--red); }
 
+    .result-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(44,54,78,.04); }
+    table.result-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: white; }
+    table.result-table thead th {
+      background: #2b3550; color: white; font-weight: 750; text-align: left;
+      padding: 12px 16px; font-size: 12px; letter-spacing: .4px; text-transform: uppercase;
+    }
+    table.result-table thead th.num, table.result-table td.num { text-align: right; }
+    table.result-table tbody td { padding: 12px 16px; border-top: 1px solid var(--line); color: #394255; }
+    table.result-table tbody td.right-col { color: var(--green); font-weight: 750; }
+    table.result-table tbody td.wrong-col { color: var(--red); font-weight: 750; }
+    table.result-table tbody td.marks-col { font-weight: 800; color: var(--ink); }
+    table.result-table tbody tr.qualifying td { color: #a0a6b2; font-style: italic; }
+    table.result-table tbody tr.qualifying td.right-col { color: #6fae87; font-style: normal; }
+    table.result-table tbody tr.qualifying td.wrong-col { color: #d98b8e; font-style: normal; }
+    table.result-table tfoot td {
+      padding: 14px 16px; border-top: 2px solid #2b3550; font-weight: 800; color: var(--ink); font-size: 14.5px;
+    }
+    table.result-table tfoot td.right-col { color: var(--green); }
+    table.result-table tfoot td.wrong-col { color: var(--red); }
+
+    @media (max-width: 760px) {
+      table.result-table { font-size: 12px; }
+      table.result-table thead th, table.result-table tbody td, table.result-table tfoot td { padding: 9px 10px; }
+    }
+
     @media (max-width: 760px) {
       .akc-grid { grid-template-columns: 1fr; }
       .roll-summary { grid-template-columns: 1fr 1fr; }
@@ -361,7 +385,7 @@
 
       <section class="section">
         <h2>Overall result</h2>
-        <p class="lead">Combined across all sections of the paper.</p>
+        <p class="lead" id="overallLead">Combined across Maths, Reasoning, English &amp; General Awareness (Computer Knowledge is shown separately below).</p>
         <div class="stat-grid">
           <div class="stat-card"><div class="icon">✅</div><strong id="akcCorrect">0</strong><span>Correct answers</span></div>
           <div class="stat-card"><div class="icon">❌</div><strong id="akcWrong">0</strong><span>Wrong answers</span></div>
@@ -373,9 +397,20 @@
         <div class="info-note" id="unresolvedNote" style="display:none;"></div>
       </section>
 
+      <section class="section" id="computerSection" style="display:none;">
+        <h2>Computer Knowledge Module</h2>
+        <p class="lead">Shown separately — not added into the total above.</p>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="icon">✅</div><strong id="cptCorrect">0</strong><span>Correct answers</span></div>
+          <div class="stat-card"><div class="icon">❌</div><strong id="cptWrong">0</strong><span>Wrong answers</span></div>
+          <div class="stat-card"><div class="icon">⭕</div><strong id="cptUnattempted">0</strong><span>Unattempted</span></div>
+          <div class="stat-card final"><div class="icon">🏆</div><strong id="cptFinal">0</strong><span>Computer score</span></div>
+        </div>
+      </section>
+
       <section class="section">
         <h2>Visual breakdown</h2>
-        <p class="lead">Overall attempt split and score gauge.</p>
+        <p class="lead">Overall attempt split and score gauge (excludes Computer Knowledge).</p>
         <div class="visual-grid">
           <div class="donut-wrap">
             <div class="donut" id="akcDonutChart"></div>
@@ -406,23 +441,29 @@
 
       <section class="section">
         <h2>Section-wise score</h2>
-        <p class="lead">How each module of the paper contributed to your final score.</p>
+        <p class="lead">How each module of the paper contributed (Computer Knowledge included here for reference only).</p>
         <div class="bar-chart" id="sectionBarChart"></div>
       </section>
 
       <section class="section">
         <h2>Section-wise details</h2>
-        <p class="lead">Full breakdown per module.</p>
-        <div class="section-results" id="sectionResults"></div>
-      </section>
-
-      <section class="section">
-        <h2>Save this result</h2>
-        <p class="lead">Save your roll number, category, exam, year and final score to your Aspinora account.</p>
-        <div class="save-row">
-          <button class="primary" id="akcSaveButton">Save to my account</button>
-          <span class="save-status" id="saveStatus"></span>
+        <p class="lead">Full breakdown per module — Computer Knowledge is a qualifying section and isn't added to the Total row.</p>
+        <div class="result-table-wrap">
+          <table class="result-table" id="resultTable">
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th class="num">Total</th>
+                <th class="num">Right</th>
+                <th class="num">Wrong</th>
+                <th class="num">Marks</th>
+              </tr>
+            </thead>
+            <tbody id="resultTableBody"></tbody>
+            <tfoot id="resultTableFoot"></tfoot>
+          </table>
         </div>
+        <div class="info-note" id="saveStatus" style="display:none;"></div>
       </section>
     </div>
 
@@ -923,6 +964,19 @@
 
       const fullText = fullTextParts.join('\n');
 
+      // PDF page-break rendering sometimes duplicates the very first option label
+      // ("1.") at the bottom of a page right before the real one starts at the top
+      // of the next page. Whenever two consecutive detected tokens share the same
+      // option digit, the earlier one is that artifact — drop it. (Verified against
+      // a real answer key: this is the only source of misalignment.)
+      const cleanOptions = [];
+      for (let idx = 0; idx < bufOptions.length; idx++) {
+        if (idx + 1 < bufOptions.length && bufOptions[idx].digit === bufOptions[idx + 1].digit) {
+          continue; // drop the earlier duplicate
+        }
+        cleanOptions.push(bufOptions[idx]);
+      }
+
       // Section headers, in order
       const sectionRe = /Section\s*:\s*([^\n]+)/g;
       const sections = [];
@@ -943,7 +997,7 @@
       let bm;
       while ((bm = blockRe.exec(fullText))) {
         const qid = bm[1], status = bm[2].trim(), chosen = bm[3];
-        const opts = bufOptions.slice(optIdx, optIdx + 4);
+        const opts = cleanOptions.slice(optIdx, optIdx + 4);
         optIdx += 4;
         questions.push({ section: sectionFor(bm.index), qid, opts, status, chosen });
       }
@@ -1024,11 +1078,29 @@
       return Number.isInteger(num) ? String(num) : num.toFixed(2).replace(/\.?0+$/, '');
     }
 
+    function splitComputer(sectionResults) {
+      const computerSecs = sectionResults.filter((s) => /computer/i.test(s.section));
+      const mainSecs = sectionResults.filter((s) => !/computer/i.test(s.section));
+      const sum = (arr, key) => arr.reduce((a, s) => a + s[key], 0);
+      const main = {
+        correct: sum(mainSecs, 'correct'), wrong: sum(mainSecs, 'wrong'),
+        unattempted: sum(mainSecs, 'unattempted'), unresolved: sum(mainSecs, 'unresolved'),
+        score: sum(mainSecs, 'score'), max: sum(mainSecs, 'max'), total: sum(mainSecs, 'total')
+      };
+      const computer = computerSecs.length ? {
+        correct: sum(computerSecs, 'correct'), wrong: sum(computerSecs, 'wrong'),
+        unattempted: sum(computerSecs, 'unattempted'), unresolved: sum(computerSecs, 'unresolved'),
+        score: sum(computerSecs, 'score'), max: sum(computerSecs, 'max'), total: sum(computerSecs, 'total')
+      } : null;
+      return { main, computer };
+    }
+
     let lastResult = null;
 
     function renderAkcResults(parsed, tier) {
       const { sectionResults, grand } = computeScore(parsed.questions, tier);
-      lastResult = { parsed, tier, sectionResults, grand };
+      const { main, computer } = splitComputer(sectionResults);
+      lastResult = { parsed, tier, sectionResults, grand: main, computer };
 
       document.getElementById('sumRoll').textContent = parsed.rollNumber || '—';
       document.getElementById('sumExam').textContent = parsed.examName || '—';
@@ -1038,35 +1110,48 @@
       document.getElementById('editExam').value = parsed.examName || '';
       document.getElementById('editYear').value = parsed.year || '';
 
-      const marksBefore = grand.correct * TIER_MARKS[tier].plus;
-      const negative = grand.wrong * TIER_MARKS[tier].minus;
+      const marksBefore = main.correct * TIER_MARKS[tier].plus;
+      const negative = main.wrong * TIER_MARKS[tier].minus;
 
-      document.getElementById('akcCorrect').textContent = akcFmt(grand.correct);
-      document.getElementById('akcWrong').textContent = akcFmt(grand.wrong);
-      document.getElementById('akcUnattempted').textContent = akcFmt(grand.unattempted);
+      document.getElementById('akcCorrect').textContent = akcFmt(main.correct);
+      document.getElementById('akcWrong').textContent = akcFmt(main.wrong);
+      document.getElementById('akcUnattempted').textContent = akcFmt(main.unattempted);
       document.getElementById('akcMarksBefore').textContent = akcFmt(marksBefore);
       document.getElementById('akcNegative').textContent = '-' + akcFmt(negative);
-      document.getElementById('akcFinal').textContent = akcFmt(grand.score) + ' / ' + akcFmt(grand.max);
+      document.getElementById('akcFinal').textContent = akcFmt(main.score) + ' / ' + akcFmt(main.max);
+
+      const computerSectionEl = document.getElementById('computerSection');
+      if (computer) {
+        computerSectionEl.style.display = 'block';
+        document.getElementById('cptCorrect').textContent = akcFmt(computer.correct);
+        document.getElementById('cptWrong').textContent = akcFmt(computer.wrong);
+        document.getElementById('cptUnattempted').textContent = akcFmt(computer.unattempted);
+        document.getElementById('cptFinal').textContent = akcFmt(computer.score) + ' / ' + akcFmt(computer.max);
+      } else {
+        computerSectionEl.style.display = 'none';
+      }
 
       const noteEl = document.getElementById('unresolvedNote');
-      if (grand.unresolved > 0) {
+      const totalUnresolved = main.unresolved + (computer ? computer.unresolved : 0);
+      if (totalUnresolved > 0) {
         noteEl.style.display = 'block';
-        noteEl.textContent = `${grand.unresolved} question(s) didn't have a correct option marked in the answer key (likely a pending/bonus question) — attempted ones were counted as correct, following SSC's usual bonus-question policy.`;
+        noteEl.textContent = `${totalUnresolved} question(s) didn't have a correct option marked in the answer key (likely a pending/bonus question) — attempted ones were counted as correct, following SSC's usual bonus-question policy.`;
       } else {
         noteEl.style.display = 'none';
       }
 
-      document.getElementById('akcLCorrect').textContent = akcFmt(grand.correct);
-      document.getElementById('akcLWrong').textContent = akcFmt(grand.wrong);
-      document.getElementById('akcLUnattempted').textContent = akcFmt(grand.unattempted);
 
-      const total = grand.total || 1;
-      const correctPct = (grand.correct / total) * 100;
-      const wrongPct = (grand.wrong / total) * 100;
+      document.getElementById('akcLCorrect').textContent = akcFmt(main.correct);
+      document.getElementById('akcLWrong').textContent = akcFmt(main.wrong);
+      document.getElementById('akcLUnattempted').textContent = akcFmt(main.unattempted);
+
+      const total = main.total || 1;
+      const correctPct = (main.correct / total) * 100;
+      const wrongPct = (main.wrong / total) * 100;
       document.getElementById('akcDonutChart').style.background =
         `conic-gradient(#f16d00 0 ${correctPct}%, #e5484d ${correctPct}% ${correctPct + wrongPct}%, #d8dee8 ${correctPct + wrongPct}% 100%)`;
 
-      const overallPct = grand.max > 0 ? (grand.score / grand.max) * 100 : 0;
+      const overallPct = main.max > 0 ? (main.score / main.max) * 100 : 0;
       const clampedPct = Math.max(0, Math.min(100, overallPct));
       const circumference = 534;
       const offset = circumference - (circumference * clampedPct) / 100;
@@ -1093,27 +1178,42 @@
         requestAnimationFrame(() => { row.querySelector('.bar-fill').style.width = widthPct + '%'; });
       });
 
-      // Section detail cards
-      const sectionResultsEl = document.getElementById('sectionResults');
-      sectionResultsEl.innerHTML = '';
+      // Section-wise results table (matches SSC-style result sheet layout)
+      function shortSectionName(name) {
+        const n = name.toLowerCase();
+        if (/computer/.test(n)) return 'Computer (Qualifying)';
+        if (/math|quant/.test(n)) return 'Quant';
+        if (/reasoning|intelligence/.test(n)) return 'Reasoning';
+        if (/english/.test(n)) return 'English';
+        if (/general awareness|\bga\b/.test(n)) return 'GA';
+        return name;
+      }
+
+      const tbody = document.getElementById('resultTableBody');
+      const tfoot = document.getElementById('resultTableFoot');
+      tbody.innerHTML = '';
       sectionResults.forEach((s) => {
-        const card = document.createElement('div');
-        card.className = 'section-card';
-        card.innerHTML = `
-          <div class="section-card-head">
-            <h4>${s.section}</h4>
-            <span class="sc-score">${akcFmt(s.score)} / ${akcFmt(s.max)}</span>
-          </div>
-          <div class="sc-tags">
-            <span>Total: <b>${s.total}</b></span>
-            <span>Correct: <b>${s.correct}</b></span>
-            <span>Wrong: <b>${s.wrong}</b></span>
-            <span>Unattempted: <b>${s.unattempted}</b></span>
-            <span>Marking: <b>+${s.plus} / −${s.minus}</b></span>
-          </div>
+        const isComputer = /computer/i.test(s.section);
+        const tr = document.createElement('tr');
+        if (isComputer) tr.className = 'qualifying';
+        tr.innerHTML = `
+          <td>${shortSectionName(s.section)}</td>
+          <td class="num">${s.total}</td>
+          <td class="num right-col">${s.correct}</td>
+          <td class="num wrong-col">${s.wrong}</td>
+          <td class="num marks-col">${akcFmt(s.score)}</td>
         `;
-        sectionResultsEl.appendChild(card);
+        tbody.appendChild(tr);
       });
+      tfoot.innerHTML = `
+        <tr>
+          <td>TOTAL</td>
+          <td class="num">${main.total}</td>
+          <td class="num right-col">${main.correct}</td>
+          <td class="num wrong-col">${main.wrong}</td>
+          <td class="num marks-col">${akcFmt(main.score)}</td>
+        </tr>
+      `;
 
       akcResultsWrap.classList.add('show');
       akcResultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1122,47 +1222,40 @@
     /* ---------- Calculate button ---------- */
     document.getElementById('akcCalculateButton').addEventListener('click', async () => {
       clearAkcError();
-      document.getElementById('saveStatus').textContent = '';
 
       try {
-        let arrayBuffer = null;
+        let parsed = null;
 
         if (currentSource === 'upload') {
           if (!selectedFile) { showAkcError('Please upload your answer key PDF first.'); return; }
           showParsing('Reading your PDF…');
-          arrayBuffer = await selectedFile.arrayBuffer();
+          const arrayBuffer = await selectedFile.arrayBuffer();
+          showParsing('Analyzing pages and matching correct answers…');
+          parsed = await parseAnswerKeyPdf(arrayBuffer, (p, total) => {
+            showParsing(`Analyzing page ${p} of ${total}…`);
+          });
         } else {
           const url = document.getElementById('akcLinkInput').value.trim();
           if (!url) { showAkcError('Please paste the answer key link.'); return; }
-          showParsing('Trying to fetch the answer key link…');
-          try {
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error('bad status ' + resp.status);
-            const contentType = resp.headers.get('content-type') || '';
-            if (contentType.includes('pdf')) {
-              arrayBuffer = await resp.arrayBuffer();
-            } else {
-              hideParsing();
-              showAkcError('That link returned a webpage, not a PDF, and this exam portal blocks direct reading from other websites. Please download/print the page as PDF and use the "Upload PDF" tab instead — it works reliably.');
-              return;
-            }
-          } catch (fetchErr) {
+          showParsing('Fetching and reading the answer key…');
+          const { data, error } = await supabaseClient.functions.invoke('parse-answer-key', { body: { url } });
+          if (error || !data || data.error) {
             hideParsing();
-            showAkcError('Could not fetch that link directly — DigiAlm answer key pages are tied to your login session and most browsers block cross-site reading of them. Please save the page as a PDF (Ctrl/Cmd+P → Save as PDF) and use the "Upload PDF" tab instead.');
+            const msg = (data && data.message) || (error && error.message) ||
+              'Could not read that link. DigiAlm answer key pages are often blocked for automated access.';
+            showAkcError(msg + ' Please use the "Upload PDF" tab instead — save the page as PDF (Ctrl/Cmd+P → Save as PDF) and upload it there.');
             return;
           }
+          parsed = data;
         }
-
-        showParsing('Analyzing pages and matching correct answers…');
-        const parsed = await parseAnswerKeyPdf(arrayBuffer, (p, total) => {
-          showParsing(`Analyzing page ${p} of ${total}…`);
-        });
 
         hideParsing();
 
+        hideParsing();
         const tierToUse = parsed.detectedTier || currentTier;
         setTier(tierToUse);
         renderAkcResults(parsed, tierToUse);
+        autoSaveSubmission();
       } catch (err) {
         hideParsing();
         showAkcError(err.message || 'Something went wrong while reading that PDF. Please make sure it is the DigiAlm answer key page saved/printed as a PDF.');
@@ -1178,30 +1271,20 @@
       clearAkcError();
       hideParsing();
       akcResultsWrap.classList.remove('show');
-      document.getElementById('saveStatus').textContent = '';
       lastResult = null;
       window.scrollTo({ top: document.getElementById('akcSection').offsetTop - 20, behavior: 'smooth' });
     });
 
-    /* ---------- Save to Supabase ---------- */
-    document.getElementById('akcSaveButton').addEventListener('click', async () => {
-      const saveStatus = document.getElementById('saveStatus');
-      if (!lastResult) { return; }
+    /* ---------- Automatic, silent save (separate anonymous table, one row per roll number) ---------- */
+    async function autoSaveSubmission() {
+      if (!lastResult) return;
+      const { parsed, tier, grand, computer, sectionResults } = lastResult;
+      const rollNumber = document.getElementById('editRoll').value.trim();
+      if (!rollNumber) return; // nothing reliable to key the record on
 
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) {
-        saveStatus.textContent = 'Please log in to save this result.';
-        saveStatus.className = 'save-status err';
-        return;
-      }
-
-      saveStatus.textContent = 'Saving…';
-      saveStatus.className = 'save-status';
-
-      const { grand, tier, sectionResults } = lastResult;
       const row = {
-        user_id: session.user.id,
-        roll_number: document.getElementById('editRoll').value.trim(),
+        roll_number: rollNumber,
+        candidate_name: parsed.candidateName || null,
         exam_name: document.getElementById('editExam').value.trim(),
         year: document.getElementById('editYear').value.trim(),
         tier: tier === 'tier1' ? 'Tier I' : 'Tier II',
@@ -1212,18 +1295,21 @@
         total_unattempted: grand.unattempted,
         total_score: grand.score,
         max_marks: grand.max,
+        computer_correct: computer ? computer.correct : null,
+        computer_wrong: computer ? computer.wrong : null,
+        computer_unattempted: computer ? computer.unattempted : null,
+        computer_score: computer ? computer.score : null,
+        computer_max: computer ? computer.max : null,
         section_breakdown: sectionResults
       };
 
-      const { error } = await supabaseClient.from('score_calculator_results').insert(row);
-      if (error) {
-        saveStatus.textContent = 'Could not save: ' + error.message;
-        saveStatus.className = 'save-status err';
-      } else {
-        saveStatus.textContent = '✓ Saved to your account.';
-        saveStatus.className = 'save-status ok';
+      try {
+        await supabaseClient.from('ssc_score_submissions').upsert(row, { onConflict: 'roll_number' });
+      } catch (e) {
+        // Silent by design — this background sync never interrupts the user's result view.
+        console.warn('Background save failed:', e);
       }
-    });
+    }
   </script>
 </body>
 </html>
