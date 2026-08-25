@@ -313,19 +313,21 @@
 
         <div class="akc-grid">
           <div class="field">
-            <label for="akcCategory">Category</label>
+            <label for="akcCategory">Category <span style="color:var(--red);">*</span></label>
             <select id="akcCategory">
+              <option value="" disabled selected>-- Select category --</option>
               <option value="UR">UR (General)</option>
               <option value="OBC">OBC</option>
               <option value="SC">SC</option>
               <option value="ST">ST</option>
               <option value="EWS">EWS</option>
             </select>
-            <span class="hint">Your reservation category</span>
+            <span class="hint">Required — your reservation category</span>
           </div>
           <div class="field">
-            <label for="akcHorizontal">Horizontal category</label>
+            <label for="akcHorizontal">Horizontal category <span style="color:var(--red);">*</span></label>
             <select id="akcHorizontal">
+              <option value="" disabled selected>-- Select horizontal category --</option>
               <option value="None">None</option>
               <option value="PWD">PWD</option>
               <option value="ESM">ESM (Ex-Servicemen)</option>
@@ -333,7 +335,7 @@
               <option value="VH">VH (Visually Handicapped)</option>
               <option value="HH">HH (Hearing Handicapped)</option>
             </select>
-            <span class="hint">Leave as None if not applicable</span>
+            <span class="hint">Required — choose None if not applicable</span>
           </div>
         </div>
 
@@ -1172,6 +1174,15 @@
     /* ---------- Calculate button ---------- */
     document.getElementById('akcCalculateButton').addEventListener('click', async () => {
       clearAkcError();
+
+      if (!document.getElementById('akcCategory').value) {
+        showAkcError('Please select your category before calculating.');
+        return;
+      }
+      if (!document.getElementById('akcHorizontal').value) {
+        showAkcError('Please select your horizontal category before calculating (choose None if not applicable).');
+        return;
+      }
 
       try {
         let parsed = null;
