@@ -1,1280 +1,2558 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC Score Calculator & Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  gtag('config', 'G-2T21NS52RF');
-</script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspinora — Exam Score Calculator</title>
-  <style>
-    :root {
-      --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
-      --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
-      --red: #e5484d; --gray: #d8dee8; --blue: #367dd7; --green: #239363;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
-    button { font: inherit; }
-    input { font: inherit; }
-    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+        :root {
+            --primary-orange: #f97316;
+            --primary-orange-dark: #ea580c;
+            --navy-dark: #1e293b;
+            --navy: #334155;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+            --green: #10b981;
+            --green-light: #d1fae5;
+            --red: #ef4444;
+            --red-light: #fee2e2;
+            --amber: #f59e0b;
+            --amber-light: #fef3c7;
+            --blue: #3b82f6;
+            --blue-light: #dbeafe;
+        }
 
-    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
-    .brand { display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px; transition: background .2s ease, transform .2s ease; }
-    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
-    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
-    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
-    .brand-name span { color: var(--orange); }
-    .menu-wrap { position: relative; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--navy-dark);
+            line-height: 1.6;
+        }
 
-    .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
-    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
-    .dots { display: flex; gap: 4px; }
-    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
-    .menu-panel { position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px; background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow); opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
-    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
-    .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
-    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
-    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
-    .orange { background: #fff0e1; color: #f16d00; }
-    .blue { background: #eaf4ff; color: #367dd7; }
-    .purple { background: #f2edff; color: #7957db; }
-    .green { background: #eaf9f1; color: #239363; }
-    .red { background: #ffe9e9; color: #e5484d; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    .menu-profile { margin-bottom: 6px; cursor: default; }
-    .menu-item.menu-profile:hover { background: transparent; color: #394255; }
-    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
-    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
-    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
-    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
+        .calculator-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            margin-bottom: 30px;
+        }
 
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
-    .eyebrow::before { content: "✦"; font-size: 13px; }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--navy-dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-    .page-hero { padding: 46px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
-    .page-hero h1 { max-width: 680px; margin: 18px 0 14px; font-size: clamp(34px, 4.6vw, 54px); line-height: 1.05; letter-spacing: -2.2px; }
-    .page-hero h1 em { color: var(--orange); font-style: normal; }
-    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+        .subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
 
-    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 34px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
-    .section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.6px; }
-    .section .lead { max-width: 700px; margin: 0 0 20px; color: var(--muted); font-size: 14.5px; line-height: 1.7; }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin: 30px 0 20px;
+            border-bottom: 2px solid var(--primary-orange);
+            padding-bottom: 10px;
+        }
 
-    .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .field { display: flex; flex-direction: column; gap: 7px; }
-    .field label { font-size: 13px; font-weight: 750; color: #394255; }
-    .field .hint { font-size: 11.5px; color: #a0a6b2; font-weight: 600; }
-    .field input {
-      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px;
-      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
-    }
-    .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin: 20px 0 15px;
+        }
 
-    .form-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-    .primary, .secondary { border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; font-weight: 750; transition: all .2s ease; }
-    .primary { color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
-    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
-    .secondary { color: #4e586b; border: 1px solid #e8ebf0; background: white; }
-    .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+        p {
+            color: var(--gray-600);
+            margin-bottom: 15px;
+        }
 
-    .error-msg {
-      display: none; margin-top: 16px; padding: 12px 16px; border-radius: 12px;
-      background: #fff0f0; border: 1px solid #ffd6d6; color: #c0323a; font-size: 13.5px; font-weight: 650;
-    }
-    .error-msg.show { display: block; }
+        .tool-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-    .results-wrap { display: none; }
-    .results-wrap.show { display: block; }
+        .tool-card {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .stat-card { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); text-align: center; }
-    .stat-card .icon { font-size: 20px; margin-bottom: 8px; }
-    .stat-card strong { display: block; font-size: 26px; letter-spacing: -1px; color: var(--ink); }
-    .stat-card span { font-size: 12px; color: var(--muted); font-weight: 650; }
-    .stat-card.positive strong { color: var(--orange-dark); }
-    .stat-card.negative strong { color: var(--red); }
-    .stat-card.final strong { color: var(--green); }
+        .tool-card:hover {
+            border-color: var(--primary-orange);
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
 
-    .progress-list { margin-top: 4px; display: grid; gap: 14px; }
-    .progress-item { padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(44, 54, 78, .04); }
-    .progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
-    .progress-head h4 { margin: 0; font-size: 14px; }
-    .progress-head .pct { font-size: 13.5px; font-weight: 800; color: var(--orange-dark); }
-    .progress-track { height: 9px; border-radius: 99px; background: #f2f0ee; overflow: hidden; }
-    .progress-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width 1s cubic-bezier(.22,.9,.3,1); }
+        .tool-card.active {
+            border-color: var(--primary-orange);
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.05), rgba(234, 88, 12, 0.05));
+        }
 
-    .visual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+        .tool-card h3 {
+            margin: 0 0 10px;
+            color: var(--navy-dark);
+        }
 
-    .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
-    .donut { width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#d8dee8 0 100%); transition: background 1s ease; position: relative; flex-shrink: 0; }
-    .donut::after { content: ""; position: absolute; inset: 26px; border-radius: 50%; background: #fffaf5; }
-    .legend { display: grid; gap: 10px; }
-    .legend-item { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #394255; }
-    .legend-item .swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
-    .legend-item strong { color: var(--ink); }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .gauge-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-    .gauge-svg { width: 200px; height: 200px; transform: rotate(-90deg); display: block; }
-    .gauge-track { fill: none; stroke: #ffe7d1; stroke-width: 14; }
-    .gauge-fill { fill: none; stroke: url(#gaugeGradient); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 534; stroke-dashoffset: 534; transition: stroke-dashoffset 1.3s cubic-bezier(.22,.9,.25,1); }
-    .gauge-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .gauge-center strong { display: block; font-size: 32px; letter-spacing: -1.3px; color: var(--ink); }
-    .gauge-center strong.negative { color: var(--red); }
-    .gauge-center span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--navy-dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
 
-    .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
-    .footer-contact { font-size: 14px; color: var(--muted); }
-    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
-    .footer-contact a:hover { text-decoration: underline; }
-    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
-    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
-    .footer-links a:hover { color: var(--orange-dark); }
-    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+        .required {
+            color: var(--red);
+        }
 
-    .sticky-cta { position: fixed; right: 26px; bottom: 26px; z-index: 50; display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 99px; padding: 15px 22px; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 14px 30px rgba(242, 105, 0, .3); cursor: pointer; font-weight: 750; opacity: 0; transform: translateY(18px) scale(.96); pointer-events: none; transition: opacity .25s ease, transform .25s ease, box-shadow .2s ease; }
-    .sticky-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
-    .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(242, 105, 0, .38); }
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
 
-    /* ============================================================
-       SSC ANSWER KEY SCORE CALCULATOR
-    ============================================================ */
-    .tier-tabs { display: inline-flex; padding: 4px; border-radius: 14px; background: #fff1e4; gap: 4px; margin-bottom: 22px; }
-    .tier-tab { border: 0; background: transparent; padding: 10px 20px; border-radius: 10px; font-weight: 750; font-size: 13.5px; color: #a56a2c; cursor: pointer; transition: all .18s ease; }
-    .tier-tab.active { background: white; color: var(--orange-dark); box-shadow: 0 4px 12px rgba(193,117,43,.14); }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+        }
 
-    .akc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 18px; }
-    .field select {
-      padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px;
-      color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease;
-    }
-    .field select:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+        .upload-area {
+            border: 3px dashed var(--gray-300);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--gray-50);
+        }
 
-    .source-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-    .source-tab { flex: 1; border: 1px solid var(--line); background: white; border-radius: 12px; padding: 10px 14px; font-weight: 700; font-size: 13px; color: #6d7585; cursor: pointer; transition: all .18s ease; text-align: center; }
-    .source-tab.active { border-color: #ffb46b; background: #fff7ef; color: var(--orange-dark); }
-    .source-pane { display: none; }
-    .source-pane.active { display: block; }
+        .upload-area:hover {
+            border-color: var(--primary-orange);
+            background: var(--white);
+        }
 
-    .dropzone {
-      border: 2px dashed #ffcc9e; border-radius: 16px; padding: 28px 18px; text-align: center;
-      background: #fffaf5; cursor: pointer; transition: all .18s ease;
-    }
-    .dropzone:hover, .dropzone.drag { border-color: var(--orange); background: #fff3e5; }
-    .dropzone .dz-icon { font-size: 26px; margin-bottom: 8px; }
-    .dropzone .dz-title { font-weight: 750; font-size: 14px; color: #394255; margin-bottom: 4px; }
-    .dropzone .dz-sub { font-size: 12px; color: #a0a6b2; }
-    .dropzone.has-file { border-style: solid; border-color: var(--green); background: #f2fbf6; }
-    .dz-filename { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--green); }
+        .upload-area.dragover {
+            border-color: var(--primary-orange);
+            background: rgba(249, 115, 22, 0.05);
+        }
 
-    .link-row { display: flex; gap: 10px; }
-    .link-row input { flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; }
-    .link-row input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-orange);
+            margin-bottom: 15px;
+        }
 
-    .parse-status { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: #fff7ef; border: 1px solid #ffe2ca; color: #a56a2c; font-size: 13.5px; font-weight: 650; align-items: center; gap: 10px; }
-    .parse-status.show { display: flex; }
-    .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #ffd7ac; border-top-color: var(--orange-dark); animation: spin .8s linear infinite; flex-shrink: 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .btn {
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
 
-    .info-note { margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: #eaf4ff; border: 1px solid #d3e8ff; color: #2e5f96; font-size: 12.5px; line-height: 1.6; }
+        .btn:hover {
+            background: var(--primary-orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+        }
 
-    .section-results { display: grid; gap: 14px; margin-top: 6px; }
-    .section-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(44,54,78,.04); }
-    .section-card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
-    .section-card-head h4 { margin: 0; font-size: 14.5px; color: var(--ink); }
-    .section-card-head .sc-score { font-size: 15px; font-weight: 800; color: var(--orange-dark); }
-    .sc-tags { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); font-weight: 650; }
-    .sc-tags b { color: var(--ink); }
+        .btn-secondary {
+            background: var(--gray-700);
+        }
 
-    .bar-chart { display: grid; gap: 12px; margin-top: 6px; }
-    .bar-row { display: grid; grid-template-columns: 140px 1fr 56px; align-items: center; gap: 10px; }
-    .bar-row .bar-label { font-size: 12.5px; font-weight: 700; color: #394255; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bar-track { height: 16px; border-radius: 8px; background: #f2f0ee; overflow: hidden; position: relative; }
-    .bar-fill { height: 100%; border-radius: 8px; width: 0%; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width 1s cubic-bezier(.22,.9,.3,1); }
-    .bar-fill.neg { background: linear-gradient(90deg, #e5484d, #c0323a); }
-    .bar-row .bar-val { font-size: 12.5px; font-weight: 800; color: var(--ink); text-align: right; }
+        .btn-secondary:hover {
+            background: var(--gray-800);
+        }
 
-    .roll-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-    .roll-chip { padding: 12px 14px; border-radius: 12px; background: #fff7ef; border: 1px solid #ffe2ca; }
-    .roll-chip span { display: block; font-size: 11px; color: #a56a2c; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
-    .roll-chip strong { font-size: 14px; color: var(--ink); }
+        .btn-block {
+            width: 100%;
+            text-align: center;
+        }
 
-    .save-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .save-status { font-size: 13px; font-weight: 650; }
-    .save-status.ok { color: var(--green); }
-    .save-status.err { color: var(--red); }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-    .result-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(44,54,78,.04); }
-    table.result-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: white; }
-    table.result-table thead th {
-      background: #2b3550; color: white; font-weight: 750; text-align: left;
-      padding: 12px 16px; font-size: 12px; letter-spacing: .4px; text-transform: uppercase;
-    }
-    table.result-table thead th.num, table.result-table td.num { text-align: right; }
-    table.result-table tbody td { padding: 12px 16px; border-top: 1px solid var(--line); color: #394255; }
-    table.result-table tbody td.right-col { color: var(--green); font-weight: 750; }
-    table.result-table tbody td.wrong-col { color: var(--red); font-weight: 750; }
-    table.result-table tbody td.marks-col { font-weight: 800; color: var(--ink); }
-    table.result-table tbody tr.qualifying td { color: #a0a6b2; font-style: italic; }
-    table.result-table tbody tr.qualifying td.right-col { color: #6fae87; font-style: normal; }
-    table.result-table tbody tr.qualifying td.wrong-col { color: #d98b8e; font-style: normal; }
-    table.result-table tfoot td {
-      padding: 14px 16px; border-top: 2px solid #2b3550; font-weight: 800; color: var(--ink); font-size: 14.5px;
-    }
-    table.result-table tfoot td.right-col { color: var(--green); }
-    table.result-table tfoot td.wrong-col { color: var(--red); }
+        .detail-item {
+            background: var(--gray-50);
+            padding: 15px;
+            border-radius: 8px;
+        }
 
-    @media (max-width: 760px) {
-      table.result-table { font-size: 12px; }
-      table.result-table thead th, table.result-table tbody td, table.result-table tfoot td { padding: 9px 10px; }
-    }
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
 
-    @media (max-width: 760px) {
-      .akc-grid { grid-template-columns: 1fr; }
-      .roll-summary { grid-template-columns: 1fr 1fr; }
-      .bar-row { grid-template-columns: 100px 1fr 46px; }
-    }
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--navy-dark);
+        }
 
-    @media (max-width: 900px) {
-      .visual-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 760px) {
-      .page { width: min(100% - 22px, 590px); }
-      .topbar { height: 72px; }
-      .page-hero { padding: 32px 24px; }
-      .page-hero h1 { letter-spacing: -1.6px; }
-      .section { padding: 24px 18px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .stat-grid { grid-template-columns: 1fr 1fr; }
-      .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
-    }
-  </style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--navy-dark);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-dark));
+            color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .result-section h3 {
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Analytics Dashboard Styles */
+        .analytics-section {
+            display: none;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            margin-bottom: 30px;
+        }
+
+        .analytics-section.active {
+            display: block;
+        }
+
+        .analytics-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .analytics-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--navy-dark);
+            margin-bottom: 10px;
+        }
+
+        .analytics-subtitle {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        /* Centered View Analytics Button */
+        .view-analytics-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .view-analytics-btn {
+            background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+            color: var(--white);
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px -5px rgba(30, 41, 59, 0.4);
+        }
+
+        .view-analytics-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -5px rgba(30, 41, 59, 0.5);
+        }
+
+        .view-analytics-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        .hero-score {
+            text-align: center;
+        }
+
+        .hero-main-score {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--navy-dark);
+            line-height: 1;
+        }
+
+        .hero-max-score {
+            font-size: 2rem;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .hero-percentage {
+            font-size: 1.5rem;
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .hero-stat {
+            background: var(--gray-50);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--navy-dark);
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 5px;
+        }
+
+        .hero-chart-container {
+            position: relative;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--navy-dark);
+        }
+
+        .kpi-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .kpi-subvalue {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 5px;
+        }
+
+        /* Section Cards */
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .section-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .section-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+        }
+
+        .section-score {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-orange);
+        }
+
+        .section-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metric-item {
+            background: var(--gray-50);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-top: 5px;
+        }
+
+        /* Chart Containers */
+        .chart-container {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-wrapper.small {
+            height: 250px;
+        }
+
+        .chart-wrapper.medium {
+            height: 350px;
+        }
+
+        .chart-wrapper.large {
+            height: 400px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-grid.triple {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* Insights Section */
+        .insights-section {
+            background: linear-gradient(135deg, var(--gray-50), var(--white));
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .insights-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insights-list {
+            list-style: none;
+        }
+
+        .insights-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--navy);
+            line-height: 1.6;
+        }
+
+        .insights-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insights-list li::before {
+            content: "→";
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* Computer Section */
+        .computer-section {
+            background: linear-gradient(135deg, var(--amber-light), var(--white));
+            border: 2px solid var(--amber);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .computer-badge {
+            display: inline-block;
+            background: var(--amber);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Simulator */
+        .simulator-section {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .simulator-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .simulator-result {
+            background: var(--white);
+            border: 2px solid var(--primary-orange);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .simulator-result-value {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-orange);
+        }
+
+        .simulator-result-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 10px;
+        }
+
+        /* Heatmap */
+        .heatmap-container {
+            overflow-x: auto;
+        }
+
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .heatmap-table th,
+        .heatmap-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .heatmap-table th {
+            background: var(--navy-dark);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .heatmap-cell {
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 10px !important;
+        }
+
+        .heat-excellent {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .heat-good {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .heat-average {
+            background: var(--amber-light);
+            color: var(--amber);
+        }
+
+        .heat-poor {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        /* Rankings */
+        .ranking-list {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ranking-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: var(--gray-50);
+        }
+
+        .ranking-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .ranking-position {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--primary-orange);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .ranking-name {
+            font-weight: 600;
+            color: var(--navy-dark);
+        }
+
+        .ranking-value {
+            font-weight: 700;
+            color: var(--gray-600);
+        }
+
+        /* Quadrant Chart */
+        .quadrant-container {
+            position: relative;
+            height: 400px;
+            padding: 20px;
+        }
+
+        /* Summary Panel */
+        .summary-panel {
+            background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+            color: var(--white);
+            border-radius: 12px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-item-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .summary-item-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid.triple {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .calculator-card,
+            .analytics-section {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-main-score {
+                font-size: 3.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Utility Classes */
+        .text-green {
+            color: var(--green);
+        }
+
+        .text-red {
+            color: var(--red);
+        }
+
+        .text-amber {
+            color: var(--amber);
+        }
+
+        .text-orange {
+            color: var(--primary-orange);
+        }
+
+        .bg-green {
+            background-color: var(--green);
+        }
+
+        .bg-red {
+            background-color: var(--red);
+        }
+
+        .bg-amber {
+            background-color: var(--amber);
+        }
+
+        .bg-orange {
+            background-color: var(--primary-orange);
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .mb-30 {
+            margin-bottom: 30px;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <main class="page">
-    <header class="topbar">
-      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
-        <img src="/aspinora-logo.png" alt="Aspinora logo" />
-        <span class="brand-name">Aspi<span>nora</span></span>
-      </button>
-      <div class="menu-wrap">
-        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
-          <span class="dots"><i></i><i></i><i></i></span>
-        </button>
-        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
-          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
-            <span class="menu-avatar" id="menuAvatar">A</span>
-            <span class="menu-profile-info">
-              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
-              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
-            </span>
-          </button>
-          <div class="menu-label">Explore Aspinora</div>
-          <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
-          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
-          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
-          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
-          <a class="menu-item" href="/mock-tests/"><span class="menu-icon orange">◈</span>Mock tests</a>
-          <a class="menu-item" href="/score-calculator/"><span class="menu-icon blue">▤</span>Calculators</a>
-          <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
-          <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
-          <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
-          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
-          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
-          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
-        </nav>
-      </div>
-    </div></header>
+    <div class="container">
+        <!-- Score Calculator Section -->
+        <div class="calculator-card">
+            <h1>Know your exact score, before the results do.</h1>
+            <p class="subtitle">Pick a tool below — read your official DigiAlm answer key automatically, or enter your attempt manually.</p>
 
-    <section class="page-hero">
-      <div class="eyebrow">Score calculator</div>
-      <h1>Know your exact score, <em>before the results do.</em></h1>
-      <p class="intro">Pick a tool below — read your official DigiAlm answer key automatically, or enter your attempt manually.</p>
-    </section>
+            <h2>SSC answer key score calculator</h2>
+            <p>Upload your downloaded answer-key PDF (or paste the DigiAlm link) and we'll read your responses, cross-check every question against the marked correct answer, and calculate your exact score — Tier I and Tier II detected automatically.</p>
 
-    <div class="tier-tabs" role="tablist" style="margin-top:20px;">
-      <button class="tier-tab active" id="modeTabAkc">SSC answer key score calculator</button>
-      <button class="tier-tab" id="modeTabManual">Enter your exam details</button>
-    </div>
+            <div class="tool-selector">
+                <div class="tool-card active">
+                    <h3>📄 Upload PDF</h3>
+                    <p>Tap to upload your answer key PDF</p>
+                </div>
+                <div class="tool-card">
+                    <h3>🔗 DigiAlm Link</h3>
+                    <p>Paste your response sheet URL</p>
+                </div>
+            </div>
 
-    <div id="akcModeWrap">
-      <section class="section" id="akcSection">
-        <h2>SSC answer key score calculator</h2>
-        <p class="lead">Upload your downloaded answer-key PDF (or paste the DigiAlm link) and we'll read your responses, cross-check every question against the marked correct answer, and calculate your exact score — Tier I and Tier II detected automatically.</p>
+            <div class="form-group">
+                <label>Required — your reservation category <span class="required">*</span></label>
+                <select>
+                    <option value="">Select category</option>
+                    <option value="UR">UR (Unreserved)</option>
+                    <option value="OBC">OBC</option>
+                    <option value="SC">SC</option>
+                    <option value="ST">ST</option>
+                    <option value="EWS">EWS</option>
+                </select>
+            </div>
 
-        <div class="akc-grid">
-          <div class="field">
-            <label for="akcCategory">Category <span style="color:var(--red);">*</span></label>
-            <select id="akcCategory">
-              <option value="" disabled selected>-- Select category --</option>
-              <option value="UR">UR (General)</option>
-              <option value="OBC">OBC</option>
-              <option value="SC">SC</option>
-              <option value="ST">ST</option>
-              <option value="EWS">EWS</option>
-            </select>
-            <span class="hint">Required — your reservation category</span>
-          </div>
-          <div class="field">
-            <label for="akcHorizontal">Horizontal category <span style="color:var(--red);">*</span></label>
-            <select id="akcHorizontal">
-              <option value="" disabled selected>-- Select horizontal category --</option>
-              <option value="None">None</option>
-              <option value="PWD">PWD</option>
-              <option value="ESM">ESM (Ex-Servicemen)</option>
-              <option value="OH">OH (Orthopaedically Handicapped)</option>
-              <option value="VH">VH (Visually Handicapped)</option>
-              <option value="HH">HH (Hearing Handicapped)</option>
-            </select>
-            <span class="hint">Required — choose None if not applicable</span>
-          </div>
-        </div>
+            <div class="form-group">
+                <label>Required — choose None if not applicable</label>
+                <select>
+                    <option value="">Select if applicable</option>
+                    <option value="none">None</option>
+                    <option value="PwD">PwD (Benchmark Disabilities)</option>
+                    <option value="ESM">ESM (Ex-Servicemen)</option>
+                </select>
+            </div>
 
-        <div class="source-tabs">
-          <button class="source-tab active" data-source="upload" id="tabUpload">Upload PDF</button>
-          <button class="source-tab" data-source="link" id="tabLink">Paste answer key link</button>
-        </div>
+            <div class="upload-area">
+                <div class="upload-icon">📤</div>
+                <h3>Tap to upload your answer key PDF</h3>
+                <p>Downloaded / printed from the DigiAlm response sheet page</p>
+                <p style="font-size: 0.9rem; color: var(--gray-500); margin-top: 15px;">
+                    These links are usually tied to your login session, so a direct fetch often gets blocked by the exam portal. 
+                    If it fails, download the page as PDF (Ctrl/Cmd+P → Save as PDF) and use the Upload tab instead — that always works.
+                </p>
+            </div>
 
-        <div class="source-pane active" id="paneUpload">
-          <div class="dropzone" id="dropzone">
-            <div class="dz-icon">📄</div>
-            <div class="dz-title">Tap to upload your answer key PDF</div>
-            <div class="dz-sub">Downloaded / printed from the DigiAlm response sheet page</div>
-            <div class="dz-filename" id="dzFilename" style="display:none;"></div>
-          </div>
-          <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" />
-        </div>
+            <h2>Your details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Roll number</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Candidate name</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Exam</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Year</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Tier</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Venue</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Exam date</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Exam time</div>
+                    <div class="detail-value">**—**</div>
+                </div>
+            </div>
 
-        <div class="source-pane" id="paneLink">
-          <div class="link-row">
-            <input type="url" id="akcLinkInput" placeholder="https://ssc.digialm.com/.../....html" />
-          </div>
-          <div class="info-note">These links are usually tied to your login session, so a direct fetch often gets blocked by the exam portal. If it fails, download the page as PDF (Ctrl/Cmd+P → Save as PDF) and use the Upload tab instead — that always works.</div>
-        </div>
-
-        <div class="parse-status" id="parseStatus"><span class="spinner"></span><span id="parseStatusText">Reading your answer key…</span></div>
-        <div class="error-msg" id="akcErrorMsg"></div>
-
-        <div class="form-actions">
-          <button class="primary" id="akcCalculateButton">Calculate my score&nbsp; →</button>
-          <button class="secondary" id="akcResetButton">Reset</button>
-        </div>
-      </section>
-
-      <div class="results-wrap" id="akcResultsWrap">
-        <section class="section">
-          <h2>Your details</h2>
-          <div class="roll-summary" id="detailsChips" style="grid-template-columns: repeat(4,1fr);">
-            <div class="roll-chip"><span>Roll number</span><strong id="sumRoll">—</strong></div>
-            <div class="roll-chip"><span>Candidate name</span><strong id="sumName">—</strong></div>
-            <div class="roll-chip"><span>Exam</span><strong id="sumExam">—</strong></div>
-            <div class="roll-chip"><span>Year</span><strong id="sumYear">—</strong></div>
-            <div class="roll-chip"><span>Tier</span><strong id="sumTier">—</strong></div>
-            <div class="roll-chip"><span>Venue</span><strong id="sumVenue">—</strong></div>
-            <div class="roll-chip"><span>Exam date</span><strong id="sumDate">—</strong></div>
-            <div class="roll-chip"><span>Exam time</span><strong id="sumTime">—</strong></div>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2>Section-wise details</h2>
-          <p class="lead">Full breakdown per module — Computer Knowledge is a qualifying section, shown separately, with an overall total including it below.</p>
-          <div class="result-table-wrap">
-            <table class="result-table" id="resultTable">
-              <thead>
-                <tr>
-                  <th>Section</th>
-                  <th class="num">Total</th>
-                  <th class="num">Right</th>
-                  <th class="num">Wrong</th>
-                  <th class="num">Marks</th>
-                </tr>
-              </thead>
-              <tbody id="resultTableBody"></tbody>
-              <tfoot id="resultTableFoot"></tfoot>
+            <h2>Section-wise details</h2>
+            <p>Full breakdown per module — Computer Knowledge is a qualifying section, shown separately, with an overall total including it below.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Total</th>
+                        <th>Right</th>
+                        <th>Wrong</th>
+                        <th>Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Quant</td>
+                        <td>30</td>
+                        <td>17</td>
+                        <td>1</td>
+                        <td>50</td>
+                    </tr>
+                    <tr>
+                        <td>Reasoning</td>
+                        <td>30</td>
+                        <td>26</td>
+                        <td>2</td>
+                        <td>76</td>
+                    </tr>
+                    <tr>
+                        <td>English</td>
+                        <td>45</td>
+                        <td>38</td>
+                        <td>6</td>
+                        <td>108</td>
+                    </tr>
+                    <tr>
+                        <td>GA</td>
+                        <td>25</td>
+                        <td>13</td>
+                        <td>4</td>
+                        <td>35</td>
+                    </tr>
+                    <tr style="background: var(--gray-100); font-weight: 700;">
+                        <td>TOTAL</td>
+                        <td>130</td>
+                        <td>94</td>
+                        <td>13</td>
+                        <td>269</td>
+                    </tr>
+                    <tr style="background: var(--amber-light);">
+                        <td>Computer (Qualifying)</td>
+                        <td>20</td>
+                        <td>6</td>
+                        <td>4</td>
+                        <td>14</td>
+                    </tr>
+                    <tr style="background: var(--navy-dark); color: var(--white); font-weight: 800;">
+                        <td>OVERALL TOTAL</td>
+                        <td>150</td>
+                        <td>100</td>
+                        <td>17</td>
+                        <td>283</td>
+                    </tr>
+                </tbody>
             </table>
-          </div>
-        </section>
 
-        <section class="section">
-          <h2>Overall result</h2>
-          <p class="lead" id="overallLead">Combined across Maths, Reasoning, English &amp; General Awareness (Computer Knowledge is qualifying and shown in the table above).</p>
-          <div class="stat-grid">
-            <div class="stat-card"><div class="icon">✅</div><strong id="akcCorrect">0</strong><span>Correct answers</span></div>
-            <div class="stat-card"><div class="icon">❌</div><strong id="akcWrong">0</strong><span>Wrong answers</span></div>
-            <div class="stat-card"><div class="icon">⭕</div><strong id="akcUnattempted">0</strong><span>Unattempted</span></div>
-            <div class="stat-card positive"><div class="icon">📊</div><strong id="akcMarksBefore">0</strong><span>Marks before negative</span></div>
-            <div class="stat-card negative"><div class="icon">➖</div><strong id="akcNegative">0</strong><span>Negative marks</span></div>
-            <div class="stat-card final"><div class="icon">🏆</div><strong id="akcFinal">0</strong><span>Final score</span></div>
-          </div>
-          <div class="info-note" id="unresolvedNote" style="display:none;"></div>
-          <div class="form-actions">
-            <a class="primary" href="/analytics/" id="viewAnalyticsBtn" style="text-decoration:none;display:inline-block;">View analytics&nbsp; →</a>
-          </div>
-        </section>
-      </div>
-    </div>
+            <h2>Overall result</h2>
+            <p>Combined across Maths, Reasoning, English & General Awareness (Computer Knowledge is qualifying and shown in the table above).</p>
 
-    <div id="manualModeWrap" style="display:none;">
-      <section class="section">
-        <h2>Enter your exam details</h2>
-        <p class="lead">Fill in all five fields, then hit calculate.</p>
+            <div class="result-section">
+                <h3>Final Score</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span class="result-value">94</span>
+                        <span class="result-label">Correct answers</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value">13</span>
+                        <span class="result-label">Wrong answers</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value">23</span>
+                        <span class="result-label">Unattempted</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value">282</span>
+                        <span class="result-label">Marks before negative</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value">13</span>
+                        <span class="result-label">Negative marks</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value" style="font-size: 3rem;">269</span>
+                        <span class="result-label">Final score</span>
+                    </div>
+                </div>
+            </div>
 
-        <div class="form-grid">
-          <div class="field">
-            <label for="totalQuestions">Total Questions</label>
-            <input type="number" id="totalQuestions" min="0" placeholder="e.g. 100" inputmode="numeric" />
-            <span class="hint">Total number of questions in the exam</span>
-          </div>
-          <div class="field">
-            <label for="attempted">Questions Attempted</label>
-            <input type="number" id="attempted" min="0" placeholder="e.g. 85" inputmode="numeric" />
-            <span class="hint">How many you actually answered</span>
-          </div>
-          <div class="field">
-            <label for="wrong">Wrong Answers</label>
-            <input type="number" id="wrong" min="0" placeholder="e.g. 12" inputmode="numeric" />
-            <span class="hint">Out of the ones you attempted</span>
-          </div>
-          <div class="field">
-            <label for="marksPerQ">Marks per Question</label>
-            <input type="number" id="marksPerQ" min="0" step="0.25" placeholder="e.g. 2" inputmode="decimal" />
-            <span class="hint">Marks awarded for each correct answer</span>
-          </div>
-          <div class="field">
-            <label for="negMarking">Negative Marking per Wrong Answer</label>
-            <input type="number" id="negMarking" min="0" step="0.25" placeholder="e.g. 0.5" inputmode="decimal" />
-            <span class="hint">Marks deducted for each wrong answer</span>
-          </div>
+            <!-- Centered View Analytics Button -->
+            <div class="view-analytics-container">
+                <button class="view-analytics-btn" onclick="toggleAnalytics()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    View Analytics
+                </button>
+            </div>
         </div>
 
-        <div class="error-msg" id="errorMsg"></div>
+        <!-- Analytics Dashboard Section -->
+        <div class="analytics-section" id="analyticsSection">
+            <div class="analytics-header">
+                <h1 class="analytics-title">📊 CGL Score Analytics Dashboard</h1>
+                <p class="analytics-subtitle">Premium Performance Intelligence | Comprehensive Analysis</p>
+            </div>
 
-        <div class="form-actions">
-          <button class="primary" id="calculateButton">Calculate my score&nbsp; →</button>
-          <button class="secondary" id="resetButton">Reset</button>
+            <!-- Section 1: Hero / Score Command Center -->
+            <div class="hero-section">
+                <div class="hero-score">
+                    <div class="hero-main-score">269 <span class="hero-max-score">/ 390</span></div>
+                    <div class="hero-percentage">68.97% Score</div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-green">94</div>
+                            <div class="hero-stat-label">Correct</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-red">13</div>
+                            <div class="hero-stat-label">Wrong</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value text-amber">23</div>
+                            <div class="hero-stat-label">Unattempted</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">107</div>
+                            <div class="hero-stat-label">Attempted</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">87.0%</div>
+                            <div class="hero-stat-label">Attempt Rate</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">87.85%</div>
+                            <div class="hero-stat-label">Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-chart-container">
+                    <canvas id="heroRadialChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 2: Exam Snapshot KPI Cards -->
+            <h2>📋 Exam Snapshot</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-value text-orange">269 / 390</div>
+                    <div class="kpi-label">Score</div>
+                    <div class="kpi-subvalue">68.97%</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-green">87.85%</div>
+                    <div class="kpi-label">Accuracy</div>
+                    <div class="kpi-subvalue">94 / 107</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-blue">82.31%</div>
+                    <div class="kpi-label">Attempt Rate</div>
+                    <div class="kpi-subvalue">107 / 130</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-green">94</div>
+                    <div class="kpi-label">Correct</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-red">13</div>
+                    <div class="kpi-label">Wrong</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-amber">23</div>
+                    <div class="kpi-label">Unattempted</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value text-red">13 marks</div>
+                    <div class="kpi-label">Negative Impact</div>
+                </div>
+                <div class="kpi-card" style="border-color: var(--amber);">
+                    <div class="kpi-value text-amber">14 / 20</div>
+                    <div class="kpi-label">Computer</div>
+                    <div class="kpi-subvalue">Qualifying</div>
+                </div>
+            </div>
+
+            <!-- Section 3: Section Performance Cards -->
+            <h2>📈 Section Performance</h2>
+            <div class="section-grid">
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Quant</div>
+                        <div class="section-score">50 / 90</div>
+                    </div>
+                    <div class="section-metrics">
+                        <div class="metric-item">
+                            <div class="metric-label">Accuracy</div>
+                            <div class="metric-value text-green">94.44%</div>
+                            <div class="kpi-subvalue">17 / 18</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Attempt Rate</div>
+                            <div class="metric-value text-amber">60%</div>
+                            <div class="kpi-subvalue">18 / 30</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Score Efficiency</div>
+                            <div class="metric-value text-amber">55.56%</div>
+                            <div class="kpi-subvalue">50 / 90</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Unattempted</div>
+                            <div class="metric-value text-amber">12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Reasoning</div>
+                        <div class="section-score">76 / 90</div>
+                    </div>
+                    <div class="section-metrics">
+                        <div class="metric-item">
+                            <div class="metric-label">Accuracy</div>
+                            <div class="metric-value text-green">92.86%</div>
+                            <div class="kpi-subvalue">26 / 28</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Attempt Rate</div>
+                            <div class="metric-value text-green">93.33%</div>
+                            <div class="kpi-subvalue">28 / 30</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Score Efficiency</div>
+                            <div class="metric-value text-green">84.44%</div>
+                            <div class="kpi-subvalue">76 / 90</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Unattempted</div>
+                            <div class="metric-value text-green">2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">English</div>
+                        <div class="section-score">108 / 135</div>
+                    </div>
+                    <div class="section-metrics">
+                        <div class="metric-item">
+                            <div class="metric-label">Accuracy</div>
+                            <div class="metric-value text-blue">86.36%</div>
+                            <div class="kpi-subvalue">38 / 44</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Attempt Rate</div>
+                            <div class="metric-value text-green">97.78%</div>
+                            <div class="kpi-subvalue">44 / 45</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Score Efficiency</div>
+                            <div class="metric-value text-green">80.00%</div>
+                            <div class="kpi-subvalue">108 / 135</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Unattempted</div>
+                            <div class="metric-value text-green">1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">GA</div>
+                        <div class="section-score">35 / 75</div>
+                    </div>
+                    <div class="section-metrics">
+                        <div class="metric-item">
+                            <div class="metric-label">Accuracy</div>
+                            <div class="metric-value text-red">76.47%</div>
+                            <div class="kpi-subvalue">13 / 17</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Attempt Rate</div>
+                            <div class="metric-value text-amber">68%</div>
+                            <div class="kpi-subvalue">17 / 25</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Score Efficiency</div>
+                            <div class="metric-value text-red">46.67%</div>
+                            <div class="kpi-subvalue">35 / 75</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Unattempted</div>
+                            <div class="metric-value text-red">8</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Section Score Bar Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">Section Score Comparison</h3>
+                <div class="chart-wrapper">
+                    <canvas id="sectionScoreChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 5 & 6: Accuracy and Attempt Rate Charts -->
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Accuracy by Section</h3>
+                    <div class="chart-wrapper small">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Attempt Rate by Section</h3>
+                    <div class="chart-wrapper small">
+                        <canvas id="attemptRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: 100% Stacked Outcome Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">Section-wise Outcome Distribution (100% Stacked)</h3>
+                <div class="chart-wrapper medium">
+                    <canvas id="stackedOutcomeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 8: Radar Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">Performance Profile Radar</h3>
+                <div class="chart-wrapper medium">
+                    <canvas id="radarChart"></canvas>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray-600);">
+                    This radar chart compares all four sections across five normalized performance dimensions. 
+                    Larger area indicates stronger overall performance.
+                </p>
+            </div>
+
+            <!-- Section 9: Attempt Strategy Quadrant -->
+            <div class="chart-container">
+                <h3 class="chart-title">Attempt Strategy Quadrant</h3>
+                <div class="chart-wrapper large">
+                    <canvas id="quadrantChart"></canvas>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray-600);">
+                    This scatter plot shows the relationship between attempt rate and accuracy. 
+                    Top-right represents optimal performance (high attempt + high accuracy).
+                </p>
+            </div>
+
+            <!-- Section 10 & 11: Donut Charts -->
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Marks Contribution (269 Total)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="marksContributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Question Distribution (130 Total)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="questionDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 12: Correct/Wrong/Unattempted Comparison -->
+            <div class="chart-container">
+                <h3 class="chart-title">Section-wise Correct/Wrong/Unattempted Comparison</h3>
+                <div class="chart-wrapper medium">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 13: Score Loss Analysis -->
+            <div class="chart-container">
+                <h3 class="chart-title">Where Marks Were Lost</h3>
+                <div class="section-grid">
+                    <div class="kpi-card" style="border-left: 4px solid var(--red);">
+                        <div class="kpi-value text-red">13 marks</div>
+                        <div class="kpi-label">Wrong-answer Penalty</div>
+                        <div class="kpi-subvalue">13 incorrect answers</div>
+                    </div>
+                    <div class="kpi-card" style="border-left: 4px solid var(--amber);">
+                        <div class="kpi-value text-amber">23 questions</div>
+                        <div class="kpi-label">Unattempted Question Pool</div>
+                        <div class="kpi-subvalue">Potential opportunity area</div>
+                    </div>
+                </div>
+                <div class="kpi-grid" style="margin-top: 20px;">
+                    <div class="kpi-card">
+                        <div class="kpi-value">12</div>
+                        <div class="kpi-label">Quant</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">2</div>
+                        <div class="kpi-label">Reasoning</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">1</div>
+                        <div class="kpi-label">English</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">8</div>
+                        <div class="kpi-label">GA</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 14: Score Gap Analysis -->
+            <div class="chart-container">
+                <h3 class="chart-title">Score Gap by Section (Maximum − Actual)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="scoreGapChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 15: Efficiency Analysis -->
+            <div class="chart-container">
+                <h3 class="chart-title">Marks Efficiency per Attempt</h3>
+                <div class="chart-wrapper">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray-600);">
+                    This derived metric shows marks earned per attempted question. Higher values indicate better conversion of attempts into marks.
+                </p>
+            </div>
+
+            <!-- Section 16 & 17: Waterfall Charts -->
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Negative Marking Waterfall (Main Paper)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="waterfallChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Section-wise Net Score Waterfall</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="sectionWaterfallChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 18: Risk Analysis -->
+            <div class="chart-container">
+                <h3 class="chart-title">Wrong-Answer Risk by Section</h3>
+                <div class="chart-wrapper">
+                    <canvas id="riskChart"></canvas>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray-600);">
+                    Wrong-Answer Risk = Wrong ÷ Attempted × 100. This shows the proportion of attempted questions that were answered incorrectly.
+                </p>
+            </div>
+
+            <!-- Section 19: Coverage Analysis -->
+            <div class="chart-container">
+                <h3 class="chart-title">Question Coverage by Section</h3>
+                <div class="section-grid">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Quant</div>
+                            <div class="section-score text-amber">60%</div>
+                        </div>
+                        <div style="background: var(--gray-200); border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div style="background: var(--primary-orange); width: 60%; height: 100%;"></div>
+                        </div>
+                        <div class="kpi-subvalue" style="margin-top: 10px;">18 / 30 attempted</div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Reasoning</div>
+                            <div class="section-score text-green">93.33%</div>
+                        </div>
+                        <div style="background: var(--gray-200); border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div style="background: var(--green); width: 93.33%; height: 100%;"></div>
+                        </div>
+                        <div class="kpi-subvalue" style="margin-top: 10px;">28 / 30 attempted</div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">English</div>
+                            <div class="section-score text-green">97.78%</div>
+                        </div>
+                        <div style="background: var(--gray-200); border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div style="background: var(--green); width: 97.78%; height: 100%;"></div>
+                        </div>
+                        <div class="kpi-subvalue" style="margin-top: 10px;">44 / 45 attempted</div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">GA</div>
+                            <div class="section-score text-amber">68%</div>
+                        </div>
+                        <div style="background: var(--gray-200); border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div style="background: var(--primary-orange); width: 68%; height: 100%;"></div>
+                        </div>
+                        <div class="kpi-subvalue" style="margin-top: 10px;">17 / 25 attempted</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 20: Performance Matrix Heatmap -->
+            <div class="chart-container">
+                <h3 class="chart-title">Performance Matrix Heatmap</h3>
+                <div class="heatmap-container">
+                    <table class="heatmap-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Quant</th>
+                                <th>Reasoning</th>
+                                <th>English</th>
+                                <th>GA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 600;">Score %</td>
+                                <td class="heatmap-cell heat-average">55.56%</td>
+                                <td class="heatmap-cell heat-good">84.44%</td>
+                                <td class="heatmap-cell heat-good">80.00%</td>
+                                <td class="heatmap-cell heat-poor">46.67%</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Accuracy</td>
+                                <td class="heatmap-cell heat-excellent">94.44%</td>
+                                <td class="heatmap-cell heat-excellent">92.86%</td>
+                                <td class="heatmap-cell heat-good">86.36%</td>
+                                <td class="heatmap-cell heat-average">76.47%</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Attempt Rate</td>
+                                <td class="heatmap-cell heat-average">60%</td>
+                                <td class="heatmap-cell heat-excellent">93.33%</td>
+                                <td class="heatmap-cell heat-excellent">97.78%</td>
+                                <td class="heatmap-cell heat-average">68%</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Wrong Rate</td>
+                                <td class="heatmap-cell heat-excellent">5.56%</td>
+                                <td class="heatmap-cell heat-excellent">7.14%</td>
+                                <td class="heatmap-cell heat-good">13.64%</td>
+                                <td class="heatmap-cell heat-poor">23.53%</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Unattempted Rate</td>
+                                <td class="heatmap-cell heat-average">40%</td>
+                                <td class="heatmap-cell heat-excellent">6.67%</td>
+                                <td class="heatmap-cell heat-excellent">2.22%</td>
+                                <td class="heatmap-cell heat-poor">32%</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Marks Efficiency</td>
+                                <td class="heatmap-cell heat-good">2.78</td>
+                                <td class="heatmap-cell heat-good">2.71</td>
+                                <td class="heatmap-cell heat-average">2.45</td>
+                                <td class="heatmap-cell heat-poor">2.06</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.85rem; color: var(--gray-600);">
+                    Color coding: <span class="text-green">■</span> Excellent | <span class="text-blue">■</span> Good | <span class="text-amber">■</span> Average | <span class="text-red">■</span> Poor
+                </p>
+            </div>
+
+            <!-- Section 21: Section Rankings -->
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Internal Performance Rankings</h3>
+                    <div class="ranking-list">
+                        <div class="ranking-title">By Accuracy</div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">1</span>
+                            <span class="ranking-name">Quant</span>
+                            <span class="ranking-value">94.44%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">2</span>
+                            <span class="ranking-name">Reasoning</span>
+                            <span class="ranking-value">92.86%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">3</span>
+                            <span class="ranking-name">English</span>
+                            <span class="ranking-value">86.36%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">4</span>
+                            <span class="ranking-name">GA</span>
+                            <span class="ranking-value">76.47%</span>
+                        </div>
+                    </div>
+                    <div class="ranking-list">
+                        <div class="ranking-title">By Attempt Rate</div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">1</span>
+                            <span class="ranking-name">English</span>
+                            <span class="ranking-value">97.78%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">2</span>
+                            <span class="ranking-name">Reasoning</span>
+                            <span class="ranking-value">93.33%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">3</span>
+                            <span class="ranking-name">GA</span>
+                            <span class="ranking-value">68%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">4</span>
+                            <span class="ranking-name">Quant</span>
+                            <span class="ranking-value">60%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="ranking-list">
+                        <div class="ranking-title">By Score Efficiency</div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">1</span>
+                            <span class="ranking-name">Reasoning</span>
+                            <span class="ranking-value">84.44%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">2</span>
+                            <span class="ranking-name">English</span>
+                            <span class="ranking-value">80.00%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">3</span>
+                            <span class="ranking-name">Quant</span>
+                            <span class="ranking-value">55.56%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">4</span>
+                            <span class="ranking-name">GA</span>
+                            <span class="ranking-value">46.67%</span>
+                        </div>
+                    </div>
+                    <div class="ranking-list">
+                        <div class="ranking-title">By Risk (Lowest Wrong Rate)</div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">1</span>
+                            <span class="ranking-name">Quant</span>
+                            <span class="ranking-value">5.56%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">2</span>
+                            <span class="ranking-name">Reasoning</span>
+                            <span class="ranking-value">7.14%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">3</span>
+                            <span class="ranking-name">English</span>
+                            <span class="ranking-value">13.64%</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="ranking-position">4</span>
+                            <span class="ranking-name">GA</span>
+                            <span class="ranking-value">23.53%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 22: Computer Qualifying Module -->
+            <div class="computer-section">
+                <div class="computer-badge">Qualifying Section</div>
+                <h3 style="margin-bottom: 20px;">Computer Knowledge — Excluded from 269/390 scored total</h3>
+                <div class="dashboard-grid">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">Computer Score</div>
+                            <div class="section-score text-amber">14 / 20</div>
+                        </div>
+                        <div class="section-metrics">
+                            <div class="metric-item">
+                                <div class="metric-label">Correct</div>
+                                <div class="metric-value text-green">6</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Wrong</div>
+                                <div class="metric-value text-red">4</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Unattempted</div>
+                                <div class="metric-value text-amber">10</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Attempt Rate</div>
+                                <div class="metric-value">50%</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Accuracy</div>
+                                <div class="metric-value text-amber">60%</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Wrong Rate</div>
+                                <div class="metric-value text-red">40%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="margin-bottom: 0;">
+                        <canvas id="computerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 23: Score Architecture -->
+            <div class="chart-container">
+                <h3 class="chart-title">Score Architecture</h3>
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="border: 2px solid var(--primary-orange);">
+                        <div class="kpi-value text-orange">269 / 390</div>
+                        <div class="kpi-label">Main Scored Paper</div>
+                        <div class="kpi-subvalue">Quant + Reasoning + English + GA</div>
+                    </div>
+                    <div class="kpi-card" style="border: 2px solid var(--amber);">
+                        <div class="kpi-value text-amber">14 / 20</div>
+                        <div class="kpi-label">Computer</div>
+                        <div class="kpi-subvalue">Qualifying Section</div>
+                    </div>
+                    <div class="kpi-card" style="border: 2px solid var(--green);">
+                        <div class="kpi-value text-green">283 / 410</div>
+                        <div class="kpi-label">Combined Total</div>
+                        <div class="kpi-subvalue">Including Computer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 24: Automated Insights -->
+            <div class="insights-section">
+                <h3 class="insights-title">💡 Analytical Findings</h3>
+                <ul class="insights-list">
+                    <li><strong>Reasoning</strong> has the highest accuracy at 92.86%, showing excellent precision in attempted questions.</li>
+                    <li><strong>Quant</strong> has very high accuracy (94.44%) but comparatively low attempt coverage (60%), indicating potential for improvement through more attempts.</li>
+                    <li><strong>English</strong> has the highest attempt rate (97.78%) and contributes the largest number of marks (108 out of 269).</li>
+                    <li><strong>GA</strong> has the lowest accuracy (76.47%) and the highest wrong-answer rate among attempted questions (23.53%).</li>
+                    <li><strong>Quant and GA</strong> both have the largest score gaps (40 marks each), representing the biggest opportunity areas.</li>
+                    <li><strong>Reasoning</strong> has the smallest score gap (14 marks), indicating near-optimal performance.</li>
+                    <li><strong>English</strong> has the largest number of correct answers (38 out of 94 total).</li>
+                    <li><strong>23 of 130</strong> main questions were unattempted, with Quant (12) and GA (8) accounting for most.</li>
+                    <li><strong>13 wrong answers</strong> resulted in 13 marks of negative impact across all sections.</li>
+                    <li>The main paper's gross correct-answer marks were <strong>282</strong>, reduced to <strong>269</strong> after penalties.</li>
+                </ul>
+            </div>
+
+            <!-- Section 25: What-If Score Simulator -->
+            <div class="simulator-section">
+                <h3 class="chart-title">🔮 What-If Score Simulator</h3>
+                <p style="margin-bottom: 20px;">Adjust the sliders to see how converting wrong or unattempted questions to correct answers would affect your score.</p>
+                <div class="simulator-controls">
+                    <div class="form-group">
+                        <label>Wrong → Correct: <span id="wrongToCorrectValue" style="color: var(--primary-orange); font-weight: 700;">0</span></label>
+                        <input type="range" id="wrongToCorrect" min="0" max="13" value="0" oninput="updateSimulator()" style="width: 100%;">
+                        <div style="font-size: 0.85rem; color: var(--gray-600); margin-top: 5px;">Current wrong: 13</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Unattempted → Correct: <span id="unattemptedToCorrectValue" style="color: var(--primary-orange); font-weight: 700;">0</span></label>
+                        <input type="range" id="unattemptedToCorrect" min="0" max="23" value="0" oninput="updateSimulator()" style="width: 100%;">
+                        <div style="font-size: 0.85rem; color: var(--gray-600); margin-top: 5px;">Current unattempted: 23</div>
+                    </div>
+                </div>
+                <div class="simulator-result">
+                    <div class="simulator-result-value" id="simulatedScore">269</div>
+                    <div class="simulator-result-label">Hypothetical Score (assuming +3 per correct, -0.25 penalty removed)</div>
+                </div>
+            </div>
+
+            <!-- Section 26: Final Performance Summary -->
+            <div class="summary-panel">
+                <h3 class="summary-title">📊 Final Performance Summary</h3>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 4rem; font-weight: 900; color: var(--white);">269 / 390</div>
+                    <div style="font-size: 1.5rem; opacity: 0.9;">68.97% Overall Score</div>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-item-label">Strongest by Accuracy</div>
+                        <div class="summary-item-value text-green">Quant (94.44%)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Strongest by Marks</div>
+                        <div class="summary-item-value text-green">English (108)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Weakest by Accuracy</div>
+                        <div class="summary-item-value text-red">GA (76.47%)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Largest Score Gap</div>
+                        <div class="summary-item-value text-amber">Quant & GA (40)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Highest Risk Section</div>
+                        <div class="summary-item-value text-red">GA (23.53%)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Highest Attempt Coverage</div>
+                        <div class="summary-item-value text-green">English (97.78%)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Lowest Attempt Coverage</div>
+                        <div class="summary-item-value text-amber">Quant (60%)</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Total Unattempted</div>
+                        <div class="summary-item-value">23 / 130</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
-
-      <div class="results-wrap" id="resultsWrap">
-        <section class="section">
-          <h2>Your results</h2>
-          <p class="lead">Here's exactly what happened with your attempt.</p>
-          <div class="stat-grid">
-            <div class="stat-card"><div class="icon">✅</div><strong id="rCorrect">0</strong><span>Correct answers</span></div>
-            <div class="stat-card"><div class="icon">❌</div><strong id="rWrong">0</strong><span>Wrong answers</span></div>
-            <div class="stat-card"><div class="icon">⭕</div><strong id="rUnattempted">0</strong><span>Unattempted</span></div>
-            <div class="stat-card positive"><div class="icon">📊</div><strong id="rMarksBefore">0</strong><span>Marks before negative</span></div>
-            <div class="stat-card negative"><div class="icon">➖</div><strong id="rNegative">0</strong><span>Negative marks</span></div>
-            <div class="stat-card final"><div class="icon">🏆</div><strong id="rFinal">0</strong><span>Final score</span></div>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2>Visual breakdown</h2>
-          <p class="lead">How your attempt and your score break down at a glance.</p>
-          <div class="visual-grid">
-            <div class="donut-wrap">
-              <div class="donut" id="donutChart"></div>
-              <div class="legend">
-                <div class="legend-item"><span class="swatch" style="background:#f16d00"></span>Correct — <strong id="lCorrect">0</strong></div>
-                <div class="legend-item"><span class="swatch" style="background:#e5484d"></span>Wrong — <strong id="lWrong">0</strong></div>
-                <div class="legend-item"><span class="swatch" style="background:#d8dee8"></span>Unattempted — <strong id="lUnattempted">0</strong></div>
-              </div>
-            </div>
-
-            <div class="gauge-wrap">
-              <svg class="gauge-svg" id="gaugeSvg" viewBox="0 0 200 200">
-                <defs>
-                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ff8c1a" />
-                    <stop offset="100%" stop-color="#f06400" />
-                  </linearGradient>
-                </defs>
-                <circle class="gauge-track" cx="100" cy="100" r="85" />
-                <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="85" />
-              </svg>
-              <div class="gauge-center">
-                <strong id="gaugePct">0%</strong>
-                <span>Overall score</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2>Rate analysis</h2>
-          <p class="lead">A closer look at how you performed relative to the full exam.</p>
-          <div class="progress-list">
-            <div class="progress-item">
-              <div class="progress-head"><h4>Attempt Rate</h4><span class="pct" id="pAttempt">0%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="fAttempt"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-head"><h4>Accuracy Rate (of attempted)</h4><span class="pct" id="pAccuracy">0%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="fAccuracy"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-head"><h4>Incorrect Rate (of attempted)</h4><span class="pct" id="pIncorrect">0%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="fIncorrect"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-head"><h4>Overall Percentage (of max marks)</h4><span class="pct" id="pOverall">0%</span></div>
-              <div class="progress-track"><div class="progress-fill" id="fOverall"></div></div>
-            </div>
-          </div>
-        </section>
-      </div>
     </div>
 
-
-    <footer class="footer">
-      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
-      <nav class="footer-links" aria-label="Legal and support links">
-        <a href="/legal/#privacy-policy">Privacy Policy</a>
-        <a href="/legal/#terms-of-use">Terms of Use</a>
-        <a href="/legal/#disclaimer">Disclaimer</a>
-        <a href="/legal/#contact-us">Contact Us</a>
-      </nav>
-      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
-    </footer>
-  </main>
-
-  <button class="sticky-cta" id="stickyCta" aria-label="Start learning">Start learning&nbsp; →</button>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const menuButton = document.getElementById('menuButton');
-    const menuPanel = document.getElementById('menuPanel');
-    const statusHolder = { timeout: null };
-
-    function flashMessage(message) {
-      let el = document.getElementById('status');
-      if (!el) {
-        el = document.createElement('div');
-        el.id = 'status';
-        el.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;font-weight:650;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.18);opacity:0;transition:opacity .2s ease;';
-        document.body.appendChild(el);
-      }
-      el.textContent = message;
-      requestAnimationFrame(() => { el.style.opacity = '1'; });
-      clearTimeout(statusHolder.timeout);
-      statusHolder.timeout = setTimeout(() => { el.style.opacity = '0'; }, 2400);
-    }
-
-    menuButton.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const isOpen = menuPanel.classList.toggle('open');
-      menuButton.setAttribute('aria-expanded', String(isOpen));
-    });
-
-    document.addEventListener('click', (event) => {
-      if (!event.target.closest('.menu-wrap')) {
-        menuPanel.classList.remove('open');
-        menuButton.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    document.querySelectorAll('[data-message]').forEach((button) => {
-      button.addEventListener('click', () => {
-        flashMessage(button.dataset.message);
-        menuPanel.classList.remove('open');
-        menuButton.setAttribute('aria-expanded', 'false');
-      });
-    });
-
-    document.getElementById('homeButton').addEventListener('click', () => {
-      window.location.href = '/';
-    });
-
-    /* ============================================================
-       SUPABASE — logged-in state for the triple-dot menu
-    ============================================================ */
-    const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-    async function checkSessionAndUpdateMenu() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-
-      const user = session.user;
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('username, created_at, avatar_url')
-        .eq('id', user.id)
-        .single();
-
-      const username = profile?.username || user.email.split('@')[0];
-      const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
-      const options = { month: 'long', year: 'numeric' };
-
-      const menuAvatar = document.getElementById('menuAvatar');
-      if (profile?.avatar_url) {
-        menuAvatar.innerHTML = '';
-        const avatarImg = document.createElement('img');
-        avatarImg.src = profile.avatar_url;
-        avatarImg.alt = username + '\u2019s profile photo';
-        menuAvatar.appendChild(avatarImg);
-      } else {
-        menuAvatar.textContent = username.charAt(0).toUpperCase();
-      }
-      document.getElementById('menuProfileName').textContent = username;
-      document.getElementById('menuProfileSub').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', options);
-      document.getElementById('menuProfileItem').style.display = 'flex';
-      document.getElementById('menuAccountDivider').style.display = 'block';
-      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
-      document.getElementById('menuLogoutButton').style.display = 'flex';
-    }
-
-    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
-      menuPanel.classList.remove('open');
-      menuButton.setAttribute('aria-expanded', 'false');
-      window.location.href = '/edit-profile/';
-    });
-
-    document.getElementById('menuLogoutButton').addEventListener('click', async () => {
-      menuPanel.classList.remove('open');
-      menuButton.setAttribute('aria-expanded', 'false');
-      flashMessage('Logging out…');
-      await supabaseClient.auth.signOut();
-      setTimeout(() => { window.location.href = '/'; }, 600);
-    });
-
-    checkSessionAndUpdateMenu();
-
-    const errorMsg = document.getElementById('errorMsg');
-    const resultsWrap = document.getElementById('resultsWrap');
-
-    function showError(message) {
-      errorMsg.textContent = message;
-      errorMsg.classList.add('show');
-      resultsWrap.classList.remove('show');
-    }
-
-    function clearError() {
-      errorMsg.classList.remove('show');
-      errorMsg.textContent = '';
-    }
-
-    function fmt(num) {
-      return Number.isInteger(num) ? String(num) : num.toFixed(2).replace(/\.?0+$/, '');
-    }
-
-    function calculate() {
-      const total = parseFloat(document.getElementById('totalQuestions').value);
-      const attempted = parseFloat(document.getElementById('attempted').value);
-      const wrong = parseFloat(document.getElementById('wrong').value);
-      const marksPerQ = parseFloat(document.getElementById('marksPerQ').value);
-      const negMarking = parseFloat(document.getElementById('negMarking').value);
-
-      if ([total, attempted, wrong, marksPerQ, negMarking].some((v) => isNaN(v))) {
-        showError('Please fill in all five fields with valid numbers.');
-        return;
-      }
-      if (total <= 0) { showError('Total Questions must be greater than 0.'); return; }
-      if (attempted < 0 || attempted > total) { showError('Questions Attempted must be between 0 and Total Questions.'); return; }
-      if (wrong < 0 || wrong > attempted) { showError('Wrong Answers cannot exceed Questions Attempted.'); return; }
-      if (marksPerQ < 0 || negMarking < 0) { showError('Marks and negative marking cannot be negative.'); return; }
-
-      clearError();
-
-      const correct = attempted - wrong;
-      const unattempted = total - attempted;
-      const marksBefore = correct * marksPerQ;
-      const negativeMarks = wrong * negMarking;
-      const finalScore = marksBefore - negativeMarks;
-      const maxPossible = total * marksPerQ;
-
-      const attemptRate = (attempted / total) * 100;
-      const accuracyRate = attempted > 0 ? (correct / attempted) * 100 : 0;
-      const incorrectRate = attempted > 0 ? (wrong / attempted) * 100 : 0;
-      const overallPct = maxPossible > 0 ? (finalScore / maxPossible) * 100 : 0;
-
-      document.getElementById('rCorrect').textContent = fmt(correct);
-      document.getElementById('rWrong').textContent = fmt(wrong);
-      document.getElementById('rUnattempted').textContent = fmt(unattempted);
-      document.getElementById('rMarksBefore').textContent = fmt(marksBefore);
-      document.getElementById('rNegative').textContent = '-' + fmt(negativeMarks);
-      document.getElementById('rFinal').textContent = fmt(finalScore) + ' / ' + fmt(maxPossible);
-
-      document.getElementById('lCorrect').textContent = fmt(correct);
-      document.getElementById('lWrong').textContent = fmt(wrong);
-      document.getElementById('lUnattempted').textContent = fmt(unattempted);
-
-      const correctPct = (correct / total) * 100;
-      const wrongPct = (wrong / total) * 100;
-      const donut = document.getElementById('donutChart');
-      donut.style.background = `conic-gradient(#f16d00 0 ${correctPct}%, #e5484d ${correctPct}% ${correctPct + wrongPct}%, #d8dee8 ${correctPct + wrongPct}% 100%)`;
-
-      const clampedPct = Math.max(0, Math.min(100, overallPct));
-      const circumference = 534;
-      const offset = circumference - (circumference * clampedPct) / 100;
-      const gaugeFill = document.getElementById('gaugeFill');
-      requestAnimationFrame(() => { gaugeFill.style.strokeDashoffset = offset; });
-
-      const gaugePctEl = document.getElementById('gaugePct');
-      gaugePctEl.textContent = fmt(overallPct) + '%';
-      gaugePctEl.classList.toggle('negative', overallPct < 0);
-
-      document.getElementById('pAttempt').textContent = fmt(attemptRate) + '%';
-      document.getElementById('pAccuracy').textContent = fmt(accuracyRate) + '%';
-      document.getElementById('pIncorrect').textContent = fmt(incorrectRate) + '%';
-      document.getElementById('pOverall').textContent = fmt(overallPct) + '%';
-
-      const fills = {
-        fAttempt: attemptRate, fAccuracy: accuracyRate, fIncorrect: incorrectRate, fOverall: clampedPct
-      };
-      requestAnimationFrame(() => {
-        Object.keys(fills).forEach((id) => {
-          document.getElementById(id).style.width = Math.max(0, Math.min(100, fills[id])) + '%';
-        });
-      });
-
-      resultsWrap.classList.add('show');
-      resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function resetForm() {
-      ['totalQuestions', 'attempted', 'wrong', 'marksPerQ', 'negMarking'].forEach((id) => {
-        document.getElementById(id).value = '';
-      });
-      clearError();
-      resultsWrap.classList.remove('show');
-      document.getElementById('gaugeFill').style.strokeDashoffset = 534;
-      document.querySelectorAll('.progress-fill').forEach((el) => { el.style.width = '0%'; });
-      document.getElementById('donutChart').style.background = 'conic-gradient(#d8dee8 0 100%)';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    document.getElementById('calculateButton').addEventListener('click', calculate);
-    document.getElementById('resetButton').addEventListener('click', resetForm);
-
-    document.querySelectorAll('.field input').forEach((input) => {
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') calculate();
-      });
-    });
-
-    const stickyCta = document.getElementById('stickyCta');
-    const pageHero = document.querySelector('.page-hero');
-
-    window.addEventListener('scroll', () => {
-      const heroBottom = pageHero.getBoundingClientRect().bottom;
-      stickyCta.classList.toggle('is-visible', heroBottom < 0);
-    });
-
-    stickyCta.addEventListener('click', () => {
-      window.location.href = '/start-learning/';
-    });
-  </script>
-
-  <!-- ============================================================
-       SSC ANSWER KEY SCORE CALCULATOR
-  ============================================================ -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-    /* ---------- Page mode toggle (AKC calculator vs manual calculator) ---------- */
-    document.getElementById('modeTabAkc').addEventListener('click', () => setMode('akc'));
-    document.getElementById('modeTabManual').addEventListener('click', () => setMode('manual'));
-    function setMode(mode) {
-      document.getElementById('modeTabAkc').classList.toggle('active', mode === 'akc');
-      document.getElementById('modeTabManual').classList.toggle('active', mode === 'manual');
-      document.getElementById('akcModeWrap').style.display = mode === 'akc' ? '' : 'none';
-      document.getElementById('manualModeWrap').style.display = mode === 'manual' ? '' : 'none';
-    }
-
-    /* ---------- Tier marking (auto-detected, no manual tabs) ---------- */
-    let currentTier = 'tier1';
-    const TIER_MARKS = { tier1: { plus: 2, minus: 1 }, tier2: { plus: 3, minus: 1 } };
-
-    // Detects tier from the paper's Subject text ("Tier I"/"Tier II"), falling back to
-    // whether a Computer Knowledge module is present (only Tier II papers have one).
-    function detectTier(parsed) {
-      if (parsed.detectedTier) return parsed.detectedTier;
-      const hasComputer = parsed.questions.some((q) => /computer/i.test(q.section));
-      return hasComputer ? 'tier2' : 'tier1';
-    }
-
-    /* ---------- Source tabs (upload vs link) ---------- */
-    let currentSource = 'upload';
-    document.getElementById('tabUpload').addEventListener('click', () => setSource('upload'));
-    document.getElementById('tabLink').addEventListener('click', () => setSource('link'));
-    function setSource(src) {
-      currentSource = src;
-      document.getElementById('tabUpload').classList.toggle('active', src === 'upload');
-      document.getElementById('tabLink').classList.toggle('active', src === 'link');
-      document.getElementById('paneUpload').classList.toggle('active', src === 'upload');
-      document.getElementById('paneLink').classList.toggle('active', src === 'link');
-    }
-
-    /* ---------- File upload UI ---------- */
-    const dropzone = document.getElementById('dropzone');
-    const pdfInput = document.getElementById('pdfInput');
-    let selectedFile = null;
-
-    dropzone.addEventListener('click', () => pdfInput.click());
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('drag');
-      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-    });
-    pdfInput.addEventListener('change', (e) => {
-      if (e.target.files.length) handleFile(e.target.files[0]);
-    });
-    function handleFile(file) {
-      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-        showAkcError('Please upload a PDF file.');
-        return;
-      }
-      selectedFile = file;
-      dropzone.classList.add('has-file');
-      const fn = document.getElementById('dzFilename');
-      fn.style.display = 'block';
-      fn.textContent = '✓ ' + file.name;
-      clearAkcError();
-    }
-
-    /* ---------- Error / status helpers ---------- */
-    const akcErrorMsg = document.getElementById('akcErrorMsg');
-    const akcResultsWrap = document.getElementById('akcResultsWrap');
-    const parseStatus = document.getElementById('parseStatus');
-    const parseStatusText = document.getElementById('parseStatusText');
-
-    function showAkcError(message) {
-      akcErrorMsg.textContent = message;
-      akcErrorMsg.classList.add('show');
-      akcResultsWrap.classList.remove('show');
-    }
-    function clearAkcError() {
-      akcErrorMsg.classList.remove('show');
-      akcErrorMsg.textContent = '';
-    }
-    function showParsing(text) {
-      parseStatusText.textContent = text;
-      parseStatus.classList.add('show');
-    }
-    function hideParsing() {
-      parseStatus.classList.remove('show');
-    }
-
-    /* ---------- Color classification ---------- */
-    function classifyColor(r, g, b, a) {
-      if (a < 180) return 'other';
-      if (r > 195 && g < 115 && b < 115) return 'red';
-      if (g > 195 && r < 175 && b < 195 && (g - r) > 55) return 'green';
-      return 'other';
-    }
-
-    function sampleColorNear(imgData, w, h, cx, cy) {
-      for (let dy = -4; dy <= 4; dy++) {
-        for (let dx = -4; dx <= 4; dx++) {
-          const x = Math.round(cx + dx), y = Math.round(cy + dy);
-          if (x < 0 || y < 0 || x >= w || y >= h) continue;
-          const idx = (y * w + x) * 4;
-          const cls = classifyColor(imgData[idx], imgData[idx + 1], imgData[idx + 2], imgData[idx + 3]);
-          if (cls !== 'other') return cls;
-        }
-      }
-      return 'other';
-    }
-
-    /* ---------- Core PDF parser (mirrors validated color-marker logic) ---------- */
-    async function parseAnswerKeyPdf(arrayBuffer, onProgress) {
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const scale = 1.6;
-      const bufOptions = []; // { digit, color } in document order
-      const fullTextParts = [];
-
-      for (let p = 1; p <= pdf.numPages; p++) {
-        if (onProgress) onProgress(p, pdf.numPages);
-        const page = await pdf.getPage(p);
-        const viewport = page.getViewport({ scale });
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.ceil(viewport.width);
-        canvas.height = Math.ceil(viewport.height);
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-        const textContent = await page.getTextContent();
-        let pageText = '';
-        for (const item of textContent.items) {
-          pageText += item.str + '\n';
-          const trimmed = item.str.trim();
-          if (/^[1-4]\.$/.test(trimmed)) {
-            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-            const x0 = tx[4];
-            const y0 = tx[5];
-            const wpx = Math.max((item.width || 6) * scale, 6);
-            const hpx = Math.max((item.height || 9) * scale, 9);
-            const sx = x0 + wpx * 0.3;
-            const sy = y0 - hpx * 0.45;
-            const col = sampleColorNear(imgData, canvas.width, canvas.height, sx, sy);
-            if (col === 'red' || col === 'green') {
-              bufOptions.push({ digit: trimmed[0], color: col });
+    <script>
+        // Toggle Analytics Section
+        function toggleAnalytics() {
+            const analyticsSection = document.getElementById('analyticsSection');
+            const btn = document.querySelector('.view-analytics-btn');
+            
+            if (analyticsSection.classList.contains('active')) {
+                analyticsSection.classList.remove('active');
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    View Analytics
+                `;
+            } else {
+                analyticsSection.classList.add('active');
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Hide Analytics
+                `;
+                // Initialize charts when analytics is first shown
+                if (!window.chartsInitialized) {
+                    initializeCharts();
+                    window.chartsInitialized = true;
+                }
             }
-          }
-        }
-        fullTextParts.push(pageText);
-      }
-
-      const fullText = fullTextParts.join('\n');
-
-      // PDF page-break rendering sometimes duplicates the very first option label
-      // ("1.") at the bottom of a page right before the real one starts at the top
-      // of the next page. Whenever two consecutive detected tokens share the same
-      // option digit, the earlier one is that artifact — drop it. (Verified against
-      // a real answer key: this is the only source of misalignment.)
-      const cleanOptions = [];
-      for (let idx = 0; idx < bufOptions.length; idx++) {
-        if (idx + 1 < bufOptions.length && bufOptions[idx].digit === bufOptions[idx + 1].digit) {
-          continue; // drop the earlier duplicate
-        }
-        cleanOptions.push(bufOptions[idx]);
-      }
-
-      // Section headers, in order
-      const sectionRe = /Section\s*:\s*([^\n]+)/g;
-      const sections = [];
-      let sm;
-      while ((sm = sectionRe.exec(fullText))) {
-        sections.push({ pos: sm.index, name: sm[1].trim() });
-      }
-      function sectionFor(pos) {
-        let cur = sections.length ? sections[0].name : 'Section 1';
-        for (const s of sections) { if (s.pos <= pos) cur = s.name; else break; }
-        return cur;
-      }
-
-      // Question blocks: Question ID -> Status -> Chosen Option, in order
-      const blockRe = /Question ID\s*:\s*(\d+)[\s\S]*?Status\s*:\s*([A-Za-z ]+?)\s*Chosen Option\s*:\s*(\d+|--)/g;
-      const questions = [];
-      let optIdx = 0;
-      let bm;
-      while ((bm = blockRe.exec(fullText))) {
-        const qid = bm[1], status = bm[2].trim(), chosen = bm[3];
-        const opts = cleanOptions.slice(optIdx, optIdx + 4);
-        optIdx += 4;
-        questions.push({ section: sectionFor(bm.index), qid, opts, status, chosen });
-      }
-
-      // Header fields
-      const rollMatch = fullText.match(/Roll Number\s*\n?\s*(\S+)/);
-      const subjectMatch = fullText.match(/Subject\s*\n?\s*([^\n]+)/);
-      const dateMatch = fullText.match(/Exam Date\s*\n?\s*([\d\/\-]+)/);
-      const nameMatch = fullText.match(/Candidate Name\s*\n?\s*([^\n]+)/);
-      const venueMatch = fullText.match(/Venue Name\s*\n?\s*([^\n]+)/);
-      const timeMatch = fullText.match(/Exam Time\s*\n?\s*([^\n]+)/);
-
-      let year = '';
-      if (dateMatch) {
-        const yMatch = dateMatch[1].match(/(\d{4})/);
-        if (yMatch) year = yMatch[1];
-      }
-      if (!year && subjectMatch) {
-        const yMatch = subjectMatch[1].match(/(\d{4})/);
-        if (yMatch) year = yMatch[1];
-      }
-
-      let detectedTier = null;
-      if (subjectMatch) {
-        if (/tier\s*i(?!i)/i.test(subjectMatch[1]) || /tier\s*1(?!\d)/i.test(subjectMatch[1])) detectedTier = 'tier1';
-        if (/tier\s*ii/i.test(subjectMatch[1]) || /tier\s*2/i.test(subjectMatch[1])) detectedTier = 'tier2';
-      }
-
-      if (questions.length === 0) {
-        throw new Error('Could not find any questions in this PDF. Make sure it is the DigiAlm answer key / response sheet page saved as PDF.');
-      }
-
-      return {
-        questions,
-        rollNumber: rollMatch ? rollMatch[1] : '',
-        candidateName: nameMatch ? nameMatch[1].trim() : '',
-        examName: subjectMatch ? subjectMatch[1].trim() : '',
-        venueName: venueMatch ? venueMatch[1].trim() : '',
-        examDate: dateMatch ? dateMatch[1].trim() : '',
-        examTime: timeMatch ? timeMatch[1].trim() : '',
-        year,
-        detectedTier
-      };
-    }
-
-    /* ---------- Scoring ---------- */
-    function computeScore(questions, tier) {
-      const { plus, minus } = TIER_MARKS[tier];
-      const bySection = {};
-      for (const q of questions) {
-        (bySection[q.section] = bySection[q.section] || []).push(q);
-      }
-      const sectionResults = [];
-      const grand = { correct: 0, wrong: 0, unattempted: 0, unresolved: 0, score: 0, max: 0, total: 0 };
-
-      for (const [sec, qs] of Object.entries(bySection)) {
-        let correct = 0, wrong = 0, unattempted = 0, unresolved = 0;
-        for (const q of qs) {
-          const green = q.opts.find((o) => o.color === 'green');
-          const correctOpt = green ? green.digit : null;
-          if (q.chosen === '--') {
-            unattempted++;
-          } else if (!correctOpt) {
-            unresolved++;
-            correct++; // benefit of the doubt: answer key not marked for this question (SSC bonus-question convention)
-          } else if (q.chosen === correctOpt) {
-            correct++;
-          } else {
-            wrong++;
-          }
-        }
-        const score = correct * plus - wrong * minus;
-        const max = qs.length * plus;
-        sectionResults.push({ section: sec, total: qs.length, correct, wrong, unattempted, unresolved, score, max, plus, minus });
-        grand.correct += correct; grand.wrong += wrong; grand.unattempted += unattempted;
-        grand.unresolved += unresolved; grand.score += score; grand.max += max; grand.total += qs.length;
-      }
-      return { sectionResults, grand };
-    }
-
-    /* ---------- Rendering ---------- */
-    function akcFmt(num) {
-      return Number.isInteger(num) ? String(num) : num.toFixed(2).replace(/\.?0+$/, '');
-    }
-
-    function splitComputer(sectionResults) {
-      const computerSecs = sectionResults.filter((s) => /computer/i.test(s.section));
-      const mainSecs = sectionResults.filter((s) => !/computer/i.test(s.section));
-      const sum = (arr, key) => arr.reduce((a, s) => a + s[key], 0);
-      const main = {
-        correct: sum(mainSecs, 'correct'), wrong: sum(mainSecs, 'wrong'),
-        unattempted: sum(mainSecs, 'unattempted'), unresolved: sum(mainSecs, 'unresolved'),
-        score: sum(mainSecs, 'score'), max: sum(mainSecs, 'max'), total: sum(mainSecs, 'total')
-      };
-      const computer = computerSecs.length ? {
-        correct: sum(computerSecs, 'correct'), wrong: sum(computerSecs, 'wrong'),
-        unattempted: sum(computerSecs, 'unattempted'), unresolved: sum(computerSecs, 'unresolved'),
-        score: sum(computerSecs, 'score'), max: sum(computerSecs, 'max'), total: sum(computerSecs, 'total')
-      } : null;
-      return { main, computer };
-    }
-
-    let lastResult = null;
-
-    function renderAkcResults(parsed, tier) {
-      const { sectionResults, grand } = computeScore(parsed.questions, tier);
-      const { main, computer } = splitComputer(sectionResults);
-      lastResult = { parsed, tier, sectionResults, grand: main, computer };
-
-      document.getElementById('sumRoll').textContent = parsed.rollNumber || '—';
-      document.getElementById('sumName').textContent = parsed.candidateName || '—';
-      document.getElementById('sumExam').textContent = parsed.examName || '—';
-      document.getElementById('sumYear').textContent = parsed.year || '—';
-      document.getElementById('sumTier').textContent = tier === 'tier1' ? 'Tier I' : 'Tier II';
-      document.getElementById('sumVenue').textContent = parsed.venueName || '—';
-      document.getElementById('sumDate').textContent = parsed.examDate || '—';
-      document.getElementById('sumTime').textContent = parsed.examTime || '—';
-
-      const marksBefore = main.correct * TIER_MARKS[tier].plus;
-      const negative = main.wrong * TIER_MARKS[tier].minus;
-
-      document.getElementById('akcCorrect').textContent = akcFmt(main.correct);
-      document.getElementById('akcWrong').textContent = akcFmt(main.wrong);
-      document.getElementById('akcUnattempted').textContent = akcFmt(main.unattempted);
-      document.getElementById('akcMarksBefore').textContent = akcFmt(marksBefore);
-      document.getElementById('akcNegative').textContent = '-' + akcFmt(negative);
-      document.getElementById('akcFinal').textContent = akcFmt(main.score) + ' / ' + akcFmt(main.max);
-
-
-      const noteEl = document.getElementById('unresolvedNote');
-      const totalUnresolved = main.unresolved + (computer ? computer.unresolved : 0);
-      if (totalUnresolved > 0) {
-        noteEl.style.display = 'block';
-        noteEl.textContent = `${totalUnresolved} question(s) didn't have a correct option marked in the answer key (likely a pending/bonus question) — attempted ones were counted as correct, following SSC's usual bonus-question policy.`;
-      } else {
-        noteEl.style.display = 'none';
-      }
-
-      // Section-wise results table (matches SSC-style result sheet layout)
-      function shortSectionName(name) {
-        const n = name.toLowerCase();
-        if (/computer/.test(n)) return 'Computer (Qualifying)';
-        if (/math|quant/.test(n)) return 'Quant';
-        if (/reasoning|intelligence/.test(n)) return 'Reasoning';
-        if (/english/.test(n)) return 'English';
-        if (/general awareness|\bga\b/.test(n)) return 'GA';
-        return name;
-      }
-
-      const tbody = document.getElementById('resultTableBody');
-      const tfoot = document.getElementById('resultTableFoot');
-      tbody.innerHTML = '';
-      sectionResults.filter((s) => !/computer/i.test(s.section)).forEach((s) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${shortSectionName(s.section)}</td>
-          <td class="num">${s.total}</td>
-          <td class="num right-col">${s.correct}</td>
-          <td class="num wrong-col">${s.wrong}</td>
-          <td class="num marks-col">${akcFmt(s.score)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      let footRows = `
-        <tr>
-          <td>TOTAL</td>
-          <td class="num">${main.total}</td>
-          <td class="num right-col">${main.correct}</td>
-          <td class="num wrong-col">${main.wrong}</td>
-          <td class="num marks-col">${akcFmt(main.score)}</td>
-        </tr>
-      `;
-      if (computer) {
-        const overall = {
-          total: main.total + computer.total,
-          correct: main.correct + computer.correct,
-          wrong: main.wrong + computer.wrong,
-          score: main.score + computer.score,
-        };
-        footRows += `
-          <tr class="qualifying">
-            <td>Computer (Qualifying)</td>
-            <td class="num">${computer.total}</td>
-            <td class="num right-col">${computer.correct}</td>
-            <td class="num wrong-col">${computer.wrong}</td>
-            <td class="num marks-col">${akcFmt(computer.score)}</td>
-          </tr>
-          <tr>
-            <td>OVERALL TOTAL (incl. Computer)</td>
-            <td class="num">${overall.total}</td>
-            <td class="num right-col">${overall.correct}</td>
-            <td class="num wrong-col">${overall.wrong}</td>
-            <td class="num marks-col">${akcFmt(overall.score)}</td>
-          </tr>
-        `;
-      }
-      tfoot.innerHTML = footRows;
-
-      akcResultsWrap.classList.add('show');
-      akcResultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    /* ---------- Calculate button ---------- */
-    document.getElementById('akcCalculateButton').addEventListener('click', async () => {
-      clearAkcError();
-
-      if (!document.getElementById('akcCategory').value) {
-        showAkcError('Please select your category before calculating.');
-        return;
-      }
-      if (!document.getElementById('akcHorizontal').value) {
-        showAkcError('Please select your horizontal category before calculating (choose None if not applicable).');
-        return;
-      }
-
-      try {
-        let parsed = null;
-
-        if (currentSource === 'upload') {
-          if (!selectedFile) { showAkcError('Please upload your answer key PDF first.'); return; }
-          showParsing('Reading your PDF…');
-          const arrayBuffer = await selectedFile.arrayBuffer();
-          showParsing('Analyzing pages and matching correct answers…');
-          parsed = await parseAnswerKeyPdf(arrayBuffer, (p, total) => {
-            showParsing(`Analyzing page ${p} of ${total}…`);
-          });
-        } else {
-          const url = document.getElementById('akcLinkInput').value.trim();
-          if (!url) { showAkcError('Please paste the answer key link.'); return; }
-          showParsing('Fetching and reading the answer key…');
-          const { data, error } = await supabaseClient.functions.invoke('bright-service', { body: { url } });
-          if (error || !data || data.error) {
-            hideParsing();
-            const msg = (data && data.message) || (error && error.message) ||
-              'Could not read that link. DigiAlm answer key pages are often blocked for automated access.';
-            showAkcError(msg + ' Please use the "Upload PDF" tab instead — save the page as PDF (Ctrl/Cmd+P → Save as PDF) and upload it there.');
-            return;
-          }
-          parsed = data;
         }
 
-        hideParsing();
-        const tierToUse = detectTier(parsed);
-        currentTier = tierToUse;
-        renderAkcResults(parsed, tierToUse);
-        autoSaveSubmission();
-      } catch (err) {
-        hideParsing();
-        showAkcError(err.message || 'Something went wrong while reading that PDF. Please make sure it is the DigiAlm answer key page saved/printed as a PDF.');
-      }
-    });
+        // Initialize all charts
+        function initializeCharts() {
+            // Hero Radial Chart
+            const heroCtx = document.getElementById('heroRadialChart').getContext('2d');
+            new Chart(heroCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Scored', 'Remaining'],
+                    datasets: [{
+                        data: [269, 121],
+                        backgroundColor: ['#f97316', '#e5e7eb'],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
 
-    document.getElementById('akcResetButton').addEventListener('click', () => {
-      selectedFile = null;
-      pdfInput.value = '';
-      dropzone.classList.remove('has-file');
-      document.getElementById('dzFilename').style.display = 'none';
-      document.getElementById('akcLinkInput').value = '';
-      clearAkcError();
-      hideParsing();
-      akcResultsWrap.classList.remove('show');
-      lastResult = null;
-      window.scrollTo({ top: document.getElementById('akcSection').offsetTop - 20, behavior: 'smooth' });
-    });
+            // Section Score Bar Chart
+            const sectionScoreCtx = document.getElementById('sectionScoreChart').getContext('2d');
+            new Chart(sectionScoreCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Actual Score',
+                        data: [50, 76, 108, 35],
+                        backgroundColor: '#f97316',
+                        borderRadius: 8
+                    }, {
+                        label: 'Maximum',
+                        data: [90, 90, 135, 75],
+                        backgroundColor: '#e5e7eb',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.x;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 140
+                        }
+                    }
+                }
+            });
 
-    /* ---------- Automatic, silent save (separate anonymous table, one row per roll number) ---------- */
-    async function autoSaveSubmission() {
-      if (!lastResult) return;
-      const { parsed, tier, grand, computer, sectionResults } = lastResult;
-      const rollNumber = (parsed.rollNumber || '').trim();
-      if (!rollNumber) return; // nothing reliable to key the record on
+            // Accuracy Chart
+            const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+            new Chart(accuracyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Accuracy %',
+                        data: [94.44, 92.86, 86.36, 76.47],
+                        backgroundColor: ['#10b981', '#10b981', '#3b82f6', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
 
-      const row = {
-        roll_number: rollNumber,
-        candidate_name: parsed.candidateName || null,
-        venue_name: parsed.venueName || null,
-        exam_date: parsed.examDate || null,
-        exam_time: parsed.examTime || null,
-        exam_name: parsed.examName || '',
-        year: parsed.year || '',
-        tier: tier === 'tier1' ? 'Tier I' : 'Tier II',
-        category: document.getElementById('akcCategory').value,
-        horizontal_category: document.getElementById('akcHorizontal').value,
-        total_correct: grand.correct,
-        total_wrong: grand.wrong,
-        total_unattempted: grand.unattempted,
-        total_score: grand.score,
-        max_marks: grand.max,
-        computer_correct: computer ? computer.correct : null,
-        computer_wrong: computer ? computer.wrong : null,
-        computer_unattempted: computer ? computer.unattempted : null,
-        computer_score: computer ? computer.score : null,
-        computer_max: computer ? computer.max : null,
-        section_breakdown: sectionResults
-      };
+            // Attempt Rate Chart
+            const attemptRateCtx = document.getElementById('attemptRateChart').getContext('2d');
+            new Chart(attemptRateCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Attempt Rate %',
+                        data: [60, 93.33, 97.78, 68],
+                        backgroundColor: ['#f97316', '#10b981', '#10b981', '#f97316'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
 
-      try {
-        // Requires a UNIQUE constraint on roll_number in the table (see setup notes).
-        // ignoreDuplicates means: insert if new, silently skip if that roll number
-        // already has a row — never overwrites an existing record.
-        await supabaseClient.from('ssc_score_submissions').upsert(row, { onConflict: 'roll_number', ignoreDuplicates: true });
-      } catch (e) {
-        // Silent by design — this background sync never interrupts the user's result view.
-        console.warn('Background save failed:', e);
-      }
-    }
-  </script>
+            // 100% Stacked Outcome Chart
+            const stackedCtx = document.getElementById('stackedOutcomeChart').getContext('2d');
+            new Chart(stackedCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Correct',
+                        data: [56.67, 86.67, 84.44, 52],
+                        backgroundColor: '#10b981',
+                        stack: 'Stack 0'
+                    }, {
+                        label: 'Wrong',
+                        data: [3.33, 6.67, 13.33, 16],
+                        backgroundColor: '#ef4444',
+                        stack: 'Stack 0'
+                    }, {
+                        label: 'Unattempted',
+                        data: [40, 6.67, 2.22, 32],
+                        backgroundColor: '#f59e0b',
+                        stack: 'Stack 0'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Radar Chart
+            const radarCtx = document.getElementById('radarChart').getContext('2d');
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Accuracy', 'Attempt Rate', 'Score Efficiency', 'Question Coverage', 'Correct Rate'],
+                    datasets: [{
+                        label: 'Quant',
+                        data: [94.44, 60, 55.56, 60, 56.67],
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        pointBackgroundColor: '#f97316'
+                    }, {
+                        label: 'Reasoning',
+                        data: [92.86, 93.33, 84.44, 93.33, 86.67],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        pointBackgroundColor: '#10b981'
+                    }, {
+                        label: 'English',
+                        data: [86.36, 97.78, 80, 97.78, 84.44],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        pointBackgroundColor: '#3b82f6'
+                    }, {
+                        label: 'GA',
+                        data: [76.47, 68, 46.67, 68, 52],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        pointBackgroundColor: '#ef4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Quadrant Chart
+            const quadrantCtx = document.getElementById('quadrantChart').getContext('2d');
+            new Chart(quadrantCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Sections',
+                        data: [
+                            {x: 60, y: 94.44, section: 'Quant'},
+                            {x: 93.33, y: 92.86, section: 'Reasoning'},
+                            {x: 97.78, y: 86.36, section: 'English'},
+                            {x: 68, y: 76.47, section: 'GA'}
+                        ],
+                        backgroundColor: ['#f97316', '#10b981', '#3b82f6', '#ef4444'],
+                        pointRadius: 10,
+                        pointHoverRadius: 14
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return point.section + ' (' + point.x + '%, ' + point.y + '%)';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Attempt Rate (%)' },
+                            min: 0,
+                            max: 100
+                        },
+                        y: {
+                            title: { display: true, text: 'Accuracy (%)' },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Marks Contribution Chart
+            const marksCtx = document.getElementById('marksContributionChart').getContext('2d');
+            new Chart(marksCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['English', 'Reasoning', 'Quant', 'GA'],
+                    datasets: [{
+                        data: [108, 76, 50, 35],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f97316', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percentage = ((value / 269) * 100).toFixed(1);
+                                    return context.label + ': ' + value + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Question Distribution Chart
+            const questionCtx = document.getElementById('questionDistributionChart').getContext('2d');
+            new Chart(questionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Correct', 'Wrong', 'Unattempted'],
+                    datasets: [{
+                        data: [94, 13, 23],
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Comparison Chart
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Correct',
+                        data: [17, 26, 38, 13],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }, {
+                        label: 'Wrong',
+                        data: [1, 2, 6, 4],
+                        backgroundColor: '#ef4444',
+                        borderRadius: 6
+                    }, {
+                        label: 'Unattempted',
+                        data: [12, 2, 1, 8],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Score Gap Chart
+            const gapCtx = document.getElementById('scoreGapChart').getContext('2d');
+            new Chart(gapCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'GA', 'English', 'Reasoning'],
+                    datasets: [{
+                        label: 'Score Gap',
+                        data: [40, 40, 27, 14],
+                        backgroundColor: ['#f97316', '#f97316', '#3b82f6', '#10b981'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Gap: ' + context.parsed.x + ' marks';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Efficiency Chart
+            const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+            new Chart(efficiencyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Marks per Attempt',
+                        data: [2.78, 2.71, 2.45, 2.06],
+                        backgroundColor: ['#f97316', '#10b981', '#3b82f6', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x.toFixed(2) + ' marks/attempt';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Waterfall Chart
+            const waterfallCtx = document.getElementById('waterfallChart').getContext('2d');
+            new Chart(waterfallCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Gross Marks', 'Negative', 'Net Score'],
+                    datasets: [{
+                        data: [282, -13, 269],
+                        backgroundColor: ['#10b981', '#ef4444', '#f97316'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' marks';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Section Waterfall Chart
+            const sectionWaterfallCtx = document.getElementById('sectionWaterfallChart').getContext('2d');
+            new Chart(sectionWaterfallCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Quant', 'Reasoning', 'English', 'GA'],
+                    datasets: [{
+                        label: 'Gross Marks',
+                        data: [51, 78, 114, 39],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }, {
+                        label: 'Penalty',
+                        data: [-1, -2, -6, -4],
+                        backgroundColor: '#ef4444',
+                        borderRadius: 6
+                    }, {
+                        label: 'Net Score',
+                        data: [50, 76, 108, 35],
+                        backgroundColor: '#f97316',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Risk Chart
+            const riskCtx = document.getElementById('riskChart').getContext('2d');
+            new Chart(riskCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['GA', 'English', 'Reasoning', 'Quant'],
+                    datasets: [{
+                        label: 'Wrong Rate %',
+                        data: [23.53, 13.64, 7.14, 5.56],
+                        backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 30
+                        }
+                    }
+                }
+            });
+
+            // Computer Chart
+            const computerCtx = document.getElementById('computerChart').getContext('2d');
+            new Chart(computerCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Correct', 'Wrong', 'Unattempted'],
+                    datasets: [{
+                        data: [6, 4, 10],
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // What-If Simulator
+        function updateSimulator() {
+            const wrongToCorrect = parseInt(document.getElementById('wrongToCorrect').value);
+            const unattemptedToCorrect = parseInt(document.getElementById('unattemptedToCorrect').value);
+            
+            document.getElementById('wrongToCorrectValue').textContent = wrongToCorrect;
+            document.getElementById('unattemptedToCorrectValue').textContent = unattemptedToCorrect;
+            
+            // Base score: 269
+            // Each wrong → correct: +3.25 (gain 3 marks + remove 0.25 penalty)
+            // Each unattempted → correct: +3 marks
+            const simulatedScore = 269 + (wrongToCorrect * 3.25) + (unattemptedToCorrect * 3);
+            document.getElementById('simulatedScore').textContent = Math.round(simulatedScore);
+        }
+
+        // Upload area interaction
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            // Handle file drop
+        });
+        
+        uploadArea.addEventListener('click', () => {
+            // Trigger file input
+        });
+
+        // Tool card selection
+        const toolCards = document.querySelectorAll('.tool-card');
+        toolCards.forEach(card => {
+            card.addEventListener('click', () => {
+                toolCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
