@@ -350,6 +350,10 @@
     .an-loading-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width .22s ease, background .35s ease; }
     .an-loading-fill.almost { background: linear-gradient(90deg, #3ecf8e, #16a34a); }
     .an-loading-pct { margin-top: 11px; font-size: 12.5px; color: var(--muted); font-weight: 700; }
+
+    .an-footer-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 28px 0 8px; }
+    .an-homebtn { border: 1px solid var(--orange); background: var(--orange); color: white; border-radius: 12px; padding: 10px 20px; font-weight: 750; cursor: pointer; transition: all .2s ease; text-decoration: none; display: inline-block; }
+    .an-homebtn:hover { background: var(--orange-dark); border-color: var(--orange-dark); }
   </style>
 </head>
 <body>
@@ -675,6 +679,11 @@
             <ul class="insight-list" id="anFinalSummary"></ul>
           </div>
         </section>
+
+        <div class="an-footer-actions">
+          <button class="an-backbtn" id="anBackToTopBtn" type="button">↑ Back to top</button>
+          <button class="an-homebtn" id="anHomeBtn" type="button">Return to home page</button>
+        </div>
       </div>
     </div>
 
@@ -1202,16 +1211,50 @@
         cleanOptions.push(bufOptions[idx]);
       }
 
-      // Section headers, in order
+      // Section headers, in order (used for NAMES — see below for why we don't
+      // trust their exact text position as a section boundary).
       const sectionRe = /Section\s*:\s*([^\n]+)/g;
       const sections = [];
       let sm;
       while ((sm = sectionRe.exec(fullText))) {
         sections.push({ pos: sm.index, name: sm[1].trim() });
       }
-      function sectionFor(pos) {
+
+      // The DigiAlm response-sheet PDF sometimes paints the "Section :"
+      // header out of reading order — it can land in the middle of, or even
+      // a couple of questions after, the first question of a new module,
+      // because the header box is drawn at a different point in the page's
+      // content stream than where it visually sits. Trusting its raw text
+      // position to decide section boundaries can silently misattribute 1–2
+      // questions per transition (verified against a real response sheet).
+      // The on-page question counter ("Q . 1", "Q . 2", ...) resetting back
+      // to 1 is a far more reliable signal that a new module has started, so
+      // we use that as the primary boundary detector and only fall back to
+      // header position if the reset count doesn't line up with the number
+      // of detected sections.
+      const qNumRe = /Q\n\.\n(\d(?:\n\d)*)\n\nA\nn\ns/g;
+      const qResets = [];
+      let qnm, prevQNum = null;
+      while ((qnm = qNumRe.exec(fullText))) {
+        const num = parseInt(qnm[1].replace(/\n/g, ''), 10);
+        if (prevQNum !== null && num === 1 && prevQNum !== 1) qResets.push(qnm.index);
+        prevQNum = num;
+      }
+      const useResets = sections.length > 0 && qResets.length === sections.length - 1;
+      const resetBoundaries = useResets ? [0, ...qResets, Infinity] : null;
+
+      function sectionFor(pos, endPos) {
+        if (useResets) {
+          for (let i = 0; i < sections.length; i++) {
+            if (pos >= resetBoundaries[i] && pos < resetBoundaries[i + 1]) return sections[i].name;
+          }
+          return sections[sections.length - 1].name;
+        }
+        // Fallback: match against the END of the question block rather than
+        // its start, since the header (when present) tends to land after the
+        // block begins — this recovers most transitions even without resets.
         let cur = sections.length ? sections[0].name : 'Section 1';
-        for (const s of sections) { if (s.pos <= pos) cur = s.name; else break; }
+        for (const s of sections) { if (s.pos <= (endPos != null ? endPos : pos)) cur = s.name; else break; }
         return cur;
       }
 
@@ -1224,7 +1267,7 @@
         const qid = bm[1], status = bm[2].trim(), chosen = bm[3];
         const opts = cleanOptions.slice(optIdx, optIdx + 4);
         optIdx += 4;
-        questions.push({ section: sectionFor(bm.index), qid, opts, status, chosen });
+        questions.push({ section: sectionFor(bm.index, blockRe.lastIndex), qid, opts, status, chosen });
       }
 
       // Header fields
@@ -2034,6 +2077,14 @@
 
     document.getElementById('anMethoBtn').addEventListener('click', () => {
       document.getElementById('anMethodology').classList.toggle('show');
+    });
+
+    document.getElementById('anBackToTopBtn').addEventListener('click', () => {
+      document.getElementById('analyticsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('anHomeBtn').addEventListener('click', () => {
+      window.location.href = '/';
     });
   </script>
 </body>
