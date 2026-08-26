@@ -508,6 +508,7 @@
       </div>
 
       <div class="analytics-wrap" id="analyticsWrap">
+        <div class="error-msg" id="anRenderError" style="display:none;"></div>
         <div class="an-topbar">
           <button class="an-backbtn" id="anBackBtn" type="button">← Back to results</button>
           <div class="an-title">CGL Score Analytics · Performance Intelligence</div>
@@ -1834,6 +1835,7 @@
 
     function renderAnInsights(d) {
       const rows = d.mainRows;
+      if (!rows.length) { document.getElementById('anInsights').innerHTML = '<li>No section-wise data was found for this result.</li>'; return; }
       const byAcc = [...rows].sort((a, b) => b.accuracy - a.accuracy);
       const byScore = [...rows].sort((a, b) => b.score - a.score);
       const byGap = [...rows].sort((a, b) => b.gap - a.gap);
@@ -1853,12 +1855,13 @@
 
     function renderAnFinalSummary(d) {
       const rows = d.mainRows;
+      document.getElementById('anFinalScore').textContent = `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
+      if (!rows.length) { document.getElementById('anFinalSummary').innerHTML = '<li>No section-wise data was found for this result.</li>'; return; }
       const byAcc = [...rows].sort((a, b) => b.accuracy - a.accuracy);
       const byScore = [...rows].sort((a, b) => b.score - a.score);
       const byGap = [...rows].sort((a, b) => b.gap - a.gap);
       const byRisk = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
       const byAttempt = [...rows].sort((a, b) => b.attemptRate - a.attemptRate);
-      document.getElementById('anFinalScore').textContent = `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
       const items = [
         `Strongest section by accuracy: <strong>${byAcc[0].name}</strong> (${fmtPct(akcFmt(byAcc[0].accuracy))})`,
         `Strongest section by marks: <strong>${byScore[0].name}</strong> (${akcFmt(byScore[0].score)})`,
@@ -1895,6 +1898,8 @@
 
     function renderAnalyticsView() {
       if (!lastResult) return;
+      const banner = document.getElementById('anRenderError');
+      if (banner) { banner.style.display = 'none'; banner.textContent = ''; }
       const d = computeAnalytics(lastResult);
       renderAnHero(d);
       renderAnKpis(d);
@@ -1912,14 +1917,20 @@
 
     document.getElementById('viewAnalyticsBtn').addEventListener('click', () => {
       if (!lastResult) { showAkcError('Calculate your score first, then view analytics.'); return; }
+      akcResultsWrap.classList.remove('show');
+      const anWrap = document.getElementById('analyticsWrap');
+      anWrap.classList.add('show');
       try {
         renderAnalyticsView();
       } catch (e) {
         console.error('Analytics render error:', e);
+        const banner = document.getElementById('anRenderError');
+        if (banner) {
+          banner.textContent = 'Something went wrong building the analytics view. Please tap "Back to results" and try again, or reload the page. (' + (e && e.message ? e.message : 'unknown error') + ')';
+          banner.style.display = 'block';
+        }
       }
-      akcResultsWrap.classList.remove('show');
-      document.getElementById('analyticsWrap').classList.add('show');
-      document.getElementById('analyticsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      anWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     document.getElementById('anBackBtn').addEventListener('click', () => {
