@@ -341,6 +341,15 @@
     .an-methodology code { background: #eef0f4; padding: 1px 6px; border-radius: 6px; font-size: 12px; }
 
     .qual-flag { display: inline-block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: #a0680a; background: #fff0d2; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
+
+    .an-loading-overlay { position: fixed; inset: 0; background: rgba(255, 251, 246, .97); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+    .an-loading-overlay.show { opacity: 1; pointer-events: all; }
+    .an-loading-card { width: min(340px, 82vw); text-align: center; }
+    .an-loading-title { font-size: 14.5px; font-weight: 750; color: var(--ink); margin-bottom: 16px; min-height: 20px; }
+    .an-loading-track { height: 6px; border-radius: 99px; background: #f1ede6; overflow: hidden; }
+    .an-loading-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width .22s ease, background .35s ease; }
+    .an-loading-fill.almost { background: linear-gradient(90deg, #3ecf8e, #16a34a); }
+    .an-loading-pct { margin-top: 11px; font-size: 12.5px; color: var(--muted); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -508,6 +517,13 @@
       </div>
 
       <div class="analytics-wrap" id="analyticsWrap">
+        <div class="an-loading-overlay" id="anLoadingOverlay">
+          <div class="an-loading-card">
+            <div class="an-loading-title" id="anLoadingTitle">Just a moment — building your analytics…</div>
+            <div class="an-loading-track"><div class="an-loading-fill" id="anLoadingFill"></div></div>
+            <div class="an-loading-pct" id="anLoadingPct">0% there</div>
+          </div>
+        </div>
         <div class="error-msg" id="anRenderError" style="display:none;"></div>
         <div class="an-topbar">
           <button class="an-backbtn" id="anBackBtn" type="button">← Back to results</button>
@@ -1597,14 +1613,14 @@
       const offset = circumference - (Math.max(0, Math.min(100, d.scorePercent)) / 100) * circumference;
       document.getElementById('anGaugeFill').style.strokeDasharray = circumference;
       requestAnimationFrame(() => { document.getElementById('anGaugeFill').style.strokeDashoffset = offset; });
-      document.getElementById('anGaugePct').textContent = fmtPct(akcFmt(d.scorePercent));
+      document.getElementById('anGaugePct').textContent = fmtPct(d.scorePercent);
       document.getElementById('anGaugeScore').textContent = `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
       document.getElementById('anCorrect').textContent = d.main.correct;
       document.getElementById('anWrong').textContent = d.main.wrong;
       document.getElementById('anUnattempted').textContent = d.main.unattempted;
       document.getElementById('anAttempted').textContent = d.totalAttempted;
-      document.getElementById('anAttemptRate').textContent = fmtPct(akcFmt(d.overallAttemptRate));
-      document.getElementById('anAccuracy').textContent = fmtPct(akcFmt(d.overallAccuracy));
+      document.getElementById('anAttemptRate').textContent = fmtPct(d.overallAttemptRate);
+      document.getElementById('anAccuracy').textContent = fmtPct(d.overallAccuracy);
       document.getElementById('anNegImpact').textContent = akcFmt(d.negativeMarks);
       document.getElementById('anCombined').textContent = d.combined ? `${akcFmt(d.combined.score)} / ${akcFmt(d.combined.max)}` : `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
       document.getElementById('anHeroNote').textContent = `${akcFmt(d.negativeMarks)} marks lost to negative marking · gross correct-answer marks were ${akcFmt(d.grossMarks)}, reduced to ${akcFmt(d.main.score)} net after penalties.`;
@@ -1612,9 +1628,9 @@
 
     function renderAnKpis(d) {
       const cards = [
-        { label: 'Score', value: `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`, sub: fmtPct(akcFmt(d.scorePercent)) },
-        { label: 'Accuracy', value: fmtPct(akcFmt(d.overallAccuracy)), sub: `${d.main.correct} / ${d.totalAttempted} attempted` },
-        { label: 'Attempt Rate', value: fmtPct(akcFmt(d.overallAttemptRate)), sub: `${d.totalAttempted} / ${d.main.total} questions` },
+        { label: 'Score', value: `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`, sub: fmtPct(d.scorePercent) },
+        { label: 'Accuracy', value: fmtPct(d.overallAccuracy), sub: `${d.main.correct} / ${d.totalAttempted} attempted` },
+        { label: 'Attempt Rate', value: fmtPct(d.overallAttemptRate), sub: `${d.totalAttempted} / ${d.main.total} questions` },
         { label: 'Correct', value: d.main.correct, sub: 'main paper' },
         { label: 'Wrong', value: d.main.wrong, sub: 'main paper' },
         { label: 'Unattempted', value: d.main.unattempted, sub: 'main paper' },
@@ -1629,42 +1645,51 @@
     function renderAnSectionCards(d) {
       document.getElementById('anSectionCards').innerHTML = d.mainRows.map((s) => `
         <div class="sec-card">
-          <h4>${s.name} <span class="sc-score">${akcFmt(s.score)} / ${akcFmt(s.max)} · ${fmtPct(akcFmt(s.scorePct))}</span></h4>
+          <h4>${s.name} <span class="sc-score">${akcFmt(s.score)} / ${akcFmt(s.max)} · ${fmtPct(s.scorePct)}</span></h4>
           <div class="sc-metrics">
             <div class="sc-metric"><strong style="color:var(--green)">${s.correct}</strong><span>Correct</span></div>
             <div class="sc-metric"><strong style="color:var(--red)">${s.wrong}</strong><span>Wrong</span></div>
             <div class="sc-metric"><strong style="color:#8a919e">${s.unattempted}</strong><span>Unattempted</span></div>
           </div>
-          <div class="sec-mini-label"><span>Accuracy</span><span>${fmtPct(akcFmt(s.accuracy))}</span></div>
+          <div class="sec-mini-label"><span>Accuracy</span><span>${fmtPct(s.accuracy)}</span></div>
           <div class="sec-mini-track"><div class="sec-mini-fill" style="width:${s.accuracy}%;background:${SEC_COLORS[s.name] || '#f16d00'};"></div></div>
-          <div class="sec-mini-label"><span>Attempt rate</span><span>${fmtPct(akcFmt(s.attemptRate))}</span></div>
+          <div class="sec-mini-label"><span>Attempt rate</span><span>${fmtPct(s.attemptRate)}</span></div>
           <div class="sec-mini-track"><div class="sec-mini-fill" style="width:${s.attemptRate}%;"></div></div>
           <div class="sec-mini-label" style="margin-bottom:0;"><span>Efficiency</span><span>${akcFmt(s.efficiency)} marks/attempt</span></div>
         </div>
       `).join('');
     }
 
-    function renderAnCharts(d) {
+    function anChartBase(d) {
       const rows = d.mainRows;
       const names = rows.map((s) => s.name);
       const cols = names.map((n) => SEC_COLORS[n] || AN_COLORS.orange);
+      return { rows, names, cols };
+    }
 
-      // Section score vs maximum
+    function renderChScore(d) {
+      const { rows, names } = anChartBase(d);
       mkChart('chScore', 'score', { type: 'bar', data: { labels: names, datasets: [
         { label: 'Earned', data: rows.map((s) => s.score), backgroundColor: AN_COLORS.orange, borderRadius: 6 },
         { label: 'Available', data: rows.map((s) => s.max - s.score), backgroundColor: '#f0f0ee', borderRadius: 6 }
       ] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true } } } });
+    }
 
-      // Accuracy sorted desc
+    function renderChAccuracy(d) {
+      const { rows } = anChartBase(d);
       const accSorted = [...rows].sort((a, b) => b.accuracy - a.accuracy);
       mkChart('chAccuracy', 'accuracy', { type: 'bar', data: { labels: accSorted.map((s) => s.name), datasets: [{ data: accSorted.map((s) => +s.accuracy.toFixed(1)), backgroundColor: accSorted.map((s) => SEC_COLORS[s.name]), borderRadius: 6 }] },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, ticks: { callback: (v) => v + '%' } } } } });
+    }
 
-      // Attempt rate
+    function renderChAttemptRate(d) {
+      const { rows, names, cols } = anChartBase(d);
       mkChart('chAttemptRate', 'attemptRate', { type: 'bar', data: { labels: names, datasets: [{ data: rows.map((s) => +s.attemptRate.toFixed(1)), backgroundColor: cols, borderRadius: 6 }] },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, ticks: { callback: (v) => v + '%' } } } } });
+    }
 
-      // Outcome composition (toggle pct/abs)
+    function renderChOutcome(d) {
+      const { rows, names } = anChartBase(d);
       function outcomeData(mode) {
         if (mode === 'abs') {
           return [
@@ -1692,8 +1717,10 @@
           anCharts.outcome.update();
         };
       });
+    }
 
-      // Radar
+    function renderChRadar(d) {
+      const { rows } = anChartBase(d);
       const normEff = rows.map((s) => (s.efficiency / s.plus) * 100);
       mkChart('chRadar', 'radar', { type: 'radar', data: {
         labels: ['Accuracy', 'Attempt Rate', 'Score Efficiency', 'Question Coverage', 'Correct Rate'],
@@ -1702,8 +1729,10 @@
           borderColor: SEC_COLORS[s.name], backgroundColor: SEC_COLORS[s.name] + '22', pointBackgroundColor: SEC_COLORS[s.name]
         }))
       }, options: { responsive: true, scales: { r: { min: 0, max: 100 } }, plugins: { legend: { position: 'bottom' } } } });
+    }
 
-      // Quadrant scatter
+    function renderChQuadrant(d) {
+      const { rows } = anChartBase(d);
       const quadrantPlugin = {
         id: 'quadrantZones',
         beforeDraw(chart) {
@@ -1725,31 +1754,42 @@
         label: s.name, data: [{ x: +s.attemptRate.toFixed(1), y: +s.accuracy.toFixed(1) }],
         backgroundColor: SEC_COLORS[s.name], pointRadius: 8, pointHoverRadius: 9
       })) }, options: { responsive: true, scales: { x: { min: 0, max: 100, title: { display: true, text: 'Attempt Rate %' } }, y: { min: 0, max: 100, title: { display: true, text: 'Accuracy %' } } }, plugins: { legend: { position: 'bottom' } } }, plugins: [quadrantPlugin] });
+    }
 
-      // Marks contribution donut
+    function renderChMarksDonut(d) {
+      const { rows, names, cols } = anChartBase(d);
       mkChart('chMarksDonut', 'marksDonut', { type: 'doughnut', data: { labels: names, datasets: [{ data: rows.map((s) => s.score), backgroundColor: cols }] },
         options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed} (${(ctx.parsed / d.main.score * 100).toFixed(1)}%)` } } } } });
+    }
 
-      // Question distribution donut (main paper only)
+    function renderChQuestionDonut(d) {
       mkChart('chQuestionDonut', 'questionDonut', { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Unattempted'], datasets: [{ data: [d.main.correct, d.main.wrong, d.main.unattempted], backgroundColor: [AN_COLORS.green, AN_COLORS.red, AN_COLORS.gray] }] },
         options: { responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: `${d.main.total} Questions` } } } });
+    }
 
-      // Score gap sorted desc
+    function renderChGap(d) {
+      const { rows } = anChartBase(d);
       const gapSorted = [...rows].sort((a, b) => b.gap - a.gap);
       mkChart('chGap', 'gap', { type: 'bar', data: { labels: gapSorted.map((s) => s.name), datasets: [{ data: gapSorted.map((s) => s.gap), backgroundColor: '#f0a202', borderRadius: 6 }] },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } } });
+    }
 
-      // Efficiency
+    function renderChEfficiency(d) {
+      const { rows } = anChartBase(d);
       const effSorted = [...rows].sort((a, b) => b.efficiency - a.efficiency);
       mkChart('chEfficiency', 'efficiency', { type: 'bar', data: { labels: effSorted.map((s) => s.name), datasets: [{ data: effSorted.map((s) => +s.efficiency.toFixed(2)), backgroundColor: effSorted.map((s) => SEC_COLORS[s.name]), borderRadius: 6 }] },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } } });
+    }
 
-      // Risk
+    function renderChRisk(d) {
+      const { rows } = anChartBase(d);
       const riskSorted = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
       mkChart('chRisk', 'risk', { type: 'bar', data: { labels: riskSorted.map((s) => s.name), datasets: [{ data: riskSorted.map((s) => +s.wrongRate.toFixed(1)), backgroundColor: AN_COLORS.red, borderRadius: 6 }] },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: (v) => v + '%' } } } } });
+    }
 
-      // Waterfall: net vs penalty, overall + per-section
+    function renderChWaterfall(d) {
+      const { rows, names } = anChartBase(d);
       const wfLabels = ['Overall', ...names];
       const wfNet = [d.main.score, ...rows.map((s) => s.score)];
       const wfGross = [d.grossMarks, ...rows.map((s) => s.grossMarks)];
@@ -1762,7 +1802,7 @@
     function renderAnCoverage(d) {
       document.getElementById('anCoverage').innerHTML = d.mainRows.map((s) => `
         <div class="progress-item">
-          <div class="progress-head"><h4>${s.name} · ${s.attempted}/${s.total} attempted</h4><span class="pct">${fmtPct(akcFmt(s.attemptRate))}</span></div>
+          <div class="progress-head"><h4>${s.name} · ${s.attempted}/${s.total} attempted</h4><span class="pct">${fmtPct(s.attemptRate)}</span></div>
           <div class="progress-track"><div class="progress-fill" style="width:${s.attemptRate}%;background:${SEC_COLORS[s.name]};"></div></div>
         </div>
       `).join('');
@@ -1780,7 +1820,7 @@
       let html = '<thead><tr><th>Section</th>' + cols.map((c) => `<th>${c.label}</th>`).join('') + '</tr></thead><tbody>';
       d.mainRows.forEach((s) => {
         const vals = { scorePct: s.scorePct, accuracy: s.accuracy, attemptRate: s.attemptRate, wrongRate: s.wrongRate, unattRate: (s.unattempted / s.total) * 100, efficiency: (s.efficiency / s.plus) * 100 };
-        const disp = { scorePct: fmtPct(akcFmt(s.scorePct)), accuracy: fmtPct(akcFmt(s.accuracy)), attemptRate: fmtPct(akcFmt(s.attemptRate)), wrongRate: fmtPct(akcFmt(s.wrongRate)), unattRate: fmtPct(akcFmt(vals.unattRate)), efficiency: akcFmt(s.efficiency) };
+        const disp = { scorePct: fmtPct(s.scorePct), accuracy: fmtPct(s.accuracy), attemptRate: fmtPct(s.attemptRate), wrongRate: fmtPct(s.wrongRate), unattRate: fmtPct(vals.unattRate), efficiency: akcFmt(s.efficiency) };
         html += `<tr><td>${s.name}</td>` + cols.map((c) => `<td style="background:${heat(c.key === 'wrongRate' || c.key === 'unattRate' ? 100 - vals[c.key] : vals[c.key])};">${disp[c.key]}</td>`).join('') + '</tr>';
       });
       html += '</tbody>';
@@ -1816,8 +1856,8 @@
           <div class="an-hero-chip"><strong>${c.correct}</strong><span>Correct</span></div>
           <div class="an-hero-chip"><strong>${c.wrong}</strong><span>Wrong</span></div>
           <div class="an-hero-chip"><strong>${c.unattempted}</strong><span>Unattempted</span></div>
-          <div class="an-hero-chip"><strong>${fmtPct(akcFmt(c.attemptRate))}</strong><span>Attempt rate</span></div>
-          <div class="an-hero-chip"><strong>${fmtPct(akcFmt(c.accuracy))}</strong><span>Accuracy (attempted)</span></div>
+          <div class="an-hero-chip"><strong>${fmtPct(c.attemptRate)}</strong><span>Attempt rate</span></div>
+          <div class="an-hero-chip"><strong>${fmtPct(c.accuracy)}</strong><span>Accuracy (attempted)</span></div>
           <div class="an-hero-note">Overall including Computer: <strong>${d.combined ? akcFmt(d.combined.score) + ' / ' + akcFmt(d.combined.max) : '—'}</strong></div>
         </div>
       `;
@@ -1842,11 +1882,11 @@
       const byAttempt = [...rows].sort((a, b) => b.attemptRate - a.attemptRate);
       const byRisk = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
       const insights = [
-        `${byAcc[0].name} has the highest accuracy at ${fmtPct(akcFmt(byAcc[0].accuracy))}, while ${byAcc[byAcc.length - 1].name} has the lowest at ${fmtPct(akcFmt(byAcc[byAcc.length - 1].accuracy))}.`,
+        `${byAcc[0].name} has the highest accuracy at ${fmtPct(byAcc[0].accuracy)}, while ${byAcc[byAcc.length - 1].name} has the lowest at ${fmtPct(byAcc[byAcc.length - 1].accuracy)}.`,
         `${byScore[0].name} contributes the largest number of marks (${akcFmt(byScore[0].score)}) to the scored total.`,
-        `${byAttempt[0].name} has the highest attempt coverage (${fmtPct(akcFmt(byAttempt[0].attemptRate))}), while ${byAttempt[byAttempt.length - 1].name} has the lowest (${fmtPct(akcFmt(byAttempt[byAttempt.length - 1].attemptRate))}).`,
+        `${byAttempt[0].name} has the highest attempt coverage (${fmtPct(byAttempt[0].attemptRate)}), while ${byAttempt[byAttempt.length - 1].name} has the lowest (${fmtPct(byAttempt[byAttempt.length - 1].attemptRate)}).`,
         `${byGap[0].name} and any section near it show the largest score gap (${akcFmt(byGap[0].gap)} marks), while ${byGap[byGap.length - 1].name} has the smallest gap (${akcFmt(byGap[byGap.length - 1].gap)} marks).`,
-        `${byRisk[0].name} has the highest wrong-answer rate among attempted questions (${fmtPct(akcFmt(byRisk[0].wrongRate))}).`,
+        `${byRisk[0].name} has the highest wrong-answer rate among attempted questions (${fmtPct(byRisk[0].wrongRate)}).`,
         `${d.main.unattempted} of ${d.main.total} main questions were left unattempted, and ${d.main.wrong} wrong answers resulted in ${akcFmt(d.negativeMarks)} marks of negative impact.`,
         `The main paper's gross correct-answer marks were ${akcFmt(d.grossMarks)}, reduced to ${akcFmt(d.main.score)} after negative marking.`
       ];
@@ -1863,13 +1903,13 @@
       const byRisk = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
       const byAttempt = [...rows].sort((a, b) => b.attemptRate - a.attemptRate);
       const items = [
-        `Strongest section by accuracy: <strong>${byAcc[0].name}</strong> (${fmtPct(akcFmt(byAcc[0].accuracy))})`,
+        `Strongest section by accuracy: <strong>${byAcc[0].name}</strong> (${fmtPct(byAcc[0].accuracy)})`,
         `Strongest section by marks: <strong>${byScore[0].name}</strong> (${akcFmt(byScore[0].score)})`,
-        `Weakest section by accuracy: <strong>${byAcc[byAcc.length - 1].name}</strong> (${fmtPct(akcFmt(byAcc[byAcc.length - 1].accuracy))})`,
+        `Weakest section by accuracy: <strong>${byAcc[byAcc.length - 1].name}</strong> (${fmtPct(byAcc[byAcc.length - 1].accuracy)})`,
         `Largest score gap: <strong>${byGap[0].name}</strong> (${akcFmt(byGap[0].gap)} marks)`,
-        `Highest risk section: <strong>${byRisk[0].name}</strong> (${fmtPct(akcFmt(byRisk[0].wrongRate))} wrong rate)`,
-        `Highest attempt coverage: <strong>${byAttempt[0].name}</strong> (${fmtPct(akcFmt(byAttempt[0].attemptRate))})`,
-        `Lowest attempt coverage: <strong>${byAttempt[byAttempt.length - 1].name}</strong> (${fmtPct(akcFmt(byAttempt[byAttempt.length - 1].attemptRate))})`,
+        `Highest risk section: <strong>${byRisk[0].name}</strong> (${fmtPct(byRisk[0].wrongRate)} wrong rate)`,
+        `Highest attempt coverage: <strong>${byAttempt[0].name}</strong> (${fmtPct(byAttempt[0].attemptRate)})`,
+        `Lowest attempt coverage: <strong>${byAttempt[byAttempt.length - 1].name}</strong> (${fmtPct(byAttempt[byAttempt.length - 1].attemptRate)})`,
         `Total questions left unattempted: <strong>${d.main.unattempted}</strong> of ${d.main.total}`
       ];
       document.getElementById('anFinalSummary').innerHTML = items.map((t) => `<li>${t}</li>`).join('');
@@ -1896,41 +1936,94 @@
       update();
     }
 
-    function renderAnalyticsView() {
+    function anSetLoadingProgress(pct, label) {
+      const fill = document.getElementById('anLoadingFill');
+      const pctEl = document.getElementById('anLoadingPct');
+      const titleEl = document.getElementById('anLoadingTitle');
+      const clamped = Math.max(0, Math.min(100, pct));
+      fill.style.width = clamped + '%';
+      fill.classList.toggle('almost', clamped >= 85);
+      if (label) titleEl.textContent = label;
+      if (clamped >= 100) pctEl.textContent = 'Your dashboard is ready to view!';
+      else if (clamped >= 90) pctEl.textContent = clamped + '% there — almost complete';
+      else pctEl.textContent = clamped + '% there';
+    }
+
+    function anShowLoading() {
+      document.getElementById('anLoadingOverlay').classList.add('show');
+      anSetLoadingProgress(0, 'Just a moment — building your analytics…');
+    }
+
+    function anHideLoading() {
+      document.getElementById('anLoadingOverlay').classList.remove('show');
+    }
+
+    function anWait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+    async function renderAnalyticsView() {
       if (!lastResult) return;
       const banner = document.getElementById('anRenderError');
       if (banner) { banner.style.display = 'none'; banner.textContent = ''; }
+      anShowLoading();
+      await anWait(30);
+
       const d = computeAnalytics(lastResult);
-      renderAnHero(d);
-      renderAnKpis(d);
-      renderAnSectionCards(d);
-      renderAnCharts(d);
-      renderAnCoverage(d);
-      renderAnHeatmap(d);
-      renderAnRankings(d);
-      renderAnComputer(d);
-      renderAnArchFlow(d);
-      renderAnInsights(d);
-      renderAnFinalSummary(d);
-      renderAnSimulator(d);
+      const steps = [
+        ['Crunching your score data', () => {}],
+        ['Building your score overview', () => renderAnHero(d)],
+        ['Assembling KPI snapshot', () => renderAnKpis(d)],
+        ['Mapping section performance', () => renderAnSectionCards(d)],
+        ['Drawing score vs maximum chart', () => renderChScore(d)],
+        ['Drawing accuracy chart', () => renderChAccuracy(d)],
+        ['Drawing attempt-rate chart', () => renderChAttemptRate(d)],
+        ['Drawing outcome composition', () => renderChOutcome(d)],
+        ['Building performance radar', () => renderChRadar(d)],
+        ['Plotting strategy quadrant', () => renderChQuadrant(d)],
+        ['Drawing marks-contribution donut', () => renderChMarksDonut(d)],
+        ['Drawing question-distribution donut', () => renderChQuestionDonut(d)],
+        ['Ranking score gaps', () => renderChGap(d)],
+        ['Calculating efficiency chart', () => renderChEfficiency(d)],
+        ['Assessing wrong-answer risk', () => renderChRisk(d)],
+        ['Building negative-marking waterfall', () => renderChWaterfall(d)],
+        ['Charting question coverage', () => renderAnCoverage(d)],
+        ['Building performance matrix', () => renderAnHeatmap(d)],
+        ['Compiling internal rankings', () => renderAnRankings(d)],
+        ['Preparing Computer module', () => renderAnComputer(d)],
+        ['Assembling score architecture', () => renderAnArchFlow(d)],
+        ['Generating analytical findings', () => renderAnInsights(d)],
+        ['Finalizing performance summary', () => renderAnFinalSummary(d)],
+        ['Setting up what-if simulator', () => renderAnSimulator(d)]
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        const [label, fn] = steps[i];
+        anSetLoadingProgress(Math.round((i / steps.length) * 100), label);
+        await anWait(24);
+        fn();
+      }
+
+      anSetLoadingProgress(100, 'Your dashboard is ready!');
+      await anWait(450);
+      anHideLoading();
     }
 
-    document.getElementById('viewAnalyticsBtn').addEventListener('click', () => {
+    document.getElementById('viewAnalyticsBtn').addEventListener('click', async () => {
       if (!lastResult) { showAkcError('Calculate your score first, then view analytics.'); return; }
       akcResultsWrap.classList.remove('show');
       const anWrap = document.getElementById('analyticsWrap');
       anWrap.classList.add('show');
+      anWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
       try {
-        renderAnalyticsView();
+        await renderAnalyticsView();
       } catch (e) {
         console.error('Analytics render error:', e);
+        anHideLoading();
         const banner = document.getElementById('anRenderError');
         if (banner) {
           banner.textContent = 'Something went wrong building the analytics view. Please tap "Back to results" and try again, or reload the page. (' + (e && e.message ? e.message : 'unknown error') + ')';
           banner.style.display = 'block';
         }
       }
-      anWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     document.getElementById('anBackBtn').addEventListener('click', () => {
