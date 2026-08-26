@@ -257,6 +257,90 @@
       .stat-grid { grid-template-columns: 1fr 1fr; }
       .sticky-cta { right: 16px; bottom: 16px; padding: 13px 18px; font-size: 14px; }
     }
+
+    /* ===== Analytics dashboard ===== */
+    .analytics-wrap { display: none; }
+    .analytics-wrap.show { display: block; }
+    .an-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 6px 0 18px; }
+    .an-backbtn { border: 1px solid #e8ebf0; background: white; color: #4e586b; border-radius: 12px; padding: 10px 16px; font-weight: 750; cursor: pointer; transition: all .2s ease; }
+    .an-backbtn:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .an-title { font-size: 15px; font-weight: 800; color: var(--muted); letter-spacing: .3px; }
+    .an-methobtn { border: 1px solid #ffe2ca; background: #fff0e3; color: var(--orange-dark); border-radius: 12px; padding: 9px 15px; font-weight: 750; cursor: pointer; font-size: 13px; }
+
+    .an-hero { display: grid; grid-template-columns: 220px 1fr; gap: 30px; align-items: center; }
+    .an-hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .an-hero-chip { padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.94); text-align: center; }
+    .an-hero-chip strong { display: block; font-size: 19px; letter-spacing: -.6px; }
+    .an-hero-chip span { font-size: 11px; color: var(--muted); font-weight: 650; }
+    .an-hero-note { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); background: #fff7ef; border: 1px solid #ffe4c8; border-radius: 12px; padding: 10px 14px; }
+    @media (max-width: 760px) {
+      .an-hero { grid-template-columns: 1fr; }
+      .an-hero-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .kpi-grid { grid-template-columns: 1fr 1fr; } }
+
+    .sec-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .sec-card-grid { grid-template-columns: 1fr; } }
+    .sec-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); }
+    .sec-card h4 { margin: 0 0 10px; font-size: 15.5px; display: flex; justify-content: space-between; align-items: baseline; }
+    .sec-card h4 .sc-score { font-size: 13px; color: var(--orange-dark); font-weight: 800; }
+    .sec-card .sc-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .sec-card .sc-metric { text-align: center; }
+    .sec-card .sc-metric strong { display: block; font-size: 15px; }
+    .sec-card .sc-metric span { font-size: 10.5px; color: var(--muted); font-weight: 650; text-transform: uppercase; letter-spacing: .3px; }
+    .sec-mini-track { height: 8px; border-radius: 99px; background: #f2f0ee; overflow: hidden; margin-bottom: 6px; }
+    .sec-mini-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width .9s ease; }
+    .sec-mini-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+    .chart-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); }
+    .chart-card h4 { margin: 0 0 3px; font-size: 15px; }
+    .chart-card .cc-note { margin: 0 0 12px; font-size: 12px; color: var(--muted); }
+    .chart-card canvas { max-height: 260px; }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; float: right; }
+    .chart-toggle button { border: 0; background: white; color: #6d7585; font-size: 11.5px; font-weight: 700; padding: 6px 10px; cursor: pointer; }
+    .chart-toggle button.active { background: var(--orange); color: white; }
+
+    .heatmap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .heatmap-table th, .heatmap-table td { padding: 10px 8px; text-align: center; border: 1px solid var(--line); }
+    .heatmap-table th { background: var(--ink); color: white; font-size: 11.5px; text-transform: uppercase; letter-spacing: .4px; }
+    .heatmap-table td:first-child { text-align: left; font-weight: 750; background: #fbfaf8; }
+
+    .rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .rank-grid { grid-template-columns: 1fr 1fr; } }
+    .rank-card { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.94); }
+    .rank-card h5 { margin: 0 0 8px; font-size: 12.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+    .rank-card ol { margin: 0; padding-left: 18px; font-size: 13.5px; }
+    .rank-card li { margin-bottom: 5px; font-weight: 650; }
+
+    .arch-flow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .arch-card { flex: 1; min-width: 140px; padding: 18px; border-radius: 16px; text-align: center; border: 1px solid var(--line); background: white; }
+    .arch-card.main { transform: scale(1.05); border-color: #ffcc9e; background: #fff7ef; }
+    .arch-card strong { display: block; font-size: 22px; letter-spacing: -.8px; }
+    .arch-card span { font-size: 11.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .arch-arrow { font-size: 20px; color: var(--orange); }
+
+    .insight-list { margin: 0; padding-left: 20px; display: grid; gap: 9px; }
+    .insight-list li { font-size: 14px; line-height: 1.55; }
+
+    .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 760px) { .sim-grid { grid-template-columns: 1fr; } }
+    .sim-control { margin-bottom: 16px; }
+    .sim-control label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .sim-control input[type="range"] { width: 100%; }
+    .sim-result { padding: 18px; border-radius: 16px; background: #fff7ef; border: 1px solid #ffe4c8; text-align: center; }
+    .sim-result .tag { display: inline-block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--orange-dark); background: #ffe9d2; padding: 4px 10px; border-radius: 99px; margin-bottom: 8px; }
+    .sim-result strong { display: block; font-size: 30px; letter-spacing: -1px; }
+
+    .an-methodology { display: none; margin-top: 14px; padding: 16px 18px; border-radius: 14px; background: #faf9f7; border: 1px solid var(--line); font-size: 13px; line-height: 1.7; color: #394255; }
+    .an-methodology.show { display: block; }
+    .an-methodology code { background: #eef0f4; padding: 1px 6px; border-radius: 6px; font-size: 12px; }
+
+    .qual-flag { display: inline-block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: #a0680a; background: #fff0d2; padding: 4px 10px; border-radius: 99px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -417,8 +501,161 @@
             <div class="stat-card final"><div class="icon">🏆</div><strong id="akcFinal">0</strong><span>Final score</span></div>
           </div>
           <div class="info-note" id="unresolvedNote" style="display:none;"></div>
-          <div class="form-actions">
-            <a class="primary" href="/analytics/" id="viewAnalyticsBtn" style="text-decoration:none;display:inline-block;">View analytics&nbsp; →</a>
+          <div class="form-actions" style="justify-content:center;">
+            <button class="primary" id="viewAnalyticsBtn" type="button">View analytics&nbsp; →</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="analytics-wrap" id="analyticsWrap">
+        <div class="an-topbar">
+          <button class="an-backbtn" id="anBackBtn" type="button">← Back to results</button>
+          <div class="an-title">CGL Score Analytics · Performance Intelligence</div>
+          <button class="an-methobtn" id="anMethoBtn" type="button">Methodology / Calculations</button>
+        </div>
+
+        <div class="an-methodology" id="anMethodology">
+          <strong>How these numbers are calculated</strong><br/>
+          <code>Accuracy = Correct ÷ Attempted × 100</code> · <code>Attempt Rate = Attempted ÷ Total × 100</code> ·
+          <code>Score % = Marks ÷ Maximum × 100</code> · <code>Wrong Rate = Wrong ÷ Attempted × 100</code> ·
+          <code>Unattempted = Total − Correct − Wrong</code> · <code>Score Gap = Maximum − Marks</code> ·
+          <code>Marks Efficiency = Marks ÷ Attempted</code>. Everything below is computed live from your own result — no peer data, percentiles, ranks, or historical averages are used anywhere on this page.
+        </div>
+
+        <section class="section">
+          <h2>Score Command Center</h2>
+          <p class="lead">Your overall standing on the scored paper, at a glance.</p>
+          <div class="an-hero">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" id="anGaugeSvg" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="anGaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff8c1a" /><stop offset="100%" stop-color="#f06400" />
+                  </linearGradient>
+                </defs>
+                <circle class="gauge-track" cx="100" cy="100" r="85" />
+                <circle class="gauge-fill" id="anGaugeFill" style="stroke:url(#anGaugeGradient);" cx="100" cy="100" r="85" />
+              </svg>
+              <div class="gauge-center">
+                <strong id="anGaugePct">0%</strong>
+                <span id="anGaugeScore">0 / 0</span>
+              </div>
+            </div>
+            <div class="an-hero-stats">
+              <div class="an-hero-chip"><strong id="anCorrect">0</strong><span>Correct</span></div>
+              <div class="an-hero-chip"><strong id="anWrong">0</strong><span>Wrong</span></div>
+              <div class="an-hero-chip"><strong id="anUnattempted">0</strong><span>Unattempted</span></div>
+              <div class="an-hero-chip"><strong id="anAttempted">0</strong><span>Attempted</span></div>
+              <div class="an-hero-chip"><strong id="anAttemptRate">0%</strong><span>Attempt rate</span></div>
+              <div class="an-hero-chip"><strong id="anAccuracy">0%</strong><span>Overall accuracy</span></div>
+              <div class="an-hero-chip"><strong id="anNegImpact">0</strong><span>Marks lost to −ve</span></div>
+              <div class="an-hero-chip"><strong id="anCombined">0 / 0</strong><span>Incl. Computer</span></div>
+              <div class="an-hero-note" id="anHeroNote"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Exam Snapshot</h2>
+          <p class="lead">Key performance indicators for the scored paper.</p>
+          <div class="kpi-grid" id="anKpiGrid"></div>
+        </section>
+
+        <section class="section">
+          <h2>Section Performance</h2>
+          <p class="lead">Attempted, accuracy, attempt rate and score efficiency — section by section.</p>
+          <div class="sec-card-grid" id="anSectionCards"></div>
+        </section>
+
+        <section class="section">
+          <h2>Visual Analytics</h2>
+          <p class="lead">Sixteen focused charts, each answering a different analytical question about the same result.</p>
+          <div class="chart-grid">
+            <div class="chart-card"><h4>Section Score vs Maximum</h4><p class="cc-note">Earned marks against available marks per section.</p><canvas id="chScore"></canvas></div>
+            <div class="chart-card"><h4>Accuracy by Section</h4><p class="cc-note">Correct ÷ attempted, sorted highest to lowest.</p><canvas id="chAccuracy"></canvas></div>
+            <div class="chart-card"><h4>Attempt Rate by Section</h4><p class="cc-note">How much of each section was actually attempted.</p><canvas id="chAttemptRate"></canvas></div>
+            <div class="chart-card">
+              <div class="chart-toggle" id="outcomeToggle"><button data-mode="pct" class="active">%</button><button data-mode="abs">Count</button></div>
+              <h4>Outcome Composition</h4><p class="cc-note">Correct / wrong / unattempted per section.</p><canvas id="chOutcome"></canvas>
+            </div>
+            <div class="chart-card"><h4>Performance Radar</h4><p class="cc-note">Accuracy, attempt rate, efficiency, coverage &amp; correct rate — all normalized 0–100.</p><canvas id="chRadar"></canvas></div>
+            <div class="chart-card"><h4>Attempt Strategy Quadrant</h4><p class="cc-note">Attempt rate (x) vs accuracy (y) — reveals strategy, not just marks.</p><canvas id="chQuadrant"></canvas></div>
+            <div class="chart-card"><h4>Marks Contribution</h4><p class="cc-note">Share of the 269-style scored total contributed by each section.</p><canvas id="chMarksDonut"></canvas></div>
+            <div class="chart-card"><h4>Question Distribution</h4><p class="cc-note">All main-paper questions, correct vs wrong vs unattempted.</p><canvas id="chQuestionDonut"></canvas></div>
+            <div class="chart-card"><h4>Score Gap by Section</h4><p class="cc-note">Maximum − actual score. Largest gaps = biggest opportunity.</p><canvas id="chGap"></canvas></div>
+            <div class="chart-card"><h4>Marks Efficiency per Attempt</h4><p class="cc-note">Marks earned per attempted question (derived metric, not an official one).</p><canvas id="chEfficiency"></canvas></div>
+            <div class="chart-card"><h4>Wrong-Answer Risk</h4><p class="cc-note">Wrong ÷ attempted — proportion of attempts that backfired.</p><canvas id="chRisk"></canvas></div>
+            <div class="chart-card full"><h4>Negative Marking Waterfall</h4><p class="cc-note">Gross correct-answer marks → penalty → net score, for the main paper and each section.</p><canvas id="chWaterfall"></canvas></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Coverage</h2>
+          <p class="lead">Share of each section's questions that were attempted.</p>
+          <div class="progress-list" id="anCoverage"></div>
+        </section>
+
+        <section class="section">
+          <h2>Performance Matrix</h2>
+          <p class="lead">At-a-glance heatmap of every derived metric, section by section.</p>
+          <div style="overflow-x:auto;"><table class="heatmap-table" id="anHeatmap"></table></div>
+        </section>
+
+        <section class="section">
+          <h2>Internal Performance Rankings</h2>
+          <p class="lead">Not official ranks — just this result, ordered by each metric.</p>
+          <div class="rank-grid" id="anRankGrid"></div>
+        </section>
+
+        <section class="section">
+          <h2>Computer Knowledge — Qualifying Module</h2>
+          <span class="qual-flag">Qualifying section — excluded from the scored total</span>
+          <div class="an-hero" id="anComputerModule" style="grid-template-columns: 200px 1fr;"></div>
+        </section>
+
+        <section class="section">
+          <h2>Score Architecture</h2>
+          <p class="lead">How the scored paper, the qualifying section and the combined total relate.</p>
+          <div class="arch-flow" id="anArchFlow"></div>
+        </section>
+
+        <section class="section">
+          <h2>Analytical Findings</h2>
+          <p class="lead">Generated only from this result — no assumptions about topics or study plans.</p>
+          <ul class="insight-list" id="anInsights"></ul>
+        </section>
+
+        <section class="section">
+          <h2>What-If Score Simulator</h2>
+          <p class="lead">Explore a <strong>hypothetical scenario</strong> — not a prediction — by converting some wrong or unattempted answers to correct.</p>
+          <div class="sim-grid">
+            <div>
+              <div class="sim-control">
+                <label><span>Wrong → Correct</span><span id="simWrongVal">0</span></label>
+                <input type="range" id="simWrong" min="0" max="0" value="0" />
+              </div>
+              <div class="sim-control">
+                <label><span>Unattempted → Correct</span><span id="simUnattVal">0</span></label>
+                <input type="range" id="simUnatt" min="0" max="0" value="0" />
+              </div>
+              <p class="cc-note">Assumes each converted wrong answer removes its penalty and adds full marks; each converted unattempted question adds full marks. Marking scheme kept identical to your actual paper.</p>
+            </div>
+            <div class="sim-result">
+              <span class="tag">Hypothetical scenario</span>
+              <strong id="simScore">0 / 0</strong>
+              <div id="simDelta" style="font-size:13px;color:var(--muted);font-weight:650;"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Final Performance Summary</h2>
+          <div class="an-hero" style="grid-template-columns: 200px 1fr;">
+            <div style="text-align:center;">
+              <div style="font-size:38px;font-weight:800;letter-spacing:-1.5px;" id="anFinalScore">0 / 0</div>
+              <div style="color:var(--muted);font-weight:650;font-size:13px;">Scored total</div>
+            </div>
+            <ul class="insight-list" id="anFinalSummary"></ul>
           </div>
         </section>
       </div>
@@ -782,6 +1019,7 @@
        SSC ANSWER KEY SCORE CALCULATOR
   ============================================================ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1275,6 +1513,420 @@
         console.warn('Background save failed:', e);
       }
     }
+
+    /* =========================================================
+       ANALYTICS DASHBOARD — everything below is computed live
+       from `lastResult`. No peer data, ranks, percentiles, or
+       historical trends are used anywhere in this module.
+    ========================================================= */
+    const anCharts = {};
+    const AN_COLORS = { orange: '#f16d00', green: '#239363', red: '#e5484d', gray: '#b7bec9', blue: '#367dd7' };
+    const SEC_COLORS = { Quant: '#367dd7', Reasoning: '#7957db', English: '#f16d00', GA: '#0f9b8e' };
+
+    function anSecLabel(name) {
+      const n = name.toLowerCase();
+      if (/computer/.test(n)) return 'Computer';
+      if (/math|quant/.test(n)) return 'Quant';
+      if (/reasoning|intelligence/.test(n)) return 'Reasoning';
+      if (/english/.test(n)) return 'English';
+      if (/general awareness|\bga\b/.test(n)) return 'GA';
+      return name;
+    }
+
+    function mkChart(canvasId, key, config) {
+      if (anCharts[key]) { anCharts[key].destroy(); }
+      const el = document.getElementById(canvasId);
+      if (!el) return;
+      anCharts[key] = new Chart(el.getContext('2d'), config);
+    }
+
+    function computeAnalytics(lr) {
+      const main = lr.grand;
+      const computer = lr.computer;
+
+      const mainRows = lr.sectionResults.filter((s) => !/computer/i.test(s.section)).map((s) => {
+        const attempted = s.total - s.unattempted;
+        const accuracy = attempted ? (s.correct / attempted) * 100 : 0;
+        const attemptRate = s.total ? (attempted / s.total) * 100 : 0;
+        const scorePct = s.max ? (s.score / s.max) * 100 : 0;
+        const wrongRate = attempted ? (s.wrong / attempted) * 100 : 0;
+        const efficiency = attempted ? s.score / attempted : 0;
+        const correctRate = s.total ? (s.correct / s.total) * 100 : 0;
+        const gap = s.max - s.score;
+        const grossMarks = s.correct * s.plus;
+        const negMarks = s.wrong * s.minus;
+        return { ...s, name: anSecLabel(s.section), attempted, accuracy, attemptRate, scorePct, wrongRate, efficiency, correctRate, gap, grossMarks, negMarks };
+      });
+
+      const rawComputer = lr.sectionResults.find((s) => /computer/i.test(s.section));
+      let computerRow = null;
+      if (computer && rawComputer) {
+        const attempted = computer.total - computer.unattempted;
+        computerRow = {
+          ...computer,
+          plus: rawComputer.plus, minus: rawComputer.minus,
+          attempted,
+          accuracy: attempted ? (computer.correct / attempted) * 100 : 0,
+          attemptRate: computer.total ? (attempted / computer.total) * 100 : 0,
+          wrongRate: attempted ? (computer.wrong / attempted) * 100 : 0
+        };
+      }
+
+      const totalAttempted = main.total - main.unattempted;
+      const overallAccuracy = totalAttempted ? (main.correct / totalAttempted) * 100 : 0;
+      const overallAttemptRate = main.total ? (totalAttempted / main.total) * 100 : 0;
+      const scorePercent = main.max ? (main.score / main.max) * 100 : 0;
+      const negativeMarks = mainRows.reduce((a, s) => a + s.negMarks, 0);
+      const grossMarks = main.score + negativeMarks;
+      const combined = computer ? {
+        total: main.total + computer.total, correct: main.correct + computer.correct,
+        wrong: main.wrong + computer.wrong, unattempted: main.unattempted + computer.unattempted,
+        score: main.score + computer.score, max: main.max + computer.max
+      } : null;
+
+      const maxEff = Math.max(...mainRows.map((s) => s.plus));
+
+      return { main, computer: computerRow, mainRows, totalAttempted, overallAccuracy, overallAttemptRate, scorePercent, negativeMarks, grossMarks, combined, maxEff, tier: lr.tier };
+    }
+
+    function fmtPct(n) { return akcFmt(n) + '%'; }
+
+    function renderAnHero(d) {
+      const circumference = 2 * Math.PI * 85;
+      const offset = circumference - (Math.max(0, Math.min(100, d.scorePercent)) / 100) * circumference;
+      document.getElementById('anGaugeFill').style.strokeDasharray = circumference;
+      requestAnimationFrame(() => { document.getElementById('anGaugeFill').style.strokeDashoffset = offset; });
+      document.getElementById('anGaugePct').textContent = fmtPct(akcFmt(d.scorePercent));
+      document.getElementById('anGaugeScore').textContent = `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
+      document.getElementById('anCorrect').textContent = d.main.correct;
+      document.getElementById('anWrong').textContent = d.main.wrong;
+      document.getElementById('anUnattempted').textContent = d.main.unattempted;
+      document.getElementById('anAttempted').textContent = d.totalAttempted;
+      document.getElementById('anAttemptRate').textContent = fmtPct(akcFmt(d.overallAttemptRate));
+      document.getElementById('anAccuracy').textContent = fmtPct(akcFmt(d.overallAccuracy));
+      document.getElementById('anNegImpact').textContent = akcFmt(d.negativeMarks);
+      document.getElementById('anCombined').textContent = d.combined ? `${akcFmt(d.combined.score)} / ${akcFmt(d.combined.max)}` : `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
+      document.getElementById('anHeroNote').textContent = `${akcFmt(d.negativeMarks)} marks lost to negative marking · gross correct-answer marks were ${akcFmt(d.grossMarks)}, reduced to ${akcFmt(d.main.score)} net after penalties.`;
+    }
+
+    function renderAnKpis(d) {
+      const cards = [
+        { label: 'Score', value: `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`, sub: fmtPct(akcFmt(d.scorePercent)) },
+        { label: 'Accuracy', value: fmtPct(akcFmt(d.overallAccuracy)), sub: `${d.main.correct} / ${d.totalAttempted} attempted` },
+        { label: 'Attempt Rate', value: fmtPct(akcFmt(d.overallAttemptRate)), sub: `${d.totalAttempted} / ${d.main.total} questions` },
+        { label: 'Correct', value: d.main.correct, sub: 'main paper' },
+        { label: 'Wrong', value: d.main.wrong, sub: 'main paper' },
+        { label: 'Unattempted', value: d.main.unattempted, sub: 'main paper' },
+        { label: 'Negative Impact', value: `${akcFmt(d.negativeMarks)} marks`, sub: 'lost to wrong answers' },
+        { label: 'Computer', value: d.computer ? `${akcFmt(d.computer.score)} / ${akcFmt(d.computer.max)}` : '—', sub: 'qualifying' }
+      ];
+      document.getElementById('anKpiGrid').innerHTML = cards.map((c) => `
+        <div class="stat-card"><strong>${c.value}</strong><span>${c.label}</span><div style="font-size:10.5px;color:var(--muted);margin-top:3px;">${c.sub}</div></div>
+      `).join('');
+    }
+
+    function renderAnSectionCards(d) {
+      document.getElementById('anSectionCards').innerHTML = d.mainRows.map((s) => `
+        <div class="sec-card">
+          <h4>${s.name} <span class="sc-score">${akcFmt(s.score)} / ${akcFmt(s.max)} · ${fmtPct(akcFmt(s.scorePct))}</span></h4>
+          <div class="sc-metrics">
+            <div class="sc-metric"><strong style="color:var(--green)">${s.correct}</strong><span>Correct</span></div>
+            <div class="sc-metric"><strong style="color:var(--red)">${s.wrong}</strong><span>Wrong</span></div>
+            <div class="sc-metric"><strong style="color:#8a919e">${s.unattempted}</strong><span>Unattempted</span></div>
+          </div>
+          <div class="sec-mini-label"><span>Accuracy</span><span>${fmtPct(akcFmt(s.accuracy))}</span></div>
+          <div class="sec-mini-track"><div class="sec-mini-fill" style="width:${s.accuracy}%;background:${SEC_COLORS[s.name] || '#f16d00'};"></div></div>
+          <div class="sec-mini-label"><span>Attempt rate</span><span>${fmtPct(akcFmt(s.attemptRate))}</span></div>
+          <div class="sec-mini-track"><div class="sec-mini-fill" style="width:${s.attemptRate}%;"></div></div>
+          <div class="sec-mini-label" style="margin-bottom:0;"><span>Efficiency</span><span>${akcFmt(s.efficiency)} marks/attempt</span></div>
+        </div>
+      `).join('');
+    }
+
+    function renderAnCharts(d) {
+      const rows = d.mainRows;
+      const names = rows.map((s) => s.name);
+      const cols = names.map((n) => SEC_COLORS[n] || AN_COLORS.orange);
+
+      // Section score vs maximum
+      mkChart('chScore', 'score', { type: 'bar', data: { labels: names, datasets: [
+        { label: 'Earned', data: rows.map((s) => s.score), backgroundColor: AN_COLORS.orange, borderRadius: 6 },
+        { label: 'Available', data: rows.map((s) => s.max - s.score), backgroundColor: '#f0f0ee', borderRadius: 6 }
+      ] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true } } } });
+
+      // Accuracy sorted desc
+      const accSorted = [...rows].sort((a, b) => b.accuracy - a.accuracy);
+      mkChart('chAccuracy', 'accuracy', { type: 'bar', data: { labels: accSorted.map((s) => s.name), datasets: [{ data: accSorted.map((s) => +s.accuracy.toFixed(1)), backgroundColor: accSorted.map((s) => SEC_COLORS[s.name]), borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, ticks: { callback: (v) => v + '%' } } } } });
+
+      // Attempt rate
+      mkChart('chAttemptRate', 'attemptRate', { type: 'bar', data: { labels: names, datasets: [{ data: rows.map((s) => +s.attemptRate.toFixed(1)), backgroundColor: cols, borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, ticks: { callback: (v) => v + '%' } } } } });
+
+      // Outcome composition (toggle pct/abs)
+      function outcomeData(mode) {
+        if (mode === 'abs') {
+          return [
+            { label: 'Correct', data: rows.map((s) => s.correct), backgroundColor: AN_COLORS.green },
+            { label: 'Wrong', data: rows.map((s) => s.wrong), backgroundColor: AN_COLORS.red },
+            { label: 'Unattempted', data: rows.map((s) => s.unattempted), backgroundColor: AN_COLORS.gray }
+          ];
+        }
+        return [
+          { label: 'Correct %', data: rows.map((s) => +s.correctRate.toFixed(1)), backgroundColor: AN_COLORS.green },
+          { label: 'Wrong %', data: rows.map((s) => +(s.wrong / s.total * 100).toFixed(1)), backgroundColor: AN_COLORS.red },
+          { label: 'Unattempted %', data: rows.map((s) => +(s.unattempted / s.total * 100).toFixed(1)), backgroundColor: AN_COLORS.gray }
+        ];
+      }
+      mkChart('chOutcome', 'outcome', { type: 'bar', data: { labels: names, datasets: outcomeData('pct') },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, max: 100 } } } });
+      document.querySelectorAll('#outcomeToggle button').forEach((btn) => {
+        btn.onclick = () => {
+          document.querySelectorAll('#outcomeToggle button').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.dataset.mode;
+          anCharts.outcome.data.datasets = outcomeData(mode);
+          anCharts.outcome.options.scales.y.stacked = true;
+          anCharts.outcome.options.scales.y.max = mode === 'pct' ? 100 : undefined;
+          anCharts.outcome.update();
+        };
+      });
+
+      // Radar
+      const normEff = rows.map((s) => (s.efficiency / s.plus) * 100);
+      mkChart('chRadar', 'radar', { type: 'radar', data: {
+        labels: ['Accuracy', 'Attempt Rate', 'Score Efficiency', 'Question Coverage', 'Correct Rate'],
+        datasets: rows.map((s, i) => ({
+          label: s.name, data: [+s.accuracy.toFixed(1), +s.attemptRate.toFixed(1), +normEff[i].toFixed(1), +s.attemptRate.toFixed(1), +s.correctRate.toFixed(1)],
+          borderColor: SEC_COLORS[s.name], backgroundColor: SEC_COLORS[s.name] + '22', pointBackgroundColor: SEC_COLORS[s.name]
+        }))
+      }, options: { responsive: true, scales: { r: { min: 0, max: 100 } }, plugins: { legend: { position: 'bottom' } } } });
+
+      // Quadrant scatter
+      const quadrantPlugin = {
+        id: 'quadrantZones',
+        beforeDraw(chart) {
+          const area = chart.chartArea; if (!area) return;
+          const { ctx, scales: { x, y } } = chart;
+          const midX = x.getPixelForValue(50), midY = y.getPixelForValue(50);
+          ctx.save(); ctx.strokeStyle = '#e8ebf0'; ctx.setLineDash([4, 4]);
+          ctx.beginPath(); ctx.moveTo(midX, area.top); ctx.lineTo(midX, area.bottom); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(area.left, midY); ctx.lineTo(area.right, midY); ctx.stroke();
+          ctx.setLineDash([]); ctx.fillStyle = 'rgba(150,157,171,.75)'; ctx.font = '10px Inter, sans-serif';
+          ctx.fillText('Strong execution', midX + 6, area.top + 12);
+          ctx.fillText('Conservative', area.left + 6, area.top + 12);
+          ctx.fillText('Risk exposure', midX + 6, area.bottom - 6);
+          ctx.fillText('Development opportunity', area.left + 6, area.bottom - 6);
+          ctx.restore();
+        }
+      };
+      mkChart('chQuadrant', 'quadrant', { type: 'scatter', data: { datasets: rows.map((s) => ({
+        label: s.name, data: [{ x: +s.attemptRate.toFixed(1), y: +s.accuracy.toFixed(1) }],
+        backgroundColor: SEC_COLORS[s.name], pointRadius: 8, pointHoverRadius: 9
+      })) }, options: { responsive: true, scales: { x: { min: 0, max: 100, title: { display: true, text: 'Attempt Rate %' } }, y: { min: 0, max: 100, title: { display: true, text: 'Accuracy %' } } }, plugins: { legend: { position: 'bottom' } } }, plugins: [quadrantPlugin] });
+
+      // Marks contribution donut
+      mkChart('chMarksDonut', 'marksDonut', { type: 'doughnut', data: { labels: names, datasets: [{ data: rows.map((s) => s.score), backgroundColor: cols }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed} (${(ctx.parsed / d.main.score * 100).toFixed(1)}%)` } } } } });
+
+      // Question distribution donut (main paper only)
+      mkChart('chQuestionDonut', 'questionDonut', { type: 'doughnut', data: { labels: ['Correct', 'Wrong', 'Unattempted'], datasets: [{ data: [d.main.correct, d.main.wrong, d.main.unattempted], backgroundColor: [AN_COLORS.green, AN_COLORS.red, AN_COLORS.gray] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: `${d.main.total} Questions` } } } });
+
+      // Score gap sorted desc
+      const gapSorted = [...rows].sort((a, b) => b.gap - a.gap);
+      mkChart('chGap', 'gap', { type: 'bar', data: { labels: gapSorted.map((s) => s.name), datasets: [{ data: gapSorted.map((s) => s.gap), backgroundColor: '#f0a202', borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } } });
+
+      // Efficiency
+      const effSorted = [...rows].sort((a, b) => b.efficiency - a.efficiency);
+      mkChart('chEfficiency', 'efficiency', { type: 'bar', data: { labels: effSorted.map((s) => s.name), datasets: [{ data: effSorted.map((s) => +s.efficiency.toFixed(2)), backgroundColor: effSorted.map((s) => SEC_COLORS[s.name]), borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } } });
+
+      // Risk
+      const riskSorted = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
+      mkChart('chRisk', 'risk', { type: 'bar', data: { labels: riskSorted.map((s) => s.name), datasets: [{ data: riskSorted.map((s) => +s.wrongRate.toFixed(1)), backgroundColor: AN_COLORS.red, borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: (v) => v + '%' } } } } });
+
+      // Waterfall: net vs penalty, overall + per-section
+      const wfLabels = ['Overall', ...names];
+      const wfNet = [d.main.score, ...rows.map((s) => s.score)];
+      const wfGross = [d.grossMarks, ...rows.map((s) => s.grossMarks)];
+      mkChart('chWaterfall', 'waterfall', { type: 'bar', data: { labels: wfLabels, datasets: [
+        { label: 'Net score (kept)', data: wfNet.map((v) => [0, v]), backgroundColor: AN_COLORS.orange, borderRadius: 4 },
+        { label: 'Penalty (lost)', data: wfNet.map((v, i) => [v, wfGross[i]]), backgroundColor: AN_COLORS.red, borderRadius: 4 }
+      ] }, options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${Math.abs(ctx.raw[1] - ctx.raw[0]).toFixed(2)}` } } } } });
+    }
+
+    function renderAnCoverage(d) {
+      document.getElementById('anCoverage').innerHTML = d.mainRows.map((s) => `
+        <div class="progress-item">
+          <div class="progress-head"><h4>${s.name} · ${s.attempted}/${s.total} attempted</h4><span class="pct">${fmtPct(akcFmt(s.attemptRate))}</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:${s.attemptRate}%;background:${SEC_COLORS[s.name]};"></div></div>
+        </div>
+      `).join('');
+    }
+
+    function renderAnHeatmap(d) {
+      const cols = [
+        { key: 'scorePct', label: 'Score %' }, { key: 'accuracy', label: 'Accuracy' }, { key: 'attemptRate', label: 'Attempt Rate' },
+        { key: 'wrongRate', label: 'Wrong Rate' }, { key: 'unattRate', label: 'Unattempted Rate' }, { key: 'efficiency', label: 'Efficiency' }
+      ];
+      function heat(v) {
+        const t = Math.max(0, Math.min(1, v / 100));
+        return `rgba(241, ${Math.round(150 + t * 70)}, ${Math.round(60 + t * 40)}, ${.12 + t * .28})`;
+      }
+      let html = '<thead><tr><th>Section</th>' + cols.map((c) => `<th>${c.label}</th>`).join('') + '</tr></thead><tbody>';
+      d.mainRows.forEach((s) => {
+        const vals = { scorePct: s.scorePct, accuracy: s.accuracy, attemptRate: s.attemptRate, wrongRate: s.wrongRate, unattRate: (s.unattempted / s.total) * 100, efficiency: (s.efficiency / s.plus) * 100 };
+        const disp = { scorePct: fmtPct(akcFmt(s.scorePct)), accuracy: fmtPct(akcFmt(s.accuracy)), attemptRate: fmtPct(akcFmt(s.attemptRate)), wrongRate: fmtPct(akcFmt(s.wrongRate)), unattRate: fmtPct(akcFmt(vals.unattRate)), efficiency: akcFmt(s.efficiency) };
+        html += `<tr><td>${s.name}</td>` + cols.map((c) => `<td style="background:${heat(c.key === 'wrongRate' || c.key === 'unattRate' ? 100 - vals[c.key] : vals[c.key])};">${disp[c.key]}</td>`).join('') + '</tr>';
+      });
+      html += '</tbody>';
+      document.getElementById('anHeatmap').innerHTML = html;
+    }
+
+    function renderAnRankings(d) {
+      function ranked(list, key, desc = true) {
+        return [...list].sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key]).map((s) => s.name);
+      }
+      const groups = [
+        { title: 'Accuracy', items: ranked(d.mainRows, 'accuracy') },
+        { title: 'Attempt Rate', items: ranked(d.mainRows, 'attemptRate') },
+        { title: 'Score Efficiency', items: ranked(d.mainRows, 'efficiency') },
+        { title: 'Risk (Wrong Rate)', items: ranked(d.mainRows, 'wrongRate') }
+      ];
+      document.getElementById('anRankGrid').innerHTML = groups.map((g) => `
+        <div class="rank-card"><h5>${g.title}</h5><ol>${g.items.map((n) => `<li>${n}</li>`).join('')}</ol></div>
+      `).join('');
+    }
+
+    function renderAnComputer(d) {
+      const c = d.computer;
+      const wrap = document.getElementById('anComputerModule');
+      if (!c) { wrap.innerHTML = '<p class="cc-note">No Computer Knowledge section detected in this result.</p>'; return; }
+      const pct = c.total ? (c.correct / c.total) * 100 : 0;
+      wrap.innerHTML = `
+        <div class="donut-wrap" style="justify-content:flex-start;">
+          <div class="donut" style="background:conic-gradient(${AN_COLORS.green} 0 ${pct}%, ${AN_COLORS.red} ${pct}% ${pct + (c.wrong / c.total) * 100}%, ${AN_COLORS.gray} ${pct + (c.wrong / c.total) * 100}% 100%);"></div>
+        </div>
+        <div class="an-hero-stats" style="grid-template-columns:repeat(3,1fr);">
+          <div class="an-hero-chip"><strong>${akcFmt(c.score)} / ${akcFmt(c.max)}</strong><span>Score</span></div>
+          <div class="an-hero-chip"><strong>${c.correct}</strong><span>Correct</span></div>
+          <div class="an-hero-chip"><strong>${c.wrong}</strong><span>Wrong</span></div>
+          <div class="an-hero-chip"><strong>${c.unattempted}</strong><span>Unattempted</span></div>
+          <div class="an-hero-chip"><strong>${fmtPct(akcFmt(c.attemptRate))}</strong><span>Attempt rate</span></div>
+          <div class="an-hero-chip"><strong>${fmtPct(akcFmt(c.accuracy))}</strong><span>Accuracy (attempted)</span></div>
+          <div class="an-hero-note">Overall including Computer: <strong>${d.combined ? akcFmt(d.combined.score) + ' / ' + akcFmt(d.combined.max) : '—'}</strong></div>
+        </div>
+      `;
+    }
+
+    function renderAnArchFlow(d) {
+      const wrap = document.getElementById('anArchFlow');
+      const parts = [
+        { label: 'Main scored paper', value: `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`, cls: 'main' },
+        { label: 'Computer (qualifying)', value: d.computer ? `${akcFmt(d.computer.score)} / ${akcFmt(d.computer.max)}` : '—', cls: '' },
+        { label: 'Combined', value: d.combined ? `${akcFmt(d.combined.score)} / ${akcFmt(d.combined.max)}` : '—', cls: '' }
+      ];
+      wrap.innerHTML = parts.map((p, i) => `${i > 0 ? '<div class="arch-arrow">→</div>' : ''}<div class="arch-card ${p.cls}"><strong>${p.value}</strong><span>${p.label}</span></div>`).join('');
+    }
+
+    function renderAnInsights(d) {
+      const rows = d.mainRows;
+      const byAcc = [...rows].sort((a, b) => b.accuracy - a.accuracy);
+      const byScore = [...rows].sort((a, b) => b.score - a.score);
+      const byGap = [...rows].sort((a, b) => b.gap - a.gap);
+      const byAttempt = [...rows].sort((a, b) => b.attemptRate - a.attemptRate);
+      const byRisk = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
+      const insights = [
+        `${byAcc[0].name} has the highest accuracy at ${fmtPct(akcFmt(byAcc[0].accuracy))}, while ${byAcc[byAcc.length - 1].name} has the lowest at ${fmtPct(akcFmt(byAcc[byAcc.length - 1].accuracy))}.`,
+        `${byScore[0].name} contributes the largest number of marks (${akcFmt(byScore[0].score)}) to the scored total.`,
+        `${byAttempt[0].name} has the highest attempt coverage (${fmtPct(akcFmt(byAttempt[0].attemptRate))}), while ${byAttempt[byAttempt.length - 1].name} has the lowest (${fmtPct(akcFmt(byAttempt[byAttempt.length - 1].attemptRate))}).`,
+        `${byGap[0].name} and any section near it show the largest score gap (${akcFmt(byGap[0].gap)} marks), while ${byGap[byGap.length - 1].name} has the smallest gap (${akcFmt(byGap[byGap.length - 1].gap)} marks).`,
+        `${byRisk[0].name} has the highest wrong-answer rate among attempted questions (${fmtPct(akcFmt(byRisk[0].wrongRate))}).`,
+        `${d.main.unattempted} of ${d.main.total} main questions were left unattempted, and ${d.main.wrong} wrong answers resulted in ${akcFmt(d.negativeMarks)} marks of negative impact.`,
+        `The main paper's gross correct-answer marks were ${akcFmt(d.grossMarks)}, reduced to ${akcFmt(d.main.score)} after negative marking.`
+      ];
+      document.getElementById('anInsights').innerHTML = insights.map((t) => `<li>${t}</li>`).join('');
+    }
+
+    function renderAnFinalSummary(d) {
+      const rows = d.mainRows;
+      const byAcc = [...rows].sort((a, b) => b.accuracy - a.accuracy);
+      const byScore = [...rows].sort((a, b) => b.score - a.score);
+      const byGap = [...rows].sort((a, b) => b.gap - a.gap);
+      const byRisk = [...rows].sort((a, b) => b.wrongRate - a.wrongRate);
+      const byAttempt = [...rows].sort((a, b) => b.attemptRate - a.attemptRate);
+      document.getElementById('anFinalScore').textContent = `${akcFmt(d.main.score)} / ${akcFmt(d.main.max)}`;
+      const items = [
+        `Strongest section by accuracy: <strong>${byAcc[0].name}</strong> (${fmtPct(akcFmt(byAcc[0].accuracy))})`,
+        `Strongest section by marks: <strong>${byScore[0].name}</strong> (${akcFmt(byScore[0].score)})`,
+        `Weakest section by accuracy: <strong>${byAcc[byAcc.length - 1].name}</strong> (${fmtPct(akcFmt(byAcc[byAcc.length - 1].accuracy))})`,
+        `Largest score gap: <strong>${byGap[0].name}</strong> (${akcFmt(byGap[0].gap)} marks)`,
+        `Highest risk section: <strong>${byRisk[0].name}</strong> (${fmtPct(akcFmt(byRisk[0].wrongRate))} wrong rate)`,
+        `Highest attempt coverage: <strong>${byAttempt[0].name}</strong> (${fmtPct(akcFmt(byAttempt[0].attemptRate))})`,
+        `Lowest attempt coverage: <strong>${byAttempt[byAttempt.length - 1].name}</strong> (${fmtPct(akcFmt(byAttempt[byAttempt.length - 1].attemptRate))})`,
+        `Total questions left unattempted: <strong>${d.main.unattempted}</strong> of ${d.main.total}`
+      ];
+      document.getElementById('anFinalSummary').innerHTML = items.map((t) => `<li>${t}</li>`).join('');
+    }
+
+    function renderAnSimulator(d) {
+      const plus = TIER_MARKS[d.tier].plus, minus = TIER_MARKS[d.tier].minus;
+      const simWrong = document.getElementById('simWrong');
+      const simUnatt = document.getElementById('simUnatt');
+      simWrong.max = d.main.wrong; simWrong.value = 0;
+      simUnatt.max = d.main.unattempted; simUnatt.value = 0;
+      document.getElementById('simWrongVal').textContent = '0';
+      document.getElementById('simUnattVal').textContent = '0';
+      function update() {
+        const w = +simWrong.value, u = +simUnatt.value;
+        document.getElementById('simWrongVal').textContent = w;
+        document.getElementById('simUnattVal').textContent = u;
+        const newScore = d.main.score + w * (plus + minus) + u * plus;
+        document.getElementById('simScore').textContent = `${akcFmt(newScore)} / ${akcFmt(d.main.max)}`;
+        const delta = newScore - d.main.score;
+        document.getElementById('simDelta').textContent = delta > 0 ? `+${akcFmt(delta)} marks vs your actual score` : 'Same as your actual score';
+      }
+      simWrong.oninput = update; simUnatt.oninput = update;
+      update();
+    }
+
+    function renderAnalyticsView() {
+      if (!lastResult) return;
+      const d = computeAnalytics(lastResult);
+      renderAnHero(d);
+      renderAnKpis(d);
+      renderAnSectionCards(d);
+      renderAnCharts(d);
+      renderAnCoverage(d);
+      renderAnHeatmap(d);
+      renderAnRankings(d);
+      renderAnComputer(d);
+      renderAnArchFlow(d);
+      renderAnInsights(d);
+      renderAnFinalSummary(d);
+      renderAnSimulator(d);
+    }
+
+    document.getElementById('viewAnalyticsBtn').addEventListener('click', () => {
+      if (!lastResult) { showAkcError('Calculate your score first, then view analytics.'); return; }
+      renderAnalyticsView();
+      akcResultsWrap.classList.remove('show');
+      document.getElementById('analyticsWrap').classList.add('show');
+      document.getElementById('analyticsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('anBackBtn').addEventListener('click', () => {
+      document.getElementById('analyticsWrap').classList.remove('show');
+      akcResultsWrap.classList.add('show');
+      akcResultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('anMethoBtn').addEventListener('click', () => {
+      document.getElementById('anMethodology').classList.toggle('show');
+    });
   </script>
 </body>
 </html>
