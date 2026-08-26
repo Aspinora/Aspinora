@@ -1019,7 +1019,7 @@
        SSC ANSWER KEY SCORE CALCULATOR
   ============================================================ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1912,7 +1912,11 @@
 
     document.getElementById('viewAnalyticsBtn').addEventListener('click', () => {
       if (!lastResult) { showAkcError('Calculate your score first, then view analytics.'); return; }
-      renderAnalyticsView();
+      try {
+        renderAnalyticsView();
+      } catch (e) {
+        console.error('Analytics render error:', e);
+      }
       akcResultsWrap.classList.remove('show');
       document.getElementById('analyticsWrap').classList.add('show');
       document.getElementById('analyticsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
