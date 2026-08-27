@@ -93,24 +93,6 @@
     }
     .error-msg.show { display: block; }
 
-    /* ---------- Temporary parser debug panel ---------- */
-    .debug-panel { margin-top: 16px; padding: 16px 18px; border-radius: 14px; background: #12161f; color: #d7dbe4; font-size: 12.5px; }
-    .debug-panel h4 { margin: 0 0 4px; font-size: 13.5px; color: #ffb066; }
-    .debug-panel .dbg-summary { margin-bottom: 10px; line-height: 1.6; }
-    .debug-panel .dbg-summary b { color: #fff; }
-    .debug-panel .dbg-summary .dbg-bad { color: #ff8080; font-weight: 750; }
-    .debug-panel .dbg-summary .dbg-good { color: #7ee2a8; font-weight: 750; }
-    .debug-scroll { max-height: 480px; overflow-y: auto; border: 1px solid #2a3040; border-radius: 10px; }
-    .debug-table { width: 100%; border-collapse: collapse; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 11.5px; }
-    .debug-table th, .debug-table td { padding: 5px 8px; text-align: center; border-bottom: 1px solid #232936; white-space: nowrap; }
-    .debug-table th { position: sticky; top: 0; background: #1a2030; color: #9aa3b5; font-weight: 700; }
-    .debug-table tr.dbg-fail { background: rgba(255, 90, 90, .12); }
-    .debug-table td.dbg-qid { text-align: left; color: #cfd4de; }
-    .dbg-slot { display: inline-block; min-width: 46px; padding: 2px 6px; border-radius: 6px; font-weight: 750; }
-    .dbg-slot.green { background: rgba(70, 200, 130, .18); color: #6bdb9a; }
-    .dbg-slot.red { background: rgba(255, 90, 90, .18); color: #ff8f8f; }
-    .dbg-slot.none { background: rgba(140, 146, 160, .16); color: #9096a3; }
-
     .results-wrap { display: none; }
     .results-wrap.show { display: block; }
 
@@ -478,7 +460,6 @@
 
         <div class="parse-status" id="parseStatus"><span class="spinner"></span><span id="parseStatusText">Reading your answer key…</span></div>
         <div class="error-msg" id="akcErrorMsg"></div>
-        <div class="debug-panel" id="akcDebugPanel" style="display:none;"></div>
 
         <div class="form-actions">
           <button class="primary" id="akcCalculateButton">Calculate my score&nbsp; →</button>
@@ -1063,11 +1044,8 @@
   <!-- ============================================================
        SSC ANSWER KEY SCORE CALCULATOR
   ============================================================ -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
     /* ---------- Page mode toggle (AKC calculator vs manual calculator) ---------- */
     document.getElementById('modeTabAkc').addEventListener('click', () => setMode('akc'));
     document.getElementById('modeTabManual').addEventListener('click', () => setMode('manual'));
@@ -1154,296 +1132,47 @@
       parseStatus.classList.remove('show');
     }
 
-    /* ---------- Temporary parser debug panel ---------- */
-    const akcDebugPanel = document.getElementById('akcDebugPanel');
-    function hideDebugPanel() {
-      akcDebugPanel.style.display = 'none';
-      akcDebugPanel.innerHTML = '';
-    }
-    function slotHtml(color) {
-      const label = color === 'green' ? 'green' : color === 'red' ? 'red' : '—';
-      const cls = color === 'green' ? 'green' : color === 'red' ? 'red' : 'none';
-      return `<span class="dbg-slot ${cls}">${label}</span>`;
-    }
-    function renderDebugPanel(debugRows, debugSummary, parseIssues) {
-      if (!debugRows || !debugRows.length) { hideDebugPanel(); return; }
-      const failCount = debugRows.filter((r) => !r.ok).length;
-      const diff = debugSummary.totalMarkersDetected - debugSummary.totalMarkersExpected;
-      const summaryHtml = `
-        <h4>🔧 Parser debug (temporary)</h4>
-        <div class="dbg-summary">
-          Questions found: <b>${debugSummary.totalQuestions}</b> ·
-          Markers detected: <b>${debugSummary.totalMarkersDetected}</b> / expected <b>${debugSummary.totalMarkersExpected}</b>
-          (${diff === 0 ? '<span class="dbg-good">exact match</span>' : `<span class="dbg-bad">${diff > 0 ? '+' : ''}${diff}</span>`}) ·
-          Questions with a clean 4/4: <b class="${failCount === 0 ? 'dbg-good' : 'dbg-bad'}">${debugSummary.totalQuestions - failCount} / ${debugSummary.totalQuestions}</b>
-        </div>
-      `;
-      const rowsHtml = debugRows.map((r) => `
-        <tr class="${r.ok ? '' : 'dbg-fail'}">
-          <td>${r.seq}</td>
-          <td class="dbg-qid">${r.qid}</td>
-          <td>${r.status}</td>
-          <td>${r.chosen}</td>
-          <td>${slotHtml(r.slots['1'])}</td>
-          <td>${slotHtml(r.slots['2'])}</td>
-          <td>${slotHtml(r.slots['3'])}</td>
-          <td>${slotHtml(r.slots['4'])}</td>
-          <td>${r.markerCount} / 4</td>
-        </tr>
-      `).join('');
-      akcDebugPanel.innerHTML = summaryHtml + `
-        <div class="debug-scroll">
-          <table class="debug-table">
-            <thead><tr><th>#</th><th>Question ID</th><th>Status</th><th>Chosen</th><th>Opt 1</th><th>Opt 2</th><th>Opt 3</th><th>Opt 4</th><th>Markers</th></tr></thead>
-            <tbody>${rowsHtml}</tbody>
-          </table>
-        </div>
-      `;
-      akcDebugPanel.style.display = 'block';
+    /* ---------- PDF parsing (server-side) ---------- */
+    // PDF answer-key parsing now happens in a Supabase Edge Function, using
+    // the same architecture as the working URL-extraction path. The browser
+    // no longer renders pages to canvas or samples pixel colors at all — it
+    // only uploads the file and receives back the same normalized
+    // { questions: [{ section, qid, opts: [{digit,color}], status, chosen }], ... }
+    // shape that feeds the existing, unmodified computeScore().
+    //
+    // Deployment note: this requires a Supabase Storage bucket named
+    // 'answer-key-uploads' (with an insert policy allowing the anon key to
+    // upload) and an Edge Function named 'parse-pdf-answer-key' deployed to
+    // this project — see the accompanying edge-function source for the
+    // server-side implementation.
+    async function parseAnswerKeyPdfServerSide(file, onStatus) {
+      const bucket = 'answer-key-uploads';
+      const path = `${crypto.randomUUID()}.pdf`;
+
+      if (onStatus) onStatus('Uploading your PDF…');
+      const { error: upErr } = await supabaseClient.storage.from(bucket).upload(path, file, {
+        contentType: 'application/pdf',
+        upsert: false
+      });
+      if (upErr) {
+        throw new Error('Could not upload your PDF. ' + (upErr.message || 'Please try again.'));
+      }
+
+      if (onStatus) onStatus('Analyzing your answer key…');
+      const { data, error } = await supabaseClient.functions.invoke('parse-pdf-answer-key', {
+        body: { path, bucket }
+      });
+
+      if (error || !data || data.error) {
+        const msg = (data && data.message) || (error && error.message) ||
+          'Could not reliably read that PDF.';
+        throw new Error(msg);
+      }
+
+      return data;
     }
 
-    /* ---------- Color classification ---------- */
-    function classifyColor(r, g, b, a) {
-      if (a < 180) return 'other';
-      if (r > 195 && g < 115 && b < 115) return 'red';
-      if (g > 195 && r < 175 && b < 195 && (g - r) > 55) return 'green';
-      return 'other';
-    }
 
-    function sampleColorNear(imgData, w, h, cx, cy) {
-      for (let dy = -4; dy <= 4; dy++) {
-        for (let dx = -4; dx <= 4; dx++) {
-          const x = Math.round(cx + dx), y = Math.round(cy + dy);
-          if (x < 0 || y < 0 || x >= w || y >= h) continue;
-          const idx = (y * w + x) * 4;
-          const cls = classifyColor(imgData[idx], imgData[idx + 1], imgData[idx + 2], imgData[idx + 3]);
-          if (cls !== 'other') return cls;
-        }
-      }
-      return 'other';
-    }
-
-    /* ---------- Core PDF parser (mirrors validated color-marker logic) ---------- */
-    async function parseAnswerKeyPdf(arrayBuffer, onProgress) {
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const scale = 1.6;
-      const markers = []; // { offset, digit, color } — offset is this token's position in fullText
-      let fullText = '';
-
-      for (let p = 1; p <= pdf.numPages; p++) {
-        if (onProgress) onProgress(p, pdf.numPages);
-        const page = await pdf.getPage(p);
-        const viewport = page.getViewport({ scale });
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.ceil(viewport.width);
-        canvas.height = Math.ceil(viewport.height);
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-        const textContent = await page.getTextContent();
-        for (const item of textContent.items) {
-          const trimmed = item.str.trim();
-          if (/^[1-4]\.$/.test(trimmed)) {
-            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-            const x0 = tx[4];
-            const y0 = tx[5];
-            const wpx = Math.max((item.width || 6) * scale, 6);
-            const hpx = Math.max((item.height || 9) * scale, 9);
-            const sx = x0 + wpx * 0.3;
-            const sy = y0 - hpx * 0.45;
-            const col = sampleColorNear(imgData, canvas.width, canvas.height, sx, sy);
-            if (col === 'red' || col === 'green') {
-              // Record this marker's own position in fullText — this is what
-              // lets every question be resolved from its own local position
-              // later, instead of a running count across the whole document.
-              markers.push({ offset: fullText.length, digit: trimmed[0], color: col });
-            }
-          }
-          fullText += item.str + '\n';
-        }
-        fullText += '\n';
-      }
-
-      // PDF page-break rendering sometimes duplicates the very first option label
-      // ("1.") at the bottom of a page right before the real one starts at the top
-      // of the next page. Whenever two consecutive detected tokens share the same
-      // option digit *and* sit right next to each other in the text, the earlier
-      // one is that artifact — drop it.
-      const cleanMarkers = [];
-      for (let idx = 0; idx < markers.length; idx++) {
-        const next = markers[idx + 1];
-        if (next && next.digit === markers[idx].digit && (next.offset - markers[idx].offset) < 400) {
-          continue; // drop the earlier duplicate
-        }
-        cleanMarkers.push(markers[idx]);
-      }
-
-      // Section headers, in order (used for NAMES — see below for why we don't
-      // trust their exact text position as a section boundary).
-      const sectionRe = /Section\s*:\s*([^\n]+)/g;
-      const sections = [];
-      let sm;
-      while ((sm = sectionRe.exec(fullText))) {
-        sections.push({ pos: sm.index, name: sm[1].trim() });
-      }
-
-      // The DigiAlm response-sheet PDF sometimes paints the "Section :"
-      // header out of reading order — it can land in the middle of, or even
-      // a couple of questions after, the first question of a new module,
-      // because the header box is drawn at a different point in the page's
-      // content stream than where it visually sits. Trusting its raw text
-      // position to decide section boundaries can silently misattribute 1–2
-      // questions per transition (verified against a real response sheet).
-      // The on-page question counter ("Q . 1", "Q . 2", ...) resetting back
-      // to 1 is a far more reliable signal that a new module has started, so
-      // we use that as the primary boundary detector and only fall back to
-      // header position if the reset count doesn't line up with the number
-      // of detected sections.
-      const qNumRe = /Q\n\.\n(\d(?:\n\d)*)\n\nA\nn\ns/g;
-      const qResets = [];
-      let qnm, prevQNum = null;
-      while ((qnm = qNumRe.exec(fullText))) {
-        const num = parseInt(qnm[1].replace(/\n/g, ''), 10);
-        if (prevQNum !== null && num === 1 && prevQNum !== 1) qResets.push(qnm.index);
-        prevQNum = num;
-      }
-      const useResets = sections.length > 0 && qResets.length === sections.length - 1;
-      const resetBoundaries = useResets ? [0, ...qResets, Infinity] : null;
-
-      function sectionFor(pos, endPos) {
-        if (useResets) {
-          for (let i = 0; i < sections.length; i++) {
-            if (pos >= resetBoundaries[i] && pos < resetBoundaries[i + 1]) return sections[i].name;
-          }
-          return sections[sections.length - 1].name;
-        }
-        // Fallback: match against the END of the question block rather than
-        // its start, since the header (when present) tends to land after the
-        // block begins — this recovers most transitions even without resets.
-        let cur = sections.length ? sections[0].name : 'Section 1';
-        for (const s of sections) { if (s.pos <= (endPos != null ? endPos : pos)) cur = s.name; else break; }
-        return cur;
-      }
-
-      // Question blocks: Question ID -> Status -> Chosen Option, in order.
-      // Every question's own 4 answer-option markers are resolved from ITS
-      // OWN position in the text — the markers that fall strictly between
-      // the end of the previous question's block and the start of this
-      // one — never from a running global index. That means a detection
-      // glitch on any single page can only ever affect that one question,
-      // and gets caught by validation below instead of silently shifting
-      // every question that follows it.
-      const blockRe = /Question ID\s*:\s*(\d+)[\s\S]*?Status\s*:\s*([A-Za-z ]+?)\s*Chosen Option\s*:\s*(\d+|--)/g;
-      const questions = [];
-      const parseIssues = [];
-      const debugRows = []; // temporary diagnostic record, one entry per question — never used for scoring decisions
-      let markerCursor = 0;
-      let prevBlockEnd = 0;
-      let qSeq = 0;
-      let bm;
-      while ((bm = blockRe.exec(fullText))) {
-        qSeq++;
-        const qid = bm[1], status = bm[2].trim(), chosen = bm[3];
-        const blockStart = bm.index;
-        const blockEnd = blockRe.lastIndex;
-
-        const myMarkers = [];
-        while (markerCursor < cleanMarkers.length && cleanMarkers[markerCursor].offset < blockStart) {
-          if (cleanMarkers[markerCursor].offset >= prevBlockEnd) myMarkers.push(cleanMarkers[markerCursor]);
-          markerCursor++;
-        }
-
-        // Validate this question in isolation. The DigiAlm answer key always
-        // marks every option — exactly one green (correct) and three red
-        // (incorrect) — regardless of whether the question was attempted, so
-        // a fully-resolved question always has exactly 4 markers with unique
-        // digits 1–4. Anything else means this question's options were not
-        // reliably detected, so we stop rather than guess. (A genuinely
-        // nullified/bonus question with 0 markers would normally be allowed
-        // through — that leniency is temporarily disabled while we're
-        // debugging the color-detection stage, so every question is held to
-        // the same strict 4/4 bar.)
-        const digitsSeen = myMarkers.map((m) => m.digit);
-        const uniqueDigits = new Set(digitsSeen);
-        const greens = myMarkers.filter((m) => m.color === 'green');
-        const isFullyResolved = myMarkers.length === 4 && uniqueDigits.size === 4 && greens.length === 1;
-        if (!isFullyResolved) {
-          if (uniqueDigits.size !== digitsSeen.length) {
-            parseIssues.push(`Question ${qid} (position ${qSeq}): a duplicate option marker was detected — could not reliably tell its options apart.`);
-          } else if (greens.length > 1) {
-            parseIssues.push(`Question ${qid} (position ${qSeq}): found ${greens.length} correct-answer markers, expected exactly 1.`);
-          } else {
-            parseIssues.push(`Question ${qid} (position ${qSeq}): found ${myMarkers.length} of 4 expected answer-option markers.`);
-          }
-        }
-
-        // Build the diagnostic slot map for this question regardless of
-        // pass/fail, so the debug panel can show exactly what was (and
-        // wasn't) detected for every single question, not just failures.
-        const slots = { '1': null, '2': null, '3': null, '4': null };
-        myMarkers.forEach((m) => { slots[m.digit] = m.color; });
-        debugRows.push({ seq: qSeq, qid, status, chosen, slots, markerCount: myMarkers.length, ok: isFullyResolved });
-
-        questions.push({ section: sectionFor(blockStart, blockEnd), qid, opts: myMarkers, status, chosen });
-        prevBlockEnd = blockEnd;
-      }
-
-      const totalMarkersDetected = debugRows.reduce((a, r) => a + r.markerCount, 0);
-      const totalMarkersExpected = debugRows.length * 4;
-      const debugSummary = { totalQuestions: debugRows.length, totalMarkersDetected, totalMarkersExpected };
-
-      if (parseIssues.length > 0) {
-        const preview = parseIssues.slice(0, 6).join(' ');
-        const err = new Error(`This PDF could not be parsed reliably — stopping rather than risk an incorrect score (${parseIssues.length} of ${debugRows.length} question${debugRows.length > 1 ? 's' : ''} affected). ${preview}${parseIssues.length > 6 ? ' …' : ''}`);
-        err.debugRows = debugRows;
-        err.debugSummary = debugSummary;
-        err.parseIssues = parseIssues;
-        throw err;
-      }
-
-      // Header fields
-      const rollMatch = fullText.match(/Roll Number\s*\n?\s*(\S+)/);
-      const subjectMatch = fullText.match(/Subject\s*\n?\s*([^\n]+)/);
-      const dateMatch = fullText.match(/Exam Date\s*\n?\s*([\d\/\-]+)/);
-      const nameMatch = fullText.match(/Candidate Name\s*\n?\s*([^\n]+)/);
-      const venueMatch = fullText.match(/Venue Name\s*\n?\s*([^\n]+)/);
-      const timeMatch = fullText.match(/Exam Time\s*\n?\s*([^\n]+)/);
-
-      let year = '';
-      if (dateMatch) {
-        const yMatch = dateMatch[1].match(/(\d{4})/);
-        if (yMatch) year = yMatch[1];
-      }
-      if (!year && subjectMatch) {
-        const yMatch = subjectMatch[1].match(/(\d{4})/);
-        if (yMatch) year = yMatch[1];
-      }
-
-      let detectedTier = null;
-      if (subjectMatch) {
-        if (/tier\s*i(?!i)/i.test(subjectMatch[1]) || /tier\s*1(?!\d)/i.test(subjectMatch[1])) detectedTier = 'tier1';
-        if (/tier\s*ii/i.test(subjectMatch[1]) || /tier\s*2/i.test(subjectMatch[1])) detectedTier = 'tier2';
-      }
-
-      if (questions.length === 0) {
-        throw new Error('Could not find any questions in this PDF. Make sure it is the DigiAlm answer key / response sheet page saved as PDF.');
-      }
-
-      return {
-        questions,
-        rollNumber: rollMatch ? rollMatch[1] : '',
-        candidateName: nameMatch ? nameMatch[1].trim() : '',
-        examName: subjectMatch ? subjectMatch[1].trim() : '',
-        venueName: venueMatch ? venueMatch[1].trim() : '',
-        examDate: dateMatch ? dateMatch[1].trim() : '',
-        examTime: timeMatch ? timeMatch[1].trim() : '',
-        year,
-        detectedTier,
-        debugRows,
-        debugSummary
-      };
-    }
 
     /* ---------- Scoring ---------- */
     function computeScore(questions, tier) {
@@ -1606,7 +1335,6 @@
     /* ---------- Calculate button ---------- */
     document.getElementById('akcCalculateButton').addEventListener('click', async () => {
       clearAkcError();
-      hideDebugPanel();
 
       if (!document.getElementById('akcCategory').value) {
         showAkcError('Please select your category before calculating.');
@@ -1622,12 +1350,7 @@
 
         if (currentSource === 'upload') {
           if (!selectedFile) { showAkcError('Please upload your answer key PDF first.'); return; }
-          showParsing('Reading your PDF…');
-          const arrayBuffer = await selectedFile.arrayBuffer();
-          showParsing('Analyzing pages and matching correct answers…');
-          parsed = await parseAnswerKeyPdf(arrayBuffer, (p, total) => {
-            showParsing(`Analyzing page ${p} of ${total}…`);
-          });
+          parsed = await parseAnswerKeyPdfServerSide(selectedFile, (msg) => showParsing(msg));
         } else {
           const url = document.getElementById('akcLinkInput').value.trim();
           if (!url) { showAkcError('Please paste the answer key link.'); return; }
@@ -1644,14 +1367,12 @@
         }
 
         hideParsing();
-        if (parsed && parsed.debugRows) renderDebugPanel(parsed.debugRows, parsed.debugSummary, []);
         const tierToUse = detectTier(parsed);
         currentTier = tierToUse;
         renderAkcResults(parsed, tierToUse);
         autoSaveSubmission();
       } catch (err) {
         hideParsing();
-        if (err && err.debugRows) renderDebugPanel(err.debugRows, err.debugSummary, err.parseIssues);
         showAkcError(err.message || 'Something went wrong while reading that PDF. Please make sure it is the DigiAlm answer key page saved/printed as a PDF.');
       }
     });
@@ -1664,7 +1385,6 @@
       document.getElementById('akcLinkInput').value = '';
       clearAkcError();
       hideParsing();
-      hideDebugPanel();
       akcResultsWrap.classList.remove('show');
       lastResult = null;
       window.scrollTo({ top: document.getElementById('akcSection').offsetTop - 20, behavior: 'smooth' });
