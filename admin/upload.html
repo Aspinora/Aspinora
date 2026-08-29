@@ -125,6 +125,29 @@
     }
   });
 
+  // The edge function returns almost immediately after starting a
+  // BACKGROUND extraction job (it can take 1-3+ minutes for a full paper).
+  // So after invoking it, we poll the paper's row until status settles.
+  async function pollUntilDone(paperId, { intervalMs = 4000, timeoutMs = 6 * 60 * 1000 } = {}) {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const { data: row, error } = await supabaseClient
+        .from('pyq_papers')
+        .select('status, last_error, total_questions')
+        .eq('id', paperId)
+        .single();
+      if (error) throw new Error('Could not check extraction status: ' + error.message);
+
+      if (row.status === 'draft') return { ok: true, totalQuestions: row.total_questions };
+      if (row.status === 'extraction_failed') return { ok: false, error: row.last_error || 'Extraction failed with no further detail.' };
+
+      const elapsedSec = Math.round((Date.now() - start) / 1000);
+      setStatus(`Extracting questions with AI… (${elapsedSec}s elapsed — a full paper can take a few minutes)`, 'progress');
+      await new Promise(r => setTimeout(r, intervalMs));
+    }
+    return { ok: false, error: 'Timed out waiting for extraction after 6 minutes. It may still finish in the background — check the dashboard shortly.' };
+  }
+
   const statusEl = document.getElementById('status');
   function setStatus(text, kind) {
     statusEl.textContent = text;
@@ -151,16 +174,22 @@
   const retryPaperId = params.get('retry_paper_id');
 
   async function retryExisting(paperId) {
-    setStatus('Retrying extraction…', 'progress');
+    setStatus('Starting extraction…', 'progress');
     document.getElementById('submitBtn').disabled = true;
-    const { data, error } = await supabaseClient.functions.invoke('extract-pyq', { body: { paper_id: paperId } });
+    const { error } = await supabaseClient.functions.invoke('extract-pyq', { body: { paper_id: paperId } });
     if (error) {
       const detail = await describeFunctionError(error);
-      setStatus(`Extraction failed: ${detail}`, 'error');
+      setStatus(`Could not start extraction: ${detail}`, 'error');
       document.getElementById('submitBtn').disabled = false;
       return;
     }
-    setStatus(`Extraction complete — ${data.questions_extracted} questions drafted. Redirecting…`, 'ok');
+    const result = await pollUntilDone(paperId);
+    if (!result.ok) {
+      setStatus(`Extraction failed: ${result.error}`, 'error');
+      document.getElementById('submitBtn').disabled = false;
+      return;
+    }
+    setStatus(`Extraction complete — ${result.totalQuestions} questions drafted. Redirecting…`, 'ok');
     setTimeout(() => window.location.href = `review.html?paper_id=${paperId}`, 900);
   }
 
@@ -197,18 +226,25 @@
         .single();
       if (insertErr) throw new Error('Could not save paper: ' + insertErr.message);
 
-      setStatus('Extracting questions with AI — this can take a minute for a full paper…', 'progress');
-      const { data: extractData, error: extractErr } = await supabaseClient.functions.invoke('extract-pyq', {
+      setStatus('Starting AI extraction…', 'progress');
+      const { error: extractErr } = await supabaseClient.functions.invoke('extract-pyq', {
         body: { paper_id: paper.id },
       });
       if (extractErr) {
         const detail = await describeFunctionError(extractErr);
-        setStatus(`Uploaded, but extraction failed: ${detail}. You can retry from the dashboard.`, 'error');
+        setStatus(`Uploaded, but could not start extraction: ${detail}. You can retry from the dashboard.`, 'error');
         submitBtn.disabled = false;
         return;
       }
 
-      setStatus(`Extraction complete — ${extractData.questions_extracted} questions drafted. Redirecting to review…`, 'ok');
+      const result = await pollUntilDone(paper.id);
+      if (!result.ok) {
+        setStatus(`Uploaded, but extraction failed: ${result.error}. You can retry from the dashboard.`, 'error');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      setStatus(`Extraction complete — ${result.totalQuestions} questions drafted. Redirecting to review…`, 'ok');
       setTimeout(() => window.location.href = `review.html?paper_id=${paper.id}`, 900);
     } catch (err) {
       setStatus(err.message || 'Something went wrong.', 'error');
