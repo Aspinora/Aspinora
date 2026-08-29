@@ -131,6 +131,21 @@
     statusEl.className = 'status' + (kind ? ' ' + kind : '');
   }
 
+  // supabase-js only gives a generic message on Edge Function errors
+  // ("non-2xx status code"); the real reason is in the response body.
+  async function describeFunctionError(error) {
+    try {
+      if (error?.context?.json) {
+        const body = await error.context.json();
+        return body.detail || body.error || error.message;
+      }
+      if (error?.context?.text) {
+        return await error.context.text();
+      }
+    } catch (e) { /* fall through */ }
+    return error?.message || 'unknown error';
+  }
+
   // Support retrying extraction on an existing paper whose PDF is already uploaded.
   const params = new URLSearchParams(window.location.search);
   const retryPaperId = params.get('retry_paper_id');
@@ -140,7 +155,8 @@
     document.getElementById('submitBtn').disabled = true;
     const { data, error } = await supabaseClient.functions.invoke('extract-pyq', { body: { paper_id: paperId } });
     if (error) {
-      setStatus(`Extraction failed: ${error.message || 'unknown error'}`, 'error');
+      const detail = await describeFunctionError(error);
+      setStatus(`Extraction failed: ${detail}`, 'error');
       document.getElementById('submitBtn').disabled = false;
       return;
     }
@@ -186,7 +202,8 @@
         body: { paper_id: paper.id },
       });
       if (extractErr) {
-        setStatus(`Uploaded, but extraction failed: ${extractErr.message || 'unknown error'}. You can retry from the dashboard.`, 'error');
+        const detail = await describeFunctionError(extractErr);
+        setStatus(`Uploaded, but extraction failed: ${detail}. You can retry from the dashboard.`, 'error');
         submitBtn.disabled = false;
         return;
       }
