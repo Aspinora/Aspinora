@@ -68,6 +68,11 @@
   .image-actions{display:flex;gap:8px;flex-wrap:wrap}
   .no-image-note{font-size:13px;color:var(--muted);margin-bottom:10px}
 
+  .option-image-box{margin:8px 0 0 32px;border:1px dashed var(--line);border-radius:10px;padding:10px;background:#fafbfd}
+  .option-image-box img{max-width:160px;border-radius:6px;display:block;margin-bottom:8px;border:1px solid var(--line)}
+  .option-image-box .image-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .option-image-box button{font-size:11.5px;padding:6px 10px}
+
   .action-bar{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
   .save-note{font-size:12.5px;color:var(--muted);margin-top:8px;min-height:16px}
 
@@ -79,7 +84,8 @@
   .modal-dialog{background:#fff;border-radius:16px;padding:20px;max-width:900px;width:100%;max-height:90vh;overflow:auto}
   .modal-dialog h2{margin:0 0 4px;font-size:17px}
   .modal-dialog p{margin:0 0 14px;color:var(--muted);font-size:13px}
-  #cropCanvas{max-width:100%;border:1px solid var(--line);border-radius:8px;cursor:crosshair}
+  #cropCanvas{max-width:100%;border:1px solid var(--line);border-radius:8px;cursor:crosshair;touch-action:none;display:block}
+  .crop-target-label{display:inline-block;background:#fff3e5;color:#a5720a;border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;margin-bottom:10px}
   .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
   .page-input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
   .page-input-row input{width:80px}
@@ -114,7 +120,8 @@
 <div class="modal" id="cropModal">
   <div class="modal-dialog">
     <h2>Crop image from source PDF</h2>
-    <p>Drag a rectangle around the diagram/figure, then crop &amp; upload.</p>
+    <div class="crop-target-label" id="cropTargetLabel">Question image</div>
+    <p>Drag a rectangle around the diagram/figure (works with touch too), then crop &amp; upload.</p>
     <div class="page-input-row">
       <label style="font-size:12.5px;font-weight:700">Page:</label>
       <input type="number" id="pageJumpInput" min="1" value="1">
@@ -151,9 +158,9 @@
 
   async function guard() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) { window.location.href = 'login.html'; return null; }
+    if (!session) { window.location.href = '/auth'; return null; }
     const { data: isAdmin } = await supabaseClient.rpc('is_admin');
-    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = '/auth'; return null; }
     return session;
   }
 
@@ -249,7 +256,9 @@
 
       <div class="action-bar">
         <button class="btn btn-primary" id="saveBtn">Save changes</button>
-        <button class="btn btn-red" id="flagBtn">${q.review_status === 'rejected' ? 'Unflag' : 'Mark extraction incorrect'}</button>
+        ${q.review_status === 'approved'
+          ? `<button class="btn btn-ghost" id="unapproveBtn">Un-approve</button>`
+          : `<button class="btn btn-red" id="flagBtn">${q.review_status === 'rejected' ? 'Unflag' : 'Mark extraction incorrect'}</button>`}
       </div>
       <div class="save-note" id="saveNote"></div>
     `;
@@ -264,21 +273,27 @@
 
     const optionsWrap = document.getElementById('optionsWrap');
     [0,1,2,3].forEach(i => {
-      const opt = q.options.find(o => o.option_index === i) || { option_text: '' };
+      const opt = q.options.find(o => o.option_index === i) || { option_text: '', option_image_url: null };
       const row = document.createElement('div');
-      row.className = 'option-row';
       row.innerHTML = `
-        <span class="option-label">${String.fromCharCode(65+i)}</span>
-        <input type="radio" name="correctOpt" value="${i}" ${q.correct_option_index === i ? 'checked' : ''}>
-        <textarea data-opt-idx="${i}" rows="1">${escapeHtml(opt.option_text || '')}</textarea>
+        <div class="option-row">
+          <span class="option-label">${String.fromCharCode(65+i)}</span>
+          <input type="radio" name="correctOpt" value="${i}" ${q.correct_option_index === i ? 'checked' : ''}>
+          <textarea data-opt-idx="${i}" rows="1">${escapeHtml(opt.option_text || '')}</textarea>
+        </div>
+        <div class="option-image-box" id="optionImageBox${i}"></div>
       `;
       optionsWrap.appendChild(row);
+      renderOptionImageBox(q, i, opt.option_image_url || null);
     });
 
     renderImageBox(q);
 
     document.getElementById('saveBtn').addEventListener('click', () => saveCurrent());
-    document.getElementById('flagBtn').addEventListener('click', () => toggleFlag());
+    const flagBtn = document.getElementById('flagBtn');
+    if (flagBtn) flagBtn.addEventListener('click', () => toggleFlag());
+    const unapproveBtn = document.getElementById('unapproveBtn');
+    if (unapproveBtn) unapproveBtn.addEventListener('click', () => unapproveCurrent());
     document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderEditor(); renderNav(); } });
     document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < questions.length-1) { currentIndex++; renderEditor(); renderNav(); } });
     document.getElementById('approveBtn').addEventListener('click', () => approveCurrent());
@@ -296,7 +311,7 @@
           <button class="btn btn-red" id="deleteImageBtn">Delete image</button>
         </div>
       `;
-      document.getElementById('replaceImageBtn').addEventListener('click', () => openCropModal());
+      document.getElementById('replaceImageBtn').addEventListener('click', () => openCropModal({ type: 'question' }));
       document.getElementById('deleteImageBtn').addEventListener('click', () => deleteImage());
     } else {
       box.innerHTML = `
@@ -305,7 +320,30 @@
           <button class="btn btn-primary" id="addImageBtn">Add image from PDF page</button>
         </div>
       `;
-      document.getElementById('addImageBtn').addEventListener('click', () => openCropModal());
+      document.getElementById('addImageBtn').addEventListener('click', () => openCropModal({ type: 'question' }));
+    }
+  }
+
+  function renderOptionImageBox(q, optIdx, imageUrl) {
+    const box = document.getElementById(`optionImageBox${optIdx}`);
+    if (!box) return;
+    if (imageUrl) {
+      box.innerHTML = `
+        <img src="${imageUrl}" alt="Option ${String.fromCharCode(65+optIdx)} image">
+        <div class="image-actions">
+          <button class="btn btn-ghost" data-opt-replace="${optIdx}">Replace</button>
+          <button class="btn btn-red" data-opt-delete="${optIdx}">Delete</button>
+        </div>
+      `;
+      box.querySelector(`[data-opt-replace="${optIdx}"]`).addEventListener('click', () => openCropModal({ type: 'option', index: optIdx }));
+      box.querySelector(`[data-opt-delete="${optIdx}"]`).addEventListener('click', () => deleteOptionImage(optIdx));
+    } else {
+      box.innerHTML = `
+        <div class="image-actions">
+          <button class="btn btn-ghost" data-opt-add="${optIdx}">+ Add image for option ${String.fromCharCode(65+optIdx)}</button>
+        </div>
+      `;
+      box.querySelector(`[data-opt-add="${optIdx}"]`).addEventListener('click', () => openCropModal({ type: 'option', index: optIdx }));
     }
   }
 
@@ -359,6 +397,16 @@
     renderEditor();
   }
 
+  async function unapproveCurrent() {
+    const q = questions[currentIndex];
+    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: 'pending' }).eq('id', q.id);
+    if (error) { document.getElementById('saveNote').textContent = 'Could not un-approve: ' + error.message; return; }
+    q.review_status = 'pending';
+    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'edited', notes: 'Un-approved' });
+    updateProgress();
+    renderEditor();
+  }
+
   async function toggleFlag() {
     const q = questions[currentIndex];
     const newStatus = q.review_status === 'rejected' ? 'pending' : 'rejected';
@@ -378,11 +426,22 @@
     renderImageBox(q);
   }
 
+  async function deleteOptionImage(optIdx) {
+    const q = questions[currentIndex];
+    const opt = q.options.find(o => o.option_index === optIdx);
+    if (!opt) return;
+    const { error } = await supabaseClient.from('pyq_options').update({ option_image_url: null }).eq('id', opt.id);
+    if (error) { alert('Could not remove image: ' + error.message); return; }
+    opt.option_image_url = null;
+    renderOptionImageBox(q, optIdx, null);
+  }
+
   // ================= CROP MODAL =================
   const cropModal = document.getElementById('cropModal');
   const cropCanvas = document.getElementById('cropCanvas');
   const ctx = cropCanvas.getContext('2d');
   let dragStart = null, dragRect = null, currentPageImageData = null;
+  let cropTarget = { type: 'question' }; // or { type: 'option', index: 0..3 }
 
   document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', () => cropModal.classList.remove('show')));
 
@@ -395,7 +454,10 @@
     return pdfDoc;
   }
 
-  async function openCropModal() {
+  async function openCropModal(target) {
+    cropTarget = target || { type: 'question' };
+    document.getElementById('cropTargetLabel').textContent =
+      cropTarget.type === 'option' ? `Option ${String.fromCharCode(65 + cropTarget.index)} image` : 'Question image';
     const q = questions[currentIndex];
     document.getElementById('pageJumpInput').value = q.source_page || 1;
     cropModal.classList.add('show');
@@ -435,19 +497,31 @@
     const scaleX = cropCanvas.width / rect.width, scaleY = cropCanvas.height / rect.height;
     return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
   }
-  cropCanvas.addEventListener('mousedown', (e) => { dragStart = canvasPos(e); dragRect = null; });
-  cropCanvas.addEventListener('mousemove', (e) => {
+
+  // Pointer Events unify mouse AND touch input (iPad included) into one API —
+  // plain mousedown/mousemove/mouseup does not reliably fire for touch drags.
+  cropCanvas.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    cropCanvas.setPointerCapture(e.pointerId);
+    dragStart = canvasPos(e);
+    dragRect = null;
+  });
+  cropCanvas.addEventListener('pointermove', (e) => {
     if (!dragStart) return;
+    e.preventDefault();
     const p = canvasPos(e);
     dragRect = { x: Math.min(dragStart.x,p.x), y: Math.min(dragStart.y,p.y), w: Math.abs(p.x-dragStart.x), h: Math.abs(p.y-dragStart.y) };
     ctx.putImageData(currentPageImageData, 0, 0);
     ctx.strokeStyle = '#ff7800'; ctx.lineWidth = 2;
     ctx.strokeRect(dragRect.x, dragRect.y, dragRect.w, dragRect.h);
   });
-  window.addEventListener('mouseup', () => {
+  function endDrag(e) {
+    if (!dragStart) return;
     dragStart = null;
     document.getElementById('cropUploadBtn').disabled = !(dragRect && dragRect.w > 5 && dragRect.h > 5);
-  });
+  }
+  cropCanvas.addEventListener('pointerup', endDrag);
+  cropCanvas.addEventListener('pointercancel', endDrag);
 
   document.getElementById('cropUploadBtn').addEventListener('click', async () => {
     if (!dragRect) return;
@@ -460,19 +534,33 @@
     );
     const blob = await new Promise(res => cropCanvasOut.toBlob(res, 'image/png'));
     const q = questions[currentIndex];
-    const path = `${paperId}/${q.id}_${Date.now()}.png`;
+    const suffix = cropTarget.type === 'option' ? `opt${cropTarget.index}` : 'question';
+    const path = `${paperId}/${q.id}_${suffix}_${Date.now()}.png`;
     const { error: upErr } = await supabaseClient.storage.from('pyq-images').upload(path, blob, { contentType: 'image/png' });
     if (upErr) { alert('Upload failed: ' + upErr.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
     const { data: pub } = supabaseClient.storage.from('pyq-images').getPublicUrl(path);
+    const userId = (await supabaseClient.auth.getSession()).data.session.user.id;
 
-    if (q.images.length) await supabaseClient.from('pyq_question_images').delete().eq('question_id', q.id);
-    const { data: imgRow } = await supabaseClient.from('pyq_question_images').insert({ question_id: q.id, image_url: pub.publicUrl, page_number: parseInt(document.getElementById('pageJumpInput').value)||null }).select().single();
-    q.images = imgRow ? [imgRow] : [];
-    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'image_replaced' });
-
-    btn.disabled = false; btn.textContent = 'Crop & Upload';
-    cropModal.classList.remove('show');
-    renderImageBox(q);
+    if (cropTarget.type === 'option') {
+      const opt = q.options.find(o => o.option_index === cropTarget.index);
+      if (opt) {
+        const { error } = await supabaseClient.from('pyq_options').update({ option_image_url: pub.publicUrl }).eq('id', opt.id);
+        if (error) { alert('Could not save option image: ' + error.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
+        opt.option_image_url = pub.publicUrl;
+      }
+      await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: userId, action: 'image_replaced', notes: `Option ${String.fromCharCode(65+cropTarget.index)} image set` });
+      btn.disabled = false; btn.textContent = 'Crop & Upload';
+      cropModal.classList.remove('show');
+      renderOptionImageBox(q, cropTarget.index, pub.publicUrl);
+    } else {
+      if (q.images.length) await supabaseClient.from('pyq_question_images').delete().eq('question_id', q.id);
+      const { data: imgRow } = await supabaseClient.from('pyq_question_images').insert({ question_id: q.id, image_url: pub.publicUrl, page_number: parseInt(document.getElementById('pageJumpInput').value)||null }).select().single();
+      q.images = imgRow ? [imgRow] : [];
+      await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: userId, action: 'image_replaced' });
+      btn.disabled = false; btn.textContent = 'Crop & Upload';
+      cropModal.classList.remove('show');
+      renderImageBox(q);
+    }
   });
 
   document.getElementById('publishBtn').addEventListener('click', async () => {
