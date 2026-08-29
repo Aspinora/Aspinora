@@ -267,9 +267,21 @@ button{font:inherit;cursor:pointer;border:0;background:none}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ================== QUESTION DATA ================== */
-const sections = [
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+</script>
+<script>
+/* ================== QUESTION DATA ==================
+   `sections` is populated dynamically from Supabase (see FETCH QUESTIONS
+   below) based on the year/tier/date/shift in the URL. FALLBACK_SECTIONS
+   below is only used if no matching published PYQ is found in the
+   database (e.g. during local testing), so the page never shows a blank
+   screen — it is not the primary data source. */
+let sections = [];
+const FALLBACK_SECTIONS = [
 {name:'General Intelligence and Reasoning', questions:[
 ["Choose the term that completes the analogy: Watt is to Power as Pascal is to ___",["Temperature","Energy","Pressure","Force"],2],
 ["Complete the analogy: Mekong River originates in Tibet, similarly Amazon River originates in ___",["Brazil","Peru","Colombia","Ecuador"],1],
@@ -384,20 +396,33 @@ const sections = [
 let currentPart = 0;
 let currentQ = 0;
 let unlockedPart = 0;
-const submittedParts = sections.map(()=>false);
-const answers = sections.map(s=>new Array(s.questions.length).fill(null));
-const review = sections.map(s=>new Array(s.questions.length).fill(false));
+let submittedParts = [];
+let answers = [];
+let review = [];
+
+function initStateArrays() {
+  submittedParts = sections.map(()=>false);
+  answers = sections.map(s=>new Array(s.questions.length).fill(null));
+  review = sections.map(s=>new Array(s.questions.length).fill(false));
+}
 
 const SECTION_SECONDS = 15*60;
 let secondsLeft = SECTION_SECONDS;
 let timerInterval = null;
 
 /* ================== EXAM TITLE FROM QUERY PARAMS ================== */
-(function setTitleFromParams(){
+const EXAM_PARAMS = (function(){
   const params = new URLSearchParams(window.location.search);
-  const year = params.get('year');
-  const dateStr = params.get('date');
-  const shift = params.get('shift');
+  return {
+    year: params.get('year'),
+    tier: params.get('tier'),
+    date: params.get('date'),
+    shift: params.get('shift') || 'Single Shift',
+  };
+})();
+
+(function setTitleFromParams(){
+  const { year, date: dateStr, shift } = EXAM_PARAMS;
   let label = 'SSC CGL Mock Test';
   if (year) {
     label = `SSC CGL ${year}`;
@@ -460,15 +485,36 @@ const saveNextBtn = document.getElementById('saveNextBtn');
 
 function loadQuestion(){
   const section = sections[currentPart];
-  const [qtext, opts] = section.questions[currentQ];
+  const q = section.questions[currentQ];
+  const qtext = q[0], opts = q[1], qImage = q[3] || null, optImages = q[4] || [];
   questionNumberEl.textContent = `Question No. ${currentQ+1}`;
-  qtextEl.textContent = qtext;
+  qtextEl.innerHTML = '';
+  qtextEl.appendChild(document.createTextNode(qtext));
+  if (qImage) {
+    const img = document.createElement('img');
+    img.src = qImage;
+    img.alt = 'Question figure';
+    img.style.cssText = 'display:block;max-width:100%;margin-top:12px;border-radius:8px;border:1px solid #edf0f5';
+    qtextEl.appendChild(img);
+  }
   optionsEl.innerHTML = '';
   opts.forEach((opt, idx) => {
     const b = document.createElement('button');
     b.className = 'option';
     if (answers[currentPart][currentQ] === idx) b.classList.add('selected');
-    b.innerHTML = `<span class="radio"></span><span>${opt}</span>`;
+    const radio = document.createElement('span');
+    radio.className = 'radio';
+    const textSpan = document.createElement('span');
+    textSpan.appendChild(document.createTextNode(opt));
+    if (optImages[idx]) {
+      const oImg = document.createElement('img');
+      oImg.src = optImages[idx];
+      oImg.alt = 'Option figure';
+      oImg.style.cssText = 'display:block;max-width:220px;margin-top:8px;border-radius:6px;border:1px solid #edf0f5';
+      textSpan.appendChild(oImg);
+    }
+    b.appendChild(radio);
+    b.appendChild(textSpan);
     b.addEventListener('click', () => {
       answers[currentPart][currentQ] = idx;
       loadQuestion();
@@ -637,10 +683,77 @@ fullscreenBtn.addEventListener('click', async () => {
   } catch(e){ /* no-op */ }
 });
 
+/* ================== FETCH QUESTIONS FROM SUPABASE ================== */
+async function loadExamData(){
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.style.cssText = 'position:fixed;inset:0;background:#fffaf5;z-index:999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;color:#6d7585;font-size:15px;font-weight:600';
+  loadingOverlay.textContent = 'Loading exam questions…';
+  document.body.appendChild(loadingOverlay);
+
+  try {
+    const { year, tier, date, shift } = EXAM_PARAMS;
+    if (!year || !tier || !date) throw new Error('Missing exam parameters in URL');
+
+    const { data: paper, error: paperErr } = await supabaseClient
+      .from('pyq_papers')
+      .select('id')
+      .eq('year', year).eq('tier', tier).eq('exam_date', date).eq('shift', shift)
+      .eq('is_published', true)
+      .maybeSingle();
+
+    if (paperErr || !paper) throw new Error('No published PYQ found for these parameters');
+
+    const { data: sectionRows } = await supabaseClient
+      .from('pyq_sections').select('*').eq('paper_id', paper.id).order('order_index');
+    const { data: questionRows } = await supabaseClient
+      .from('pyq_questions').select('*').eq('paper_id', paper.id).order('question_number');
+    const qIds = (questionRows || []).map(q => q.id);
+    const { data: optionRows } = qIds.length
+      ? await supabaseClient.from('pyq_options').select('*').in('question_id', qIds).order('option_index')
+      : { data: [] };
+    const { data: imageRows } = qIds.length
+      ? await supabaseClient.from('pyq_question_images').select('*').in('question_id', qIds)
+      : { data: [] };
+
+    if (!sectionRows || !sectionRows.length || !questionRows || !questionRows.length) {
+      throw new Error('Published PYQ has no questions');
+    }
+
+    sections = sectionRows.map(sec => ({
+      name: sec.name,
+      questions: questionRows
+        .filter(q => q.section_id === sec.id)
+        .sort((a,b) => a.question_number - b.question_number)
+        .map(q => {
+          const opts = (optionRows||[]).filter(o => o.question_id === q.id).sort((a,b)=>a.option_index-b.option_index);
+          const qImage = (imageRows||[]).find(im => im.question_id === q.id);
+          return [
+            q.question_text,
+            opts.map(o => o.option_text),
+            q.correct_option_index,
+            qImage ? qImage.image_url : null,
+            opts.map(o => o.option_image_url || null),
+          ];
+        }),
+    }));
+  } catch (e) {
+    // No published PYQ matched (or Supabase unreachable) — fall back to the
+    // built-in demo question set so the page never shows a blank screen.
+    sections = FALLBACK_SECTIONS;
+    console.warn('Falling back to demo questions:', e.message);
+  }
+
+  loadingOverlay.remove();
+}
+
 /* ================== INIT ================== */
-renderParts();
-loadQuestion();
-resetTimer();
+(async function init(){
+  await loadExamData();
+  initStateArrays();
+  renderParts();
+  loadQuestion();
+  resetTimer();
+})();
 </script>
 </body>
 </html>
