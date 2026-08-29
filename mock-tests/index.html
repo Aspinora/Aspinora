@@ -884,6 +884,31 @@
     }
   };
 
+  // Extend the built-in schedule with any PYQ papers that have been
+  // published from the admin dashboard, so publishing a new paper makes
+  // it appear here automatically without any code changes.
+  async function mergePublishedPapersIntoSchedule() {
+    try {
+      const { data: papers, error } = await supabaseClient
+        .from('pyq_papers')
+        .select('year, tier, exam_date, shift')
+        .eq('is_published', true);
+      if (error || !papers) return;
+
+      papers.forEach(p => {
+        const year = parseInt(p.year, 10) || p.year;
+        const key = p.tier === 'Tier 2' ? 'tier2' : 'tier1';
+        if (!examSchedule[year]) examSchedule[year] = {};
+        if (!examSchedule[year][key]) examSchedule[year][key] = { dates: [], shifts: [] };
+        const info = examSchedule[year][key];
+        if (!info.dates.includes(p.exam_date)) info.dates.push(p.exam_date);
+        if (!info.shifts.includes(p.shift)) info.shifts.push(p.shift);
+      });
+    } catch (e) {
+      console.warn('Could not merge published PYQs into schedule:', e);
+    }
+  }
+
   function showView(view) {
     [viewChoice, viewYear, viewTier, viewDate, viewShift, viewInstructions].forEach(v => v.classList.remove('active'));
     view.classList.add('active');
@@ -897,20 +922,27 @@
     }
   }
 
-  // Build year grid: 2025 down to 2015
-  for (let year = 2025; year >= 2015; year--) {
-    const chip = document.createElement('button');
-    chip.className = 'year-chip';
-    chip.innerHTML = `<strong>${year}</strong><span>SSC CGL</span>`;
-    chip.addEventListener('click', () => {
-      isRandomFlow = false;
-      selectedYear = year;
-      tierYearLabel.textContent = year;
-      tierStatus.textContent = '';
-      showView(viewTier);
+  // Build year grid: existing hardcoded years, plus any additional years
+  // that a newly published PYQ paper introduced via the schedule merge.
+  function buildYearGrid() {
+    yearGrid.innerHTML = '';
+    const years = Object.keys(examSchedule).map(Number).sort((a,b) => b - a);
+    years.forEach(year => {
+      const chip = document.createElement('button');
+      chip.className = 'year-chip';
+      chip.innerHTML = `<strong>${year}</strong><span>SSC CGL</span>`;
+      chip.addEventListener('click', () => {
+        isRandomFlow = false;
+        selectedYear = year;
+        tierYearLabel.textContent = year;
+        tierStatus.textContent = '';
+        showView(viewTier);
+      });
+      yearGrid.appendChild(chip);
     });
-    yearGrid.appendChild(chip);
   }
+  buildYearGrid();
+  mergePublishedPapersIntoSchedule().then(buildYearGrid);
 
   document.getElementById('randomChoiceButton').addEventListener('click', () => {
     isRandomFlow = true;
