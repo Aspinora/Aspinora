@@ -37,6 +37,14 @@
   .status.error{color:var(--red)}
   .status.ok{color:#1c8f57}
   .status.progress{color:#a5720a}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{border:1px solid var(--line);border-radius:10px;padding:10px 16px;background:#fff;font-size:13.5px;font-weight:700;color:#394255;cursor:pointer}
+  .chip:hover{border-color:#ffd0a8}
+  .chip.selected{background:var(--orange);border-color:var(--orange);color:#fff}
+  .tier-chip{flex:1;text-align:center;padding:13px}
+  input[type=date]{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;font-family:inherit;background:#fff}
+  .date-preview{font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:650}
 </style>
 </head>
 <body>
@@ -52,32 +60,28 @@
 
     <form id="uploadForm">
       <label>Exam</label>
-      <input type="text" id="examName" value="SSC CGL" required>
+      <input type="text" id="examName" value="SSC CGL" required readonly style="background:#fafbfd;color:#687286">
 
-      <div class="row">
-        <div>
-          <label for="year">Year</label>
-          <input type="number" id="year" min="2000" max="2100" placeholder="2025" required>
-        </div>
-        <div>
-          <label for="tier">Tier</label>
-          <select id="tier" required>
-            <option value="">-- Select --</option>
-            <option value="Tier 1">Tier 1</option>
-            <option value="Tier 2">Tier 2</option>
-          </select>
-        </div>
+      <label>Year</label>
+      <div class="chip-row" id="yearChips"></div>
+
+      <label>Tier</label>
+      <div class="chip-row">
+        <button type="button" class="chip tier-chip" data-tier="Tier 1">Tier 1</button>
+        <button type="button" class="chip tier-chip" data-tier="Tier 2">Tier 2</button>
       </div>
 
-      <div class="row">
-        <div>
-          <label for="examDate">Exam date</label>
-          <input type="text" id="examDate" placeholder="e.g. 12 Sep 2025" required>
-        </div>
-        <div>
-          <label for="shift">Shift / Session</label>
-          <input type="text" id="shift" placeholder="e.g. Shift 1 (leave as Single Shift if only one)" value="Single Shift" required>
-        </div>
+      <label for="examDateInput">Exam date</label>
+      <input type="date" id="examDateInput" required>
+      <div class="date-preview" id="datePreview"></div>
+
+      <label>Shift / Session</label>
+      <div class="chip-row" id="shiftChips">
+        <button type="button" class="chip" data-shift="Single Shift">Single Shift</button>
+        <button type="button" class="chip" data-shift="Shift 1">Shift 1</button>
+        <button type="button" class="chip" data-shift="Shift 2">Shift 2</button>
+        <button type="button" class="chip" data-shift="Shift 3">Shift 3</button>
+        <button type="button" class="chip" data-shift="Shift 4">Shift 4</button>
       </div>
 
       <label for="pdfFile">PYQ PDF file</label>
@@ -97,12 +101,60 @@
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   let session = null;
+  let selectedYear = null;
+  let selectedTier = null;
+  let selectedShift = null;
+
+  // Year chips: current year + 1 down to 2015, matching the range style
+  // used on the student-facing mock-tests picker.
+  const yearChipsEl = document.getElementById('yearChips');
+  const thisYear = new Date().getFullYear();
+  for (let y = thisYear + 1; y >= 2015; y--) {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.textContent = y;
+    chip.dataset.year = y;
+    chip.addEventListener('click', () => {
+      selectedYear = y;
+      yearChipsEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('selected', c === chip));
+    });
+    yearChipsEl.appendChild(chip);
+  }
+
+  document.querySelectorAll('.tier-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      selectedTier = chip.dataset.tier;
+      document.querySelectorAll('.tier-chip').forEach(c => c.classList.toggle('selected', c === chip));
+    });
+  });
+
+  document.querySelectorAll('#shiftChips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      selectedShift = chip.dataset.shift;
+      document.querySelectorAll('#shiftChips .chip').forEach(c => c.classList.toggle('selected', c === chip));
+    });
+  });
+
+  // Format the native date input (YYYY-MM-DD) into the "D Mon YYYY" style
+  // used everywhere else on the site (e.g. "12 Sep 2025") — exact match
+  // matters since students' picker looks this string up verbatim.
+  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function formatExamDate(isoDate) {
+    const [y, m, d] = isoDate.split('-').map(Number);
+    return `${d} ${MONTH_ABBR[m-1]} ${y}`;
+  }
+  const dateInput = document.getElementById('examDateInput');
+  const datePreview = document.getElementById('datePreview');
+  dateInput.addEventListener('change', () => {
+    datePreview.textContent = dateInput.value ? `Will be saved as: ${formatExamDate(dateInput.value)}` : '';
+  });
 
   async function guard() {
     const { data: { session: s } } = await supabaseClient.auth.getSession();
-    if (!s) { window.location.href = 'login.html'; return null; }
+    if (!s) { window.location.href = '/auth'; return null; }
     const { data: isAdmin } = await supabaseClient.rpc('is_admin');
-    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = '/auth'; return null; }
     return s;
   }
 
@@ -196,16 +248,21 @@
   document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
 
     const examName = document.getElementById('examName').value.trim();
-    const year = document.getElementById('year').value.trim();
-    const tier = document.getElementById('tier').value;
-    const examDate = document.getElementById('examDate').value.trim();
-    const shift = document.getElementById('shift').value.trim() || 'Single Shift';
+    const year = selectedYear ? String(selectedYear) : null;
+    const tier = selectedTier;
+    const examDate = dateInput.value ? formatExamDate(dateInput.value) : null;
+    const shift = selectedShift || 'Single Shift';
     const file = fileInput.files[0];
 
-    if (!file) { setStatus('Please choose a PDF file.', 'error'); submitBtn.disabled = false; return; }
+    if (!year) { setStatus('Please select a year.', 'error'); return; }
+    if (!tier) { setStatus('Please select a tier.', 'error'); return; }
+    if (!examDate) { setStatus('Please pick the exam date.', 'error'); return; }
+    if (!shift) { setStatus('Please select a shift.', 'error'); return; }
+    if (!file) { setStatus('Please choose a PDF file.', 'error'); return; }
+
+    submitBtn.disabled = true;
 
     try {
       setStatus('Uploading PDF…', 'progress');
