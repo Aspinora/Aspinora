@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Aspinora</title>
+<style>
+  :root{
+    --orange:#ff7800;--orange-dark:#e85d00;--ink:#172033;--muted:#6d7585;
+    --line:#edf0f5;--shadow:0 18px 55px rgba(34,45,72,.08);--red:#e5484d;--green:#3ecf7a;
+    --blue:#367dd7;--purple:#7957db;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(145deg,#fffaf5 0%,#ffffff 45%,#fff8ef 100%);color:var(--ink)}
+  .page{width:min(1100px, calc(100% - 36px));margin:0 auto;padding-bottom:60px}
+  .topbar{height:86px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px}
+  .brand-name{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .brand-name span{color:var(--orange)}
+  .top-actions{display:flex;gap:10px;align-items:center}
+  .who{font-size:13px;color:var(--muted);font-weight:650}
+  .btn{border:0;border-radius:10px;padding:10px 16px;font-weight:750;font-size:13.5px;cursor:pointer;font-family:inherit}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{background:var(--orange-dark)}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:#394255}
+  .btn-ghost:hover{border-color:#ffd0a8;color:var(--orange-dark)}
+
+  .hero{padding:28px 6%;border:1px solid #f8e6d6;border-radius:24px;background:linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .hero h1{margin:0 0 6px;font-size:24px;letter-spacing:-.6px}
+  .hero p{margin:0;color:var(--muted);font-size:14px}
+
+  .list{margin-top:22px;display:flex;flex-direction:column;gap:14px}
+  .paper-card{padding:20px 24px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 25px rgba(44,54,78,.04);display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .paper-main{flex:1;min-width:220px}
+  .paper-title{font-size:16px;font-weight:800;letter-spacing:-.2px;margin-bottom:4px}
+  .paper-sub{font-size:12.5px;color:var(--muted);font-weight:600}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase}
+  .badge-uploaded{background:#eef1f5;color:#505b70}
+  .badge-extracting{background:#fff3d6;color:#a5720a}
+  .badge-extraction_failed{background:#ffe9e9;color:var(--red)}
+  .badge-draft{background:#eaf4ff;color:var(--blue)}
+  .badge-published{background:#eafaf1;color:#1c8f57}
+  .progress-wrap{width:160px}
+  .progress-track{height:8px;border-radius:99px;background:#eef1f5;overflow:hidden}
+  .progress-fill{height:100%;background:var(--green);border-radius:99px}
+  .progress-label{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:5px;text-align:right}
+  .paper-actions{display:flex;gap:8px}
+  .empty{padding:60px 20px;text-align:center;color:var(--muted)}
+  .empty h3{color:var(--ink);margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span> Admin</div></div>
+    <div class="top-actions">
+      <span class="who" id="whoLabel"></span>
+      <button class="btn btn-ghost" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>PYQ Papers</h1>
+      <p>Upload, review, and publish previous-year question papers for SSC CGL mock tests.</p>
+    </div>
+    <button class="btn btn-primary" onclick="window.location.href='upload.html'">+ Upload new PYQ PDF</button>
+  </section>
+
+  <div class="list" id="paperList">
+    <div class="empty">Loading…</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const STATUS_LABEL = {
+    uploaded: 'Uploaded',
+    extracting: 'Extracting…',
+    extraction_failed: 'Extraction failed',
+    draft: 'In review',
+    published: 'Published',
+  };
+
+  async function guard() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return null; }
+    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    document.getElementById('whoLabel').textContent = session.user.email;
+    return session;
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'login.html';
+  });
+
+  async function loadPapers() {
+    const listEl = document.getElementById('paperList');
+    const { data: papers, error } = await supabaseClient
+      .from('pyq_papers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      listEl.innerHTML = `<div class="empty"><h3>Could not load papers</h3><p>${error.message}</p></div>`;
+      return;
+    }
+    if (!papers.length) {
+      listEl.innerHTML = `<div class="empty"><h3>No PYQ papers yet</h3><p>Upload a PDF to get started.</p></div>`;
+      return;
+    }
+
+    listEl.innerHTML = '';
+    papers.forEach(p => {
+      const pct = p.total_questions > 0 ? Math.round((p.approved_questions / p.total_questions) * 100) : 0;
+      const card = document.createElement('div');
+      card.className = 'paper-card';
+      card.innerHTML = `
+        <div class="paper-main">
+          <div class="paper-title">${p.exam_name} ${p.year} — ${p.tier}</div>
+          <div class="paper-sub">Held on ${p.exam_date}${p.shift && p.shift !== 'Single Shift' ? ' · ' + p.shift : ''}</div>
+        </div>
+        <span class="badge badge-${p.status}">${STATUS_LABEL[p.status] || p.status}</span>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-label">${p.approved_questions}/${p.total_questions} reviewed</div>
+        </div>
+        <div class="paper-actions">
+          ${p.status === 'draft' || p.status === 'published' || p.status === 'extraction_failed'
+            ? `<button class="btn btn-ghost" data-review="${p.id}">Review</button>` : ''}
+          ${p.status === 'extraction_failed'
+            ? `<button class="btn btn-primary" data-retry="${p.id}">Retry extraction</button>` : ''}
+        </div>
+      `;
+      listEl.appendChild(card);
+    });
+
+    listEl.querySelectorAll('[data-review]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = `review.html?paper_id=${btn.dataset.review}`;
+      });
+    });
+    listEl.querySelectorAll('[data-retry]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.location.href = `upload.html?retry_paper_id=${btn.dataset.retry}`;
+      });
+    });
+  }
+
+  (async () => {
+    const session = await guard();
+    if (session) loadPapers();
+  })();
+</script>
+</body>
+</html>

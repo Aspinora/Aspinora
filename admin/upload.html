@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload PYQ — Aspinora Admin</title>
+<style>
+  :root{
+    --orange:#ff7800;--orange-dark:#e85d00;--ink:#172033;--muted:#6d7585;
+    --line:#edf0f5;--shadow:0 18px 55px rgba(34,45,72,.08);--red:#e5484d;--green:#3ecf7a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(145deg,#fffaf5 0%,#ffffff 45%,#fff8ef 100%);color:var(--ink)}
+  .page{width:min(680px, calc(100% - 36px));margin:0 auto;padding-bottom:60px}
+  .topbar{height:86px;display:flex;align-items:center;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px}
+  .brand-name{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .brand-name span{color:var(--orange)}
+  .back{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:#687286;cursor:pointer;font-size:12.5px;font-weight:700}
+  .back:hover{color:var(--orange-dark);border-color:#ffcc9e}
+
+  .card{padding:32px;border:1px solid #f8e6d6;border-radius:24px;background:#fff;box-shadow:var(--shadow)}
+  h1{font-size:21px;margin:0 0 6px}
+  p.sub{color:var(--muted);font-size:13.5px;margin:0 0 26px;line-height:1.5}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  label{display:block;font-size:12.5px;font-weight:700;color:#394255;margin:14px 0 6px}
+  input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;font-family:inherit;background:#fff}
+  input:focus,select:focus{outline:2px solid #ffd0a8;border-color:var(--orange)}
+  .file-drop{margin-top:14px;border:2px dashed #ffd0a8;border-radius:14px;padding:26px;text-align:center;color:var(--muted);font-size:13.5px;background:#fffaf5}
+  .file-drop.has-file{color:var(--ink);font-weight:650;border-style:solid;border-color:#ffc188}
+  button.submit{width:100%;margin-top:24px;padding:14px;border:0;border-radius:10px;background:var(--orange);color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  button.submit:hover{background:var(--orange-dark)}
+  button.submit:disabled{opacity:.6;cursor:not-allowed}
+  .status{min-height:20px;margin-top:16px;font-size:13.5px;font-weight:650}
+  .status.error{color:var(--red)}
+  .status.ok{color:#1c8f57}
+  .status.progress{color:#a5720a}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <button class="back" onclick="window.location.href='dashboard.html'">← Dashboard</button>
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span> Admin</div></div>
+  </header>
+
+  <div class="card">
+    <h1>Upload PYQ Paper</h1>
+    <p class="sub">The PDF is saved as a draft and automatically processed. Nothing is ever published until every question is reviewed and approved.</p>
+
+    <form id="uploadForm">
+      <label>Exam</label>
+      <input type="text" id="examName" value="SSC CGL" required>
+
+      <div class="row">
+        <div>
+          <label for="year">Year</label>
+          <input type="number" id="year" min="2000" max="2100" placeholder="2025" required>
+        </div>
+        <div>
+          <label for="tier">Tier</label>
+          <select id="tier" required>
+            <option value="">-- Select --</option>
+            <option value="Tier 1">Tier 1</option>
+            <option value="Tier 2">Tier 2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="examDate">Exam date</label>
+          <input type="text" id="examDate" placeholder="e.g. 12 Sep 2025" required>
+        </div>
+        <div>
+          <label for="shift">Shift / Session</label>
+          <input type="text" id="shift" placeholder="e.g. Shift 1 (leave as Single Shift if only one)" value="Single Shift" required>
+        </div>
+      </div>
+
+      <label for="pdfFile">PYQ PDF file</label>
+      <input type="file" id="pdfFile" accept="application/pdf" required style="display:none">
+      <div class="file-drop" id="fileDrop">Click to choose a PDF, or drag one here</div>
+
+      <button type="submit" class="submit" id="submitBtn">Upload &amp; start extraction</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  let session = null;
+
+  async function guard() {
+    const { data: { session: s } } = await supabaseClient.auth.getSession();
+    if (!s) { window.location.href = 'login.html'; return null; }
+    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    return s;
+  }
+
+  const fileInput = document.getElementById('pdfFile');
+  const fileDrop = document.getElementById('fileDrop');
+  fileDrop.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) {
+      fileDrop.textContent = `Selected: ${fileInput.files[0].name}`;
+      fileDrop.classList.add('has-file');
+    }
+  });
+  ['dragover'].forEach(evt => fileDrop.addEventListener(evt, e => { e.preventDefault(); fileDrop.style.background = '#fff3e5'; }));
+  ['dragleave','drop'].forEach(evt => fileDrop.addEventListener(evt, e => { e.preventDefault(); fileDrop.style.background = ''; }));
+  fileDrop.addEventListener('drop', e => {
+    if (e.dataTransfer.files[0]) {
+      fileInput.files = e.dataTransfer.files;
+      fileDrop.textContent = `Selected: ${e.dataTransfer.files[0].name}`;
+      fileDrop.classList.add('has-file');
+    }
+  });
+
+  const statusEl = document.getElementById('status');
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  // Support retrying extraction on an existing paper whose PDF is already uploaded.
+  const params = new URLSearchParams(window.location.search);
+  const retryPaperId = params.get('retry_paper_id');
+
+  async function retryExisting(paperId) {
+    setStatus('Retrying extraction…', 'progress');
+    document.getElementById('submitBtn').disabled = true;
+    const { data, error } = await supabaseClient.functions.invoke('extract-pyq', { body: { paper_id: paperId } });
+    if (error) {
+      setStatus(`Extraction failed: ${error.message || 'unknown error'}`, 'error');
+      document.getElementById('submitBtn').disabled = false;
+      return;
+    }
+    setStatus(`Extraction complete — ${data.questions_extracted} questions drafted. Redirecting…`, 'ok');
+    setTimeout(() => window.location.href = `review.html?paper_id=${paperId}`, 900);
+  }
+
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+
+    const examName = document.getElementById('examName').value.trim();
+    const year = document.getElementById('year').value.trim();
+    const tier = document.getElementById('tier').value;
+    const examDate = document.getElementById('examDate').value.trim();
+    const shift = document.getElementById('shift').value.trim() || 'Single Shift';
+    const file = fileInput.files[0];
+
+    if (!file) { setStatus('Please choose a PDF file.', 'error'); submitBtn.disabled = false; return; }
+
+    try {
+      setStatus('Uploading PDF…', 'progress');
+      const path = `${examName.replace(/\s+/g,'_')}/${year}/${tier.replace(/\s+/g,'_')}/${Date.now()}_${file.name}`;
+      const { error: uploadErr } = await supabaseClient.storage.from('pyq-source-pdfs').upload(path, file, {
+        contentType: 'application/pdf', upsert: false,
+      });
+      if (uploadErr) throw new Error('Upload failed: ' + uploadErr.message);
+
+      setStatus('Creating paper record…', 'progress');
+      const { data: paper, error: insertErr } = await supabaseClient
+        .from('pyq_papers')
+        .insert({
+          exam_name: examName, year, tier, exam_date: examDate, shift,
+          source_pdf_path: path, status: 'uploaded', created_by: session.user.id,
+        })
+        .select()
+        .single();
+      if (insertErr) throw new Error('Could not save paper: ' + insertErr.message);
+
+      setStatus('Extracting questions with AI — this can take a minute for a full paper…', 'progress');
+      const { data: extractData, error: extractErr } = await supabaseClient.functions.invoke('extract-pyq', {
+        body: { paper_id: paper.id },
+      });
+      if (extractErr) {
+        setStatus(`Uploaded, but extraction failed: ${extractErr.message || 'unknown error'}. You can retry from the dashboard.`, 'error');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      setStatus(`Extraction complete — ${extractData.questions_extracted} questions drafted. Redirecting to review…`, 'ok');
+      setTimeout(() => window.location.href = `review.html?paper_id=${paper.id}`, 900);
+    } catch (err) {
+      setStatus(err.message || 'Something went wrong.', 'error');
+      submitBtn.disabled = false;
+    }
+  });
+
+  (async () => {
+    session = await guard();
+    if (!session) return;
+    if (retryPaperId) {
+      document.getElementById('uploadForm').style.display = 'none';
+      document.querySelector('h1').textContent = 'Retry extraction';
+      document.querySelector('p.sub').textContent = 'Re-running AI extraction on the previously uploaded PDF.';
+      retryExisting(retryPaperId);
+    }
+  })();
+</script>
+</body>
+</html>

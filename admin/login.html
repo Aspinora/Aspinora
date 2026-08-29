@@ -1,1 +1,95 @@
-hii
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Aspinora</title>
+<style>
+  :root{
+    --orange:#ff7800;--orange-dark:#e85d00;--ink:#172033;--muted:#6d7585;
+    --line:#edf0f5;--shadow:0 18px 55px rgba(34,45,72,.12);--red:#e5484d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(145deg,#fffaf5 0%,#ffffff 45%,#fff8ef 100%);color:var(--ink);padding:20px}
+  .card{width:100%;max-width:380px;background:#fff;border:1px solid #f8e6d6;border-radius:24px;padding:36px 32px;box-shadow:var(--shadow)}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+  .brand-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px}
+  .brand-name{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .brand-name span{color:var(--orange)}
+  h1{font-size:19px;margin:0 0 6px}
+  p.sub{color:var(--muted);font-size:13.5px;margin:0 0 22px;line-height:1.5}
+  label{display:block;font-size:12.5px;font-weight:700;color:#394255;margin:14px 0 6px}
+  input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;font-family:inherit}
+  input:focus{outline:2px solid #ffd0a8;border-color:var(--orange)}
+  button.submit{width:100%;margin-top:22px;padding:13px;border:0;border-radius:10px;background:var(--orange);color:#fff;font-weight:800;font-size:14.5px;cursor:pointer;transition:background .15s}
+  button.submit:hover{background:var(--orange-dark)}
+  button.submit:disabled{opacity:.6;cursor:not-allowed}
+  .status{min-height:20px;margin-top:14px;font-size:13px;font-weight:600;color:var(--red)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span> Admin</div></div>
+    <h1>Admin sign in</h1>
+    <p class="sub">Restricted to authorized Aspinora administrators. Regular student accounts cannot access this area.</p>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input type="email" id="email" required autocomplete="username">
+      <label for="password">Password</label>
+      <input type="password" id="password" required autocomplete="current-password">
+      <button type="submit" class="submit" id="submitBtn">Sign in</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const statusEl = document.getElementById('status');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // If already signed in as an admin, skip straight to the dashboard.
+  (async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+    if (isAdmin) window.location.href = 'dashboard.html';
+  })();
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusEl.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in…';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const { error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      statusEl.textContent = 'Incorrect email or password.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sign in';
+      return;
+    }
+
+    const { data: isAdmin, error: rpcError } = await supabaseClient.rpc('is_admin');
+    if (rpcError || !isAdmin) {
+      // Not an admin account — sign back out immediately, never leave a
+      // non-admin session sitting around on the admin login page.
+      await supabaseClient.auth.signOut();
+      statusEl.textContent = 'This account does not have admin access.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sign in';
+      return;
+    }
+
+    window.location.href = 'dashboard.html';
+  });
+</script>
+</body>
+</html>

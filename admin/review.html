@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review PYQ — Aspinora Admin</title>
+<style>
+  :root{
+    --orange:#ff7800;--orange-dark:#e85d00;--ink:#172033;--muted:#6d7585;
+    --line:#edf0f5;--shadow:0 18px 55px rgba(34,45,72,.08);--red:#e5484d;--green:#3ecf7a;
+    --blue:#367dd7;--purple:#7957db;--yellow:#fff200;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f5f9;color:var(--ink)}
+  button{font:inherit;cursor:pointer}
+  .app{height:100vh;display:flex;flex-direction:column}
+
+  .topbar{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+  .brand-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px}
+  .brand-name{font-size:16px;font-weight:800;letter-spacing:-.4px}
+  .brand-name span{color:var(--orange)}
+  .paper-title{flex:1;font-size:14.5px;font-weight:700;color:#394255;text-align:center}
+  .progress-pill{flex:0 0 auto;background:#eef1f5;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:800;color:#394255}
+  .progress-pill b{color:#1c8f57}
+  .btn{border:0;border-radius:9px;padding:9px 15px;font-weight:750;font-size:13px}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{background:var(--orange-dark)}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:#394255}
+  .btn-ghost:hover{border-color:#ffd0a8;color:var(--orange-dark)}
+  .btn-green{background:var(--green);color:#043}
+  .btn-green:hover{filter:brightness(.95)}
+  .btn-red{background:#ffe9e9;color:var(--red)}
+  .btn-red:hover{background:#ffdada}
+
+  .body{flex:1;min-height:0;display:grid;grid-template-columns:260px minmax(0,1fr)}
+  .nav{overflow:auto;border-right:1px solid var(--line);background:#fff;padding:16px}
+  .nav h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:16px 0 8px}
+  .nav h3:first-child{margin-top:0}
+  .qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+  .qnum{height:32px;border-radius:6px;border:0;font-size:12px;font-weight:700;display:grid;place-items:center;background:#eef1f5;color:#8b95a2}
+  .qnum.pending{background:#dbe6ff;color:var(--blue)}
+  .qnum.needs_review{background:#fff3d6;color:#a5720a}
+  .qnum.approved{background:var(--green);color:#043}
+  .qnum.rejected{background:#ffe0e0;color:var(--red)}
+  .qnum.current{outline:2.5px solid var(--orange);outline-offset:1px}
+
+  .editor{overflow:auto;padding:26px 5% 60px}
+  .editor-inner{max-width:760px;margin:0 auto}
+  .warn-banner{display:flex;gap:10px;align-items:flex-start;background:#fff3d6;border:1px solid #ffdf9e;color:#7a5300;border-radius:12px;padding:12px 16px;font-size:13.5px;margin-bottom:18px;line-height:1.5}
+  .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .meta-chip{background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:12px;font-weight:700;color:#394255}
+  .meta-chip.conf-low{border-color:#ffdf9e;background:#fff9ec;color:#a5720a}
+
+  label.field-label{display:block;font-size:12px;font-weight:800;color:#394255;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.4px}
+  select,textarea,input[type=text]{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:#fff}
+  textarea{resize:vertical;min-height:70px;line-height:1.5}
+  select:focus,textarea:focus,input:focus{outline:2px solid #ffd0a8;border-color:var(--orange)}
+
+  .option-row{display:flex;align-items:flex-start;gap:10px;margin:10px 0}
+  .option-row input[type=radio]{margin-top:14px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--green)}
+  .option-row textarea{flex:1;min-height:44px}
+  .option-label{flex:0 0 22px;padding-top:12px;font-weight:800;color:var(--muted)}
+
+  .image-box{margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fafbfd}
+  .image-box img{max-width:100%;border-radius:8px;display:block;margin-bottom:10px;border:1px solid var(--line)}
+  .image-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .no-image-note{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+  .action-bar{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+  .save-note{font-size:12.5px;color:var(--muted);margin-top:8px;min-height:16px}
+
+  .footer-nav{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 5%;display:flex;justify-content:space-between;gap:10px}
+
+  /* ===== Crop modal ===== */
+  .modal{position:fixed;inset:0;background:#0008;display:none;place-items:center;padding:20px;z-index:80}
+  .modal.show{display:grid}
+  .modal-dialog{background:#fff;border-radius:16px;padding:20px;max-width:900px;width:100%;max-height:90vh;overflow:auto}
+  .modal-dialog h2{margin:0 0 4px;font-size:17px}
+  .modal-dialog p{margin:0 0 14px;color:var(--muted);font-size:13px}
+  #cropCanvas{max-width:100%;border:1px solid var(--line);border-radius:8px;cursor:crosshair}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+  .page-input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+  .page-input-row input{width:80px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span></div></div>
+    <div class="paper-title" id="paperTitle">Loading…</div>
+    <div class="progress-pill" id="progressPill">0 / 0 reviewed</div>
+    <button class="btn btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
+    <button class="btn btn-primary" id="publishBtn" disabled>Publish PYQ</button>
+  </header>
+
+  <div class="body">
+    <nav class="nav" id="navPanel"><div style="color:#9aa3b2;font-size:13px">Loading questions…</div></nav>
+    <main class="editor">
+      <div class="editor-inner" id="editorInner">
+        <div style="color:#9aa3b2;font-size:14px">Select a question to review.</div>
+      </div>
+      <div class="footer-nav" id="footerNav" style="display:none">
+        <button class="btn btn-ghost" id="prevBtn">← Previous</button>
+        <button class="btn btn-green" id="approveBtn">Approve Question →</button>
+        <button class="btn btn-ghost" id="nextBtn">Next →</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- CROP MODAL -->
+<div class="modal" id="cropModal">
+  <div class="modal-dialog">
+    <h2>Crop image from source PDF</h2>
+    <p>Drag a rectangle around the diagram/figure, then crop &amp; upload.</p>
+    <div class="page-input-row">
+      <label style="font-size:12.5px;font-weight:700">Page:</label>
+      <input type="number" id="pageJumpInput" min="1" value="1">
+      <button class="btn btn-ghost" id="pageJumpBtn">Go</button>
+      <span id="pageLoadStatus" style="font-size:12.5px;color:#9aa3b2"></span>
+    </div>
+    <canvas id="cropCanvas"></canvas>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" id="cropUploadBtn" disabled>Crop &amp; Upload</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const params = new URLSearchParams(window.location.search);
+  const paperId = params.get('paper_id');
+  if (!paperId) document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">Missing paper_id in URL.</p>';
+
+  let paper = null;
+  let sections = [];      // [{id, name, order_index}]
+  let questions = [];     // flat, in nav order, each with .options[], .images[]
+  let currentIndex = 0;
+  let pdfSignedUrl = null;
+  let pdfDoc = null; // pdf.js document, lazy-loaded
+
+  async function guard() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return null; }
+    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    return session;
+  }
+
+  async function loadAll() {
+    const { data: paperRow, error: paperErr } = await supabaseClient.from('pyq_papers').select('*').eq('id', paperId).single();
+    if (paperErr || !paperRow) { document.getElementById('editorInner').innerHTML = 'Paper not found.'; return; }
+    paper = paperRow;
+    document.getElementById('paperTitle').textContent = `${paper.exam_name} ${paper.year} — ${paper.tier} (${paper.exam_date}${paper.shift !== 'Single Shift' ? ' ' + paper.shift : ''})`;
+
+    const { data: sectionRows } = await supabaseClient.from('pyq_sections').select('*').eq('paper_id', paperId).order('order_index');
+    sections = sectionRows || [];
+
+    const { data: questionRows } = await supabaseClient.from('pyq_questions').select('*').eq('paper_id', paperId).order('question_number');
+    const { data: optionRows } = await supabaseClient.from('pyq_options').select('*').in('question_id', (questionRows||[]).map(q=>q.id).length ? (questionRows||[]).map(q=>q.id) : ['00000000-0000-0000-0000-000000000000']).order('option_index');
+    const { data: imageRows } = await supabaseClient.from('pyq_question_images').select('*').in('question_id', (questionRows||[]).map(q=>q.id).length ? (questionRows||[]).map(q=>q.id) : ['00000000-0000-0000-0000-000000000000']);
+
+    questions = (questionRows || []).map(q => ({
+      ...q,
+      options: (optionRows||[]).filter(o => o.question_id === q.id).sort((a,b)=>a.option_index-b.option_index),
+      images: (imageRows||[]).filter(im => im.question_id === q.id),
+    })).sort((a,b) => {
+      const sa = sections.findIndex(s=>s.id===a.section_id), sb = sections.findIndex(s=>s.id===b.section_id);
+      return sa !== sb ? sa - sb : a.question_number - b.question_number;
+    });
+
+    renderNav();
+    updateProgress();
+    if (questions.length) { currentIndex = questions.findIndex(q => q.review_status !== 'approved'); if (currentIndex < 0) currentIndex = 0; renderEditor(); }
+  }
+
+  function updateProgress() {
+    const total = questions.length;
+    const approved = questions.filter(q => q.review_status === 'approved').length;
+    document.getElementById('progressPill').innerHTML = `<b>${approved}</b> / ${total} reviewed`;
+    document.getElementById('publishBtn').disabled = !(total > 0 && approved === total) || paper.status === 'published';
+    document.getElementById('publishBtn').textContent = paper && paper.status === 'published' ? 'Published ✓' : 'Publish PYQ';
+  }
+
+  function renderNav() {
+    const navEl = document.getElementById('navPanel');
+    navEl.innerHTML = '';
+    sections.forEach(sec => {
+      const h = document.createElement('h3');
+      h.textContent = sec.name;
+      navEl.appendChild(h);
+      const grid = document.createElement('div');
+      grid.className = 'qgrid';
+      questions.filter(q => q.section_id === sec.id).forEach(q => {
+        const idx = questions.indexOf(q);
+        const btn = document.createElement('button');
+        let cls = q.review_status === 'approved' ? 'approved' : q.review_status === 'rejected' ? 'rejected' : (q.extraction_status === 'needs_review' ? 'needs_review' : 'pending');
+        btn.className = `qnum ${cls}${idx === currentIndex ? ' current' : ''}`;
+        btn.textContent = q.question_number;
+        btn.addEventListener('click', () => { currentIndex = idx; renderEditor(); });
+        grid.appendChild(btn);
+      });
+      navEl.appendChild(grid);
+    });
+  }
+
+  function renderEditor() {
+    const q = questions[currentIndex];
+    const inner = document.getElementById('editorInner');
+    document.getElementById('footerNav').style.display = questions.length ? 'flex' : 'none';
+    if (!q) { inner.innerHTML = 'No questions extracted.'; return; }
+
+    const confPct = q.confidence != null ? Math.round(q.confidence * 100) : null;
+    const warn = q.extraction_warnings ? `<div class="warn-banner">⚠️ <div>${escapeHtml(q.extraction_warnings)}</div></div>` : '';
+
+    inner.innerHTML = `
+      ${warn}
+      <div class="meta-row">
+        <span class="meta-chip">Q${q.question_number}</span>
+        <span class="meta-chip">Page ${q.source_page ?? '—'} of source PDF</span>
+        ${confPct !== null ? `<span class="meta-chip ${confPct < 75 ? 'conf-low' : ''}">Confidence ${confPct}%</span>` : ''}
+        <span class="meta-chip">Status: ${q.review_status}</span>
+      </div>
+
+      <label class="field-label">Section / Subject</label>
+      <select id="fSection"></select>
+
+      <label class="field-label">External Question ID (optional)</label>
+      <input type="text" id="fExternalId" value="${escapeAttr(q.external_question_id || '')}">
+
+      <label class="field-label">Question text</label>
+      <textarea id="fQuestionText" rows="4">${escapeHtml(q.question_text || '')}</textarea>
+
+      <label class="field-label">Options — select the correct one</label>
+      <div id="optionsWrap"></div>
+
+      <label class="field-label">Question image</label>
+      <div class="image-box" id="imageBox"></div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" id="saveBtn">Save changes</button>
+        <button class="btn btn-red" id="flagBtn">${q.review_status === 'rejected' ? 'Unflag' : 'Mark extraction incorrect'}</button>
+      </div>
+      <div class="save-note" id="saveNote"></div>
+    `;
+
+    const sectionSel = document.getElementById('fSection');
+    sections.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id; opt.textContent = s.name;
+      if (s.id === q.section_id) opt.selected = true;
+      sectionSel.appendChild(opt);
+    });
+
+    const optionsWrap = document.getElementById('optionsWrap');
+    [0,1,2,3].forEach(i => {
+      const opt = q.options.find(o => o.option_index === i) || { option_text: '' };
+      const row = document.createElement('div');
+      row.className = 'option-row';
+      row.innerHTML = `
+        <span class="option-label">${String.fromCharCode(65+i)}</span>
+        <input type="radio" name="correctOpt" value="${i}" ${q.correct_option_index === i ? 'checked' : ''}>
+        <textarea data-opt-idx="${i}" rows="1">${escapeHtml(opt.option_text || '')}</textarea>
+      `;
+      optionsWrap.appendChild(row);
+    });
+
+    renderImageBox(q);
+
+    document.getElementById('saveBtn').addEventListener('click', () => saveCurrent());
+    document.getElementById('flagBtn').addEventListener('click', () => toggleFlag());
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderEditor(); renderNav(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < questions.length-1) { currentIndex++; renderEditor(); renderNav(); } });
+    document.getElementById('approveBtn').addEventListener('click', () => approveCurrent());
+
+    renderNav();
+  }
+
+  function renderImageBox(q) {
+    const box = document.getElementById('imageBox');
+    if (q.images.length) {
+      box.innerHTML = `
+        <img src="${q.images[0].image_url}" alt="Question image">
+        <div class="image-actions">
+          <button class="btn btn-ghost" id="replaceImageBtn">Replace image</button>
+          <button class="btn btn-red" id="deleteImageBtn">Delete image</button>
+        </div>
+      `;
+      document.getElementById('replaceImageBtn').addEventListener('click', () => openCropModal());
+      document.getElementById('deleteImageBtn').addEventListener('click', () => deleteImage());
+    } else {
+      box.innerHTML = `
+        <div class="no-image-note">${q.needs_image ? 'The extractor flagged this question as needing a diagram/figure image.' : 'No image attached. Add one if this question needs a diagram.'}</div>
+        <div class="image-actions">
+          <button class="btn btn-primary" id="addImageBtn">Add image from PDF page</button>
+        </div>
+      `;
+      document.getElementById('addImageBtn').addEventListener('click', () => openCropModal());
+    }
+  }
+
+  async function saveCurrent(showApprovedNote) {
+    const q = questions[currentIndex];
+    const noteEl = document.getElementById('saveNote');
+    const sectionId = document.getElementById('fSection').value;
+    const externalId = document.getElementById('fExternalId').value.trim() || null;
+    const questionText = document.getElementById('fQuestionText').value;
+    const correctRadio = document.querySelector('input[name=correctOpt]:checked');
+    const correctIdx = correctRadio ? parseInt(correctRadio.value) : null;
+    const optionTexts = [0,1,2,3].map(i => document.querySelector(`textarea[data-opt-idx="${i}"]`).value);
+
+    const { error: qErr } = await supabaseClient.from('pyq_questions').update({
+      section_id: sectionId,
+      external_question_id: externalId,
+      question_text: questionText,
+      correct_option_index: correctIdx,
+    }).eq('id', q.id);
+
+    for (let i=0;i<4;i++) {
+      const existing = q.options.find(o=>o.option_index===i);
+      if (existing) {
+        await supabaseClient.from('pyq_options').update({ option_text: optionTexts[i] }).eq('id', existing.id);
+      } else {
+        await supabaseClient.from('pyq_options').insert({ question_id: q.id, option_index: i, option_text: optionTexts[i] });
+      }
+    }
+
+    // reflect edits locally
+    q.section_id = sectionId; q.external_question_id = externalId; q.question_text = questionText; q.correct_option_index = correctIdx;
+    optionTexts.forEach((t,i) => { const o = q.options.find(o=>o.option_index===i); if (o) o.option_text = t; else q.options.push({option_index:i, option_text:t}); });
+
+    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'edited' });
+
+    if (qErr) { noteEl.textContent = 'Could not save: ' + qErr.message; noteEl.style.color = 'var(--red)'; return false; }
+    if (!showApprovedNote) { noteEl.textContent = 'Saved.'; noteEl.style.color = '#1c8f57'; }
+    return true;
+  }
+
+  async function approveCurrent() {
+    const ok = await saveCurrent(true);
+    if (!ok) return;
+    const q = questions[currentIndex];
+    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: 'approved' }).eq('id', q.id);
+    if (error) { document.getElementById('saveNote').textContent = 'Could not approve: ' + error.message; return; }
+    q.review_status = 'approved';
+    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'approved' });
+    updateProgress();
+    if (currentIndex < questions.length - 1) currentIndex++;
+    renderEditor();
+  }
+
+  async function toggleFlag() {
+    const q = questions[currentIndex];
+    const newStatus = q.review_status === 'rejected' ? 'pending' : 'rejected';
+    await supabaseClient.from('pyq_questions').update({ review_status: newStatus }).eq('id', q.id);
+    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: newStatus === 'rejected' ? 'flagged' : 'edited', notes: newStatus === 'rejected' ? 'Marked extraction incorrect' : 'Unflagged' });
+    q.review_status = newStatus;
+    updateProgress();
+    renderEditor();
+  }
+
+  async function deleteImage() {
+    const q = questions[currentIndex];
+    if (!q.images.length) return;
+    const img = q.images[0];
+    await supabaseClient.from('pyq_question_images').delete().eq('id', img.id);
+    q.images = [];
+    renderImageBox(q);
+  }
+
+  // ================= CROP MODAL =================
+  const cropModal = document.getElementById('cropModal');
+  const cropCanvas = document.getElementById('cropCanvas');
+  const ctx = cropCanvas.getContext('2d');
+  let dragStart = null, dragRect = null, currentPageImageData = null;
+
+  document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', () => cropModal.classList.remove('show')));
+
+  async function ensurePdfLoaded() {
+    if (pdfDoc) return pdfDoc;
+    const { data, error } = await supabaseClient.storage.from('pyq-source-pdfs').createSignedUrl(paper.source_pdf_path, 3600);
+    if (error) throw new Error('Could not get PDF: ' + error.message);
+    pdfSignedUrl = data.signedUrl;
+    pdfDoc = await pdfjsLib.getDocument(pdfSignedUrl).promise;
+    return pdfDoc;
+  }
+
+  async function openCropModal() {
+    const q = questions[currentIndex];
+    document.getElementById('pageJumpInput').value = q.source_page || 1;
+    cropModal.classList.add('show');
+    document.getElementById('cropUploadBtn').disabled = true;
+    dragRect = null;
+    try {
+      document.getElementById('pageLoadStatus').textContent = 'Loading PDF…';
+      await ensurePdfLoaded();
+      await renderPdfPage(q.source_page || 1);
+    } catch (e) {
+      document.getElementById('pageLoadStatus').textContent = e.message;
+    }
+  }
+
+  document.getElementById('pageJumpBtn').addEventListener('click', async () => {
+    const pageNum = parseInt(document.getElementById('pageJumpInput').value) || 1;
+    document.getElementById('pageLoadStatus').textContent = 'Loading…';
+    try { await renderPdfPage(pageNum); document.getElementById('pageLoadStatus').textContent = ''; }
+    catch (e) { document.getElementById('pageLoadStatus').textContent = e.message; }
+  });
+
+  async function renderPdfPage(pageNum) {
+    const doc = await ensurePdfLoaded();
+    const page = await doc.getPage(Math.max(1, Math.min(pageNum, doc.numPages)));
+    const viewport = page.getViewport({ scale: 1.5 });
+    cropCanvas.width = viewport.width;
+    cropCanvas.height = viewport.height;
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    currentPageImageData = ctx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
+    document.getElementById('pageLoadStatus').textContent = `Page ${pageNum} of ${doc.numPages}`;
+    dragRect = null;
+    document.getElementById('cropUploadBtn').disabled = true;
+  }
+
+  function canvasPos(e) {
+    const rect = cropCanvas.getBoundingClientRect();
+    const scaleX = cropCanvas.width / rect.width, scaleY = cropCanvas.height / rect.height;
+    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+  }
+  cropCanvas.addEventListener('mousedown', (e) => { dragStart = canvasPos(e); dragRect = null; });
+  cropCanvas.addEventListener('mousemove', (e) => {
+    if (!dragStart) return;
+    const p = canvasPos(e);
+    dragRect = { x: Math.min(dragStart.x,p.x), y: Math.min(dragStart.y,p.y), w: Math.abs(p.x-dragStart.x), h: Math.abs(p.y-dragStart.y) };
+    ctx.putImageData(currentPageImageData, 0, 0);
+    ctx.strokeStyle = '#ff7800'; ctx.lineWidth = 2;
+    ctx.strokeRect(dragRect.x, dragRect.y, dragRect.w, dragRect.h);
+  });
+  window.addEventListener('mouseup', () => {
+    dragStart = null;
+    document.getElementById('cropUploadBtn').disabled = !(dragRect && dragRect.w > 5 && dragRect.h > 5);
+  });
+
+  document.getElementById('cropUploadBtn').addEventListener('click', async () => {
+    if (!dragRect) return;
+    const btn = document.getElementById('cropUploadBtn');
+    btn.disabled = true; btn.textContent = 'Uploading…';
+    const cropCanvasOut = document.createElement('canvas');
+    cropCanvasOut.width = dragRect.w; cropCanvasOut.height = dragRect.h;
+    cropCanvasOut.getContext('2d').putImageData(
+      ctx.getImageData(dragRect.x, dragRect.y, dragRect.w, dragRect.h), 0, 0
+    );
+    const blob = await new Promise(res => cropCanvasOut.toBlob(res, 'image/png'));
+    const q = questions[currentIndex];
+    const path = `${paperId}/${q.id}_${Date.now()}.png`;
+    const { error: upErr } = await supabaseClient.storage.from('pyq-images').upload(path, blob, { contentType: 'image/png' });
+    if (upErr) { alert('Upload failed: ' + upErr.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
+    const { data: pub } = supabaseClient.storage.from('pyq-images').getPublicUrl(path);
+
+    if (q.images.length) await supabaseClient.from('pyq_question_images').delete().eq('question_id', q.id);
+    const { data: imgRow } = await supabaseClient.from('pyq_question_images').insert({ question_id: q.id, image_url: pub.publicUrl, page_number: parseInt(document.getElementById('pageJumpInput').value)||null }).select().single();
+    q.images = imgRow ? [imgRow] : [];
+    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'image_replaced' });
+
+    btn.disabled = false; btn.textContent = 'Crop & Upload';
+    cropModal.classList.remove('show');
+    renderImageBox(q);
+  });
+
+  document.getElementById('publishBtn').addEventListener('click', async () => {
+    if (!confirm('Publish this PYQ? It will immediately become visible to students in the mock test list. This cannot be easily undone.')) return;
+    const { error } = await supabaseClient.rpc('publish_pyq_paper', { p_paper_id: paperId });
+    if (error) { alert('Could not publish: ' + error.message); return; }
+    paper.status = 'published';
+    updateProgress();
+    alert('Published! Students will now see this PYQ in the mock test list.');
+  });
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function escapeAttr(s) { return escapeHtml(s); }
+
+  (async () => {
+    const session = await guard();
+    if (!session || !paperId) return;
+    await loadAll();
+  })();
+</script>
+</body>
+</html>
