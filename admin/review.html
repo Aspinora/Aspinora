@@ -17,7 +17,7 @@
 
   .topbar{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line)}
   .brand{display:flex;align-items:center;gap:9px;flex:0 0 auto}
-  .brand-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px}
+  .brand-mark{width:32px;height:32px;display:block}
   .brand-name{font-size:16px;font-weight:800;letter-spacing:-.4px}
   .brand-name span{color:var(--orange)}
   .paper-title{flex:1;font-size:14.5px;font-weight:700;color:#394255;text-align:center}
@@ -94,7 +94,7 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span></div></div>
+    <div class="brand"><img src="../aspinora-logo.png" alt="Aspinora" class="brand-mark"><div class="brand-name">Aspi<span>nora</span></div></div>
     <div class="paper-title" id="paperTitle">Loading…</div>
     <div class="progress-pill" id="progressPill">0 / 0 reviewed</div>
     <button class="btn btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -562,6 +562,10 @@
     if (!dragRect) return;
     const btn = document.getElementById('cropUploadBtn');
     btn.disabled = true; btn.textContent = 'Uploading…';
+    // The orange selection rectangle was drawn directly onto this canvas
+    // as a drag guide — restore the clean, unmarked page render before
+    // reading pixels, or the crop's edges pick up the orange stroke color.
+    ctx.putImageData(currentPageImageData, 0, 0);
     const cropCanvasOut = document.createElement('canvas');
     cropCanvasOut.width = dragRect.w; cropCanvasOut.height = dragRect.h;
     cropCanvasOut.getContext('2d').putImageData(
