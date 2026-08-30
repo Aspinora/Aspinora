@@ -65,23 +65,19 @@
       <label>Year</label>
       <div class="chip-row" id="yearChips"></div>
 
-      <label>Tier</label>
-      <div class="chip-row">
-        <button type="button" class="chip tier-chip" data-tier="Tier 1">Tier 1</button>
-        <button type="button" class="chip tier-chip" data-tier="Tier 2">Tier 2</button>
+      <div id="tierBlock" style="display:none">
+        <label>Tier</label>
+        <div class="chip-row" id="tierChips"></div>
       </div>
 
-      <label for="examDateInput">Exam date</label>
-      <input type="date" id="examDateInput" required>
-      <div class="date-preview" id="datePreview"></div>
+      <div id="dateBlock" style="display:none">
+        <label>Exam date</label>
+        <div class="chip-row" id="dateChips"></div>
+      </div>
 
-      <label>Shift / Session</label>
-      <div class="chip-row" id="shiftChips">
-        <button type="button" class="chip" data-shift="Single Shift">Single Shift</button>
-        <button type="button" class="chip" data-shift="Shift 1">Shift 1</button>
-        <button type="button" class="chip" data-shift="Shift 2">Shift 2</button>
-        <button type="button" class="chip" data-shift="Shift 3">Shift 3</button>
-        <button type="button" class="chip" data-shift="Shift 4">Shift 4</button>
+      <div id="shiftBlock" style="display:none">
+        <label>Shift / Session</label>
+        <div class="chip-row" id="shiftChips"></div>
       </div>
 
       <label for="pdfFile">PYQ PDF file</label>
@@ -103,51 +99,140 @@
   let session = null;
   let selectedYear = null;
   let selectedTier = null;
+  let selectedDate = null;
   let selectedShift = null;
 
-  // Year chips: current year + 1 down to 2015, matching the range style
-  // used on the student-facing mock-tests picker.
+  // This is the SAME reference schedule used on the student-facing
+  // mock-tests picker (mock-tests/index.html) — kept in sync manually so
+  // the admin picks from real, existing exam slots instead of typing dates
+  // that might not exactly match what students see.
+  const EXAM_SCHEDULE = {
+    2025: {
+      tier1: { dates: ["12 Sep 2025","13 Sep 2025","14 Sep 2025","15 Sep 2025","16 Sep 2025","17 Sep 2025","18 Sep 2025","19 Sep 2025","20 Sep 2025","21 Sep 2025","22 Sep 2025","23 Sep 2025","24 Sep 2025","25 Sep 2025","26 Sep 2025"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["18 Jan 2026","19 Jan 2026"], shifts: ["Single Shift"] }
+    },
+    2024: {
+      tier1: { dates: ["9 Sep 2024","10 Sep 2024","11 Sep 2024","12 Sep 2024","13 Sep 2024","17 Sep 2024","18 Sep 2024","19 Sep 2024","23 Sep 2024","24 Sep 2024","25 Sep 2024","26 Sep 2024"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["18 Jan 2025","19 Jan 2025","20 Jan 2025","31 Jan 2025"], shifts: ["Single Shift"] }
+    },
+    2023: {
+      tier1: { dates: ["14 Jul 2023","17 Jul 2023","18 Jul 2023","19 Jul 2023","20 Jul 2023","21 Jul 2023","24 Jul 2023","25 Jul 2023","26 Jul 2023","27 Jul 2023"], shifts: ["Shift 1","Shift 2","Shift 3","Shift 4"] },
+      tier2: { dates: ["2 Mar 2023","3 Mar 2023","6 Mar 2023","7 Mar 2023"], shifts: ["Single Shift"] }
+    },
+    2022: {
+      tier1: { dates: ["1 Dec 2022","2 Dec 2022","3 Dec 2022","5 Dec 2022","6 Dec 2022","7 Dec 2022","8 Dec 2022","9 Dec 2022","12 Dec 2022","13 Dec 2022"], shifts: ["Shift 1","Shift 2","Shift 3","Shift 4"] },
+      tier2: { dates: ["2 Mar 2023","3 Mar 2023","6 Mar 2023","7 Mar 2023"], shifts: ["Single Shift"] }
+    },
+    2021: {
+      tier1: { dates: ["13 Aug 2021","16 Aug 2021","17 Aug 2021","23 Aug 2021"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["8 Aug 2022","10 Aug 2022"], shifts: ["Single Shift"] }
+    },
+    2020: {
+      tier1: { dates: ["3 Mar 2020","4 Mar 2020","5 Mar 2020","6 Mar 2020","7 Mar 2020","9 Mar 2020"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["28 Jan 2022","29 Jan 2022"], shifts: ["Single Shift"] }
+    },
+    2019: {
+      tier1: { dates: ["4 Jun 2019","6 Jun 2019","7 Jun 2019","10 Jun 2019","11 Jun 2019","12 Jun 2019","13 Jun 2019","19 Jun 2019"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["11 Sep 2019","12 Sep 2019","13 Sep 2019","14 Sep 2019"], shifts: ["Single Shift"] }
+    },
+    2018: {
+      tier1: { dates: ["4 Jun 2018","6 Jun 2018","7 Jun 2018","11 Jun 2018","12 Jun 2018","13 Jun 2018","14 Jun 2018"], shifts: ["Shift 1","Shift 2","Shift 3"] },
+      tier2: { dates: ["11 Sep 2019","12 Sep 2019","13 Sep 2019"], shifts: ["Single Shift"] }
+    },
+    2017: {
+      tier1: { dates: ["5 Aug 2017","6 Aug 2017","8 Aug 2017","9 Aug 2017","10 Aug 2017","11 Aug 2017","12 Aug 2017","16 Aug 2017","17 Aug 2017","18 Aug 2017","19 Aug 2017","20 Aug 2017","21 Aug 2017","22 Aug 2017","23 Aug 2017"], shifts: ["Shift 1 (10:00 AM)","Shift 2 (1:15 PM)","Shift 3 (4:15 PM)"] },
+      tier2: { dates: ["17 Feb 2018","18 Feb 2018","19 Feb 2018","20 Feb 2018","21 Feb 2018","22 Feb 2018"], shifts: ["Single Shift"] }
+    },
+    2016: {
+      tier1: { dates: ["27 Aug 2016","28 Aug 2016","29 Aug 2016","30 Aug 2016","31 Aug 2016","1 Sep 2016","2 Sep 2016","3 Sep 2016","4 Sep 2016","5 Sep 2016","6 Sep 2016","7 Sep 2016","8 Sep 2016","9 Sep 2016","10 Sep 2016","11 Sep 2016"], shifts: ["Shift 1 (10:00 AM)","Shift 2 (1:15 PM)","Shift 3 (4:15 PM)"] },
+      tier2: { dates: ["30 Nov 2016","1 Dec 2016","2 Dec 2016"], shifts: ["Single Shift"] }
+    },
+    2015: {
+      tier1: { dates: ["9 Aug 2015","16 Aug 2015"], shifts: ["Morning Shift","Evening Shift"] },
+      tier2: { dates: ["25 Oct 2015"], shifts: ["Single Shift"] }
+    }
+  };
+
+  function renderChipRow(container, items, currentValue, onSelect) {
+    container.innerHTML = '';
+    items.forEach(item => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = item;
+      if (item === currentValue) chip.classList.add('selected');
+      chip.addEventListener('click', () => {
+        onSelect(item);
+        container.querySelectorAll('.chip').forEach(c => c.classList.toggle('selected', c === chip));
+      });
+      container.appendChild(chip);
+    });
+  }
+
   const yearChipsEl = document.getElementById('yearChips');
-  const thisYear = new Date().getFullYear();
-  for (let y = thisYear + 1; y >= 2015; y--) {
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'chip';
-    chip.textContent = y;
-    chip.dataset.year = y;
-    chip.addEventListener('click', () => {
-      selectedYear = y;
-      yearChipsEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('selected', c === chip));
-    });
-    yearChipsEl.appendChild(chip);
+  const tierBlock = document.getElementById('tierBlock');
+  const tierChipsEl = document.getElementById('tierChips');
+  const dateBlock = document.getElementById('dateBlock');
+  const dateChipsEl = document.getElementById('dateChips');
+  const shiftBlock = document.getElementById('shiftBlock');
+  const shiftChipsEl = document.getElementById('shiftChips');
+
+  function resetBelowYear() {
+    selectedTier = null; selectedDate = null; selectedShift = null;
+    tierBlock.style.display = 'none';
+    dateBlock.style.display = 'none';
+    shiftBlock.style.display = 'none';
+  }
+  function resetBelowTier() {
+    selectedDate = null; selectedShift = null;
+    dateBlock.style.display = 'none';
+    shiftBlock.style.display = 'none';
   }
 
-  document.querySelectorAll('.tier-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      selectedTier = chip.dataset.tier;
-      document.querySelectorAll('.tier-chip').forEach(c => c.classList.toggle('selected', c === chip));
+  function showTiersForYear(year) {
+    const yearData = EXAM_SCHEDULE[year] || {};
+    const tiers = [];
+    if (yearData.tier1) tiers.push('Tier 1');
+    if (yearData.tier2) tiers.push('Tier 2');
+    renderChipRow(tierChipsEl, tiers, selectedTier, (tier) => {
+      selectedTier = tier;
+      resetBelowTier();
+      showDatesForTier(year, tier);
     });
-  });
-
-  document.querySelectorAll('#shiftChips .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      selectedShift = chip.dataset.shift;
-      document.querySelectorAll('#shiftChips .chip').forEach(c => c.classList.toggle('selected', c === chip));
-    });
-  });
-
-  // Format the native date input (YYYY-MM-DD) into the "D Mon YYYY" style
-  // used everywhere else on the site (e.g. "12 Sep 2025") — exact match
-  // matters since students' picker looks this string up verbatim.
-  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  function formatExamDate(isoDate) {
-    const [y, m, d] = isoDate.split('-').map(Number);
-    return `${d} ${MONTH_ABBR[m-1]} ${y}`;
+    tierBlock.style.display = tiers.length ? '' : 'none';
   }
-  const dateInput = document.getElementById('examDateInput');
-  const datePreview = document.getElementById('datePreview');
-  dateInput.addEventListener('change', () => {
-    datePreview.textContent = dateInput.value ? `Will be saved as: ${formatExamDate(dateInput.value)}` : '';
+
+  function showDatesForTier(year, tier) {
+    const tierKey = tier === 'Tier 2' ? 'tier2' : 'tier1';
+    const info = (EXAM_SCHEDULE[year] || {})[tierKey] || { dates: [], shifts: [] };
+    renderChipRow(dateChipsEl, info.dates, selectedDate, (date) => {
+      selectedDate = date;
+      showShiftsForTier(year, tier);
+    });
+    dateBlock.style.display = info.dates.length ? '' : 'none';
+    // If there's only one shift option, auto-select it — no need to make
+    // the admin tap a single button.
+    if (info.shifts.length === 1) {
+      selectedShift = info.shifts[0];
+      renderChipRow(shiftChipsEl, info.shifts, selectedShift, (s) => { selectedShift = s; });
+      shiftBlock.style.display = '';
+    } else {
+      shiftBlock.style.display = 'none';
+    }
+  }
+
+  function showShiftsForTier(year, tier) {
+    const tierKey = tier === 'Tier 2' ? 'tier2' : 'tier1';
+    const info = (EXAM_SCHEDULE[year] || {})[tierKey] || { dates: [], shifts: [] };
+    renderChipRow(shiftChipsEl, info.shifts, selectedShift, (s) => { selectedShift = s; });
+    shiftBlock.style.display = info.shifts.length ? '' : 'none';
+  }
+
+  const years = Object.keys(EXAM_SCHEDULE).map(Number).sort((a,b) => b - a);
+  renderChipRow(yearChipsEl, years, selectedYear, (year) => {
+    selectedYear = year;
+    resetBelowYear();
+    showTiersForYear(year);
   });
 
   async function guard() {
@@ -252,13 +337,13 @@
     const examName = document.getElementById('examName').value.trim();
     const year = selectedYear ? String(selectedYear) : null;
     const tier = selectedTier;
-    const examDate = dateInput.value ? formatExamDate(dateInput.value) : null;
-    const shift = selectedShift || 'Single Shift';
+    const examDate = selectedDate;
+    const shift = selectedShift;
     const file = fileInput.files[0];
 
     if (!year) { setStatus('Please select a year.', 'error'); return; }
     if (!tier) { setStatus('Please select a tier.', 'error'); return; }
-    if (!examDate) { setStatus('Please pick the exam date.', 'error'); return; }
+    if (!examDate) { setStatus('Please select the exam date.', 'error'); return; }
     if (!shift) { setStatus('Please select a shift.', 'error'); return; }
     if (!file) { setStatus('Please choose a PDF file.', 'error'); return; }
 
