@@ -150,6 +150,7 @@
   if (!paperId) document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">Missing paper_id in URL.</p>';
 
   let paper = null;
+  let currentUserId = null;
   let sections = [];      // [{id, name, order_index}]
   let questions = [];     // flat, in nav order, each with .options[], .images[]
   let currentIndex = 0;
@@ -161,6 +162,7 @@
     if (!session) { window.location.href = '/auth'; return null; }
     const { data: isAdmin } = await supabaseClient.rpc('is_admin');
     if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = '/auth'; return null; }
+    currentUserId = session.user.id;
     return session;
   }
 
@@ -202,6 +204,9 @@
   function renderNav() {
     const navEl = document.getElementById('navPanel');
     navEl.innerHTML = '';
+    // Precompute index once instead of calling questions.indexOf() per button
+    // (that was an O(n) scan per question, compounding on large papers).
+    const indexById = new Map(questions.map((q, i) => [q.id, i]));
     sections.forEach(sec => {
       const h = document.createElement('h3');
       h.textContent = sec.name;
@@ -209,7 +214,7 @@
       const grid = document.createElement('div');
       grid.className = 'qgrid';
       questions.filter(q => q.section_id === sec.id).forEach(q => {
-        const idx = questions.indexOf(q);
+        const idx = indexById.get(q.id);
         const btn = document.createElement('button');
         let cls = q.review_status === 'approved' ? 'approved' : q.review_status === 'rejected' ? 'rejected' : (q.extraction_status === 'needs_review' ? 'needs_review' : 'pending');
         btn.className = `qnum ${cls}${idx === currentIndex ? ' current' : ''}`;
@@ -347,7 +352,7 @@
     }
   }
 
-  async function saveCurrent(showApprovedNote) {
+  async function saveCurrent(reviewStatusOverride) {
     const q = questions[currentIndex];
     const noteEl = document.getElementById('saveNote');
     const sectionId = document.getElementById('fSection').value;
@@ -357,44 +362,60 @@
     const correctIdx = correctRadio ? parseInt(correctRadio.value) : null;
     const optionTexts = [0,1,2,3].map(i => document.querySelector(`textarea[data-opt-idx="${i}"]`).value);
 
-    const { error: qErr } = await supabaseClient.from('pyq_questions').update({
+    const questionUpdate = {
       section_id: sectionId,
       external_question_id: externalId,
       question_text: questionText,
       correct_option_index: correctIdx,
-    }).eq('id', q.id);
+    };
+    if (reviewStatusOverride) questionUpdate.review_status = reviewStatusOverride;
 
-    for (let i=0;i<4;i++) {
-      const existing = q.options.find(o=>o.option_index===i);
-      if (existing) {
-        await supabaseClient.from('pyq_options').update({ option_text: optionTexts[i] }).eq('id', existing.id);
-      } else {
-        await supabaseClient.from('pyq_options').insert({ question_id: q.id, option_index: i, option_text: optionTexts[i] });
-      }
-    }
+    // Run the question update and the options upsert in PARALLEL (not
+    // sequentially), and batch all 4 options into ONE upsert call instead
+    // of up to 4 separate update/insert round trips. This is the fix for
+    // approving feeling slow after many questions — it was making ~7+
+    // sequential network round trips per click.
+    const [qResult, optResult] = await Promise.all([
+      supabaseClient.from('pyq_questions').update(questionUpdate).eq('id', q.id),
+      supabaseClient.from('pyq_options').upsert(
+        [0,1,2,3].map(i => ({ question_id: q.id, option_index: i, option_text: optionTexts[i] })),
+        { onConflict: 'question_id,option_index' }
+      ),
+    ]);
+
+    if (qResult.error) { noteEl.textContent = 'Could not save: ' + qResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
+    if (optResult.error) { noteEl.textContent = 'Could not save options: ' + optResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
 
     // reflect edits locally
     q.section_id = sectionId; q.external_question_id = externalId; q.question_text = questionText; q.correct_option_index = correctIdx;
+    if (reviewStatusOverride) q.review_status = reviewStatusOverride;
     optionTexts.forEach((t,i) => { const o = q.options.find(o=>o.option_index===i); if (o) o.option_text = t; else q.options.push({option_index:i, option_text:t}); });
 
-    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'edited' });
+    // Audit log is fire-and-forget — it's just a trail, never worth
+    // blocking the UI on.
+    supabaseClient.from('pyq_review_log').insert({
+      question_id: q.id, admin_id: currentUserId,
+      action: reviewStatusOverride === 'approved' ? 'approved' : 'edited',
+    });
 
-    if (qErr) { noteEl.textContent = 'Could not save: ' + qErr.message; noteEl.style.color = 'var(--red)'; return false; }
-    if (!showApprovedNote) { noteEl.textContent = 'Saved.'; noteEl.style.color = '#1c8f57'; }
+    if (!reviewStatusOverride) { noteEl.textContent = 'Saved.'; noteEl.style.color = '#1c8f57'; }
     return true;
   }
 
   async function approveCurrent() {
-    const ok = await saveCurrent(true);
-    if (!ok) return;
-    const q = questions[currentIndex];
-    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: 'approved' }).eq('id', q.id);
-    if (error) { document.getElementById('saveNote').textContent = 'Could not approve: ' + error.message; return; }
-    q.review_status = 'approved';
-    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'approved' });
+    const approveBtn = document.getElementById('approveBtn');
+    if (!approveBtn || approveBtn.disabled) return; // guards against double-click races
+    approveBtn.disabled = true;
+    approveBtn.textContent = 'Approving…';
+    const ok = await saveCurrent('approved');
+    if (!ok) {
+      approveBtn.disabled = false;
+      approveBtn.textContent = 'Approve Question →';
+      return;
+    }
     updateProgress();
     if (currentIndex < questions.length - 1) currentIndex++;
-    renderEditor();
+    renderEditor(); // rebuilds the panel fresh, so buttons come back enabled
   }
 
   async function unapproveCurrent() {
@@ -402,7 +423,7 @@
     const { error } = await supabaseClient.from('pyq_questions').update({ review_status: 'pending' }).eq('id', q.id);
     if (error) { document.getElementById('saveNote').textContent = 'Could not un-approve: ' + error.message; return; }
     q.review_status = 'pending';
-    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: 'edited', notes: 'Un-approved' });
+    supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: currentUserId, action: 'edited', notes: 'Un-approved' });
     updateProgress();
     renderEditor();
   }
@@ -410,9 +431,10 @@
   async function toggleFlag() {
     const q = questions[currentIndex];
     const newStatus = q.review_status === 'rejected' ? 'pending' : 'rejected';
-    await supabaseClient.from('pyq_questions').update({ review_status: newStatus }).eq('id', q.id);
-    await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: (await supabaseClient.auth.getSession()).data.session.user.id, action: newStatus === 'rejected' ? 'flagged' : 'edited', notes: newStatus === 'rejected' ? 'Marked extraction incorrect' : 'Unflagged' });
+    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: newStatus }).eq('id', q.id);
+    if (error) { document.getElementById('saveNote').textContent = 'Could not update: ' + error.message; return; }
     q.review_status = newStatus;
+    supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: currentUserId, action: newStatus === 'rejected' ? 'flagged' : 'edited', notes: newStatus === 'rejected' ? 'Marked extraction incorrect' : 'Unflagged' });
     updateProgress();
     renderEditor();
   }
@@ -539,7 +561,7 @@
     const { error: upErr } = await supabaseClient.storage.from('pyq-images').upload(path, blob, { contentType: 'image/png' });
     if (upErr) { alert('Upload failed: ' + upErr.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
     const { data: pub } = supabaseClient.storage.from('pyq-images').getPublicUrl(path);
-    const userId = (await supabaseClient.auth.getSession()).data.session.user.id;
+    const userId = currentUserId;
 
     if (cropTarget.type === 'option') {
       const opt = q.options.find(o => o.option_index === cropTarget.index);
