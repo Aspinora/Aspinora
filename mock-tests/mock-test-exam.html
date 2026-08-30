@@ -61,9 +61,8 @@ button{font:inherit;cursor:pointer;border:0;background:none}
 /* ===== Main content ===== */
 .main{min-height:0;flex:1;display:flex;flex-direction:column}
 .content{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px}
-.question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px;min-height:0;overflow:hidden}
-.question-fixed{flex:0 0 auto;padding-right:8px}
-.options-scroll{min-height:0;flex:1;overflow:auto;padding-right:8px}
+.question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px;min-height:0}
+.question-scroll{min-height:0;flex:1;overflow:auto;padding-right:8px}
 .question-number{font-size:19px;font-weight:800;margin-bottom:16px}
 .qtext{font-size:18px;line-height:1.6;margin-bottom:20px;white-space:pre-line}
 .qtext img{cursor:zoom-in}
@@ -238,11 +237,9 @@ button{font:inherit;cursor:pointer;border:0;background:none}
   <main class="main">
     <div class="content">
       <section class="question-area">
-        <div class="question-fixed">
+        <div class="question-scroll">
           <div class="question-number" id="questionNumber"></div>
           <div class="qtext" id="qtext"></div>
-        </div>
-        <div class="options-scroll">
           <div id="options"></div>
         </div>
       </section>
@@ -555,6 +552,18 @@ const prevBtn = document.getElementById('prevBtn');
 const markBtn = document.getElementById('markBtn');
 const saveNextBtn = document.getElementById('saveNextBtn');
 
+// Square/portrait figures (most reasoning diagrams) look fine at a compact
+// size, but a wide image like a data table becomes illegible if squeezed
+// to the same width. Detect real aspect ratio once loaded and widen it.
+function sizeImageByOrientation(img, baseWidth, wideWidth) {
+  img.style.width = baseWidth + 'px';
+  img.addEventListener('load', () => {
+    if (img.naturalWidth > img.naturalHeight * 1.15) {
+      img.style.width = wideWidth + 'px';
+    }
+  });
+}
+
 function loadQuestion(){
   const section = sections[currentPart];
   const q = section.questions[currentQ];
@@ -566,7 +575,8 @@ function loadQuestion(){
     const img = document.createElement('img');
     img.src = qImage;
     img.alt = 'Question figure';
-    img.style.cssText = 'display:block;width:160px;max-width:100%;height:auto;margin-top:14px;border-radius:8px;border:1px solid #edf0f5';
+    img.style.cssText = 'display:block;max-width:100%;height:auto;margin-top:14px;border-radius:8px;border:1px solid #edf0f5';
+    sizeImageByOrientation(img, 160, 420);
     img.addEventListener('click', () => openImageLightbox(qImage));
     qtextEl.appendChild(img);
   }
@@ -584,7 +594,8 @@ function loadQuestion(){
       const oImg = document.createElement('img');
       oImg.src = optImages[idx];
       oImg.alt = 'Option figure';
-      oImg.style.cssText = 'display:block;width:160px;max-width:100%;height:auto;margin-top:10px;border-radius:6px;border:1px solid #edf0f5;cursor:zoom-in';
+      oImg.style.cssText = 'display:block;max-width:100%;height:auto;margin-top:10px;border-radius:6px;border:1px solid #edf0f5;cursor:zoom-in';
+      sizeImageByOrientation(oImg, 160, 260);
       oImg.addEventListener('click', (e) => { e.stopPropagation(); openImageLightbox(optImages[idx]); });
       textSpan.appendChild(oImg);
     }
