@@ -299,9 +299,8 @@
     if (flagBtn) flagBtn.addEventListener('click', () => toggleFlag());
     const unapproveBtn = document.getElementById('unapproveBtn');
     if (unapproveBtn) unapproveBtn.addEventListener('click', () => unapproveCurrent());
-    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderEditor(); renderNav(); } });
-    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < questions.length-1) { currentIndex++; renderEditor(); renderNav(); } });
-    document.getElementById('approveBtn').addEventListener('click', () => approveCurrent());
+    document.getElementById('prevBtn').disabled = currentIndex === 0;
+    document.getElementById('nextBtn').disabled = currentIndex === questions.length - 1;
 
     renderNav();
   }
@@ -375,13 +374,20 @@
     // of up to 4 separate update/insert round trips. This is the fix for
     // approving feeling slow after many questions — it was making ~7+
     // sequential network round trips per click.
-    const [qResult, optResult] = await Promise.all([
-      supabaseClient.from('pyq_questions').update(questionUpdate).eq('id', q.id),
-      supabaseClient.from('pyq_options').upsert(
-        [0,1,2,3].map(i => ({ question_id: q.id, option_index: i, option_text: optionTexts[i] })),
-        { onConflict: 'question_id,option_index' }
-      ),
-    ]);
+    let qResult, optResult;
+    try {
+      [qResult, optResult] = await Promise.all([
+        supabaseClient.from('pyq_questions').update(questionUpdate).eq('id', q.id),
+        supabaseClient.from('pyq_options').upsert(
+          [0,1,2,3].map(i => ({ question_id: q.id, option_index: i, option_text: optionTexts[i] })),
+          { onConflict: 'question_id,option_index' }
+        ),
+      ]);
+    } catch (e) {
+      noteEl.textContent = 'Network error while saving: ' + (e?.message || e);
+      noteEl.style.color = 'var(--red)';
+      return false;
+    }
 
     if (qResult.error) { noteEl.textContent = 'Could not save: ' + qResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
     if (optResult.error) { noteEl.textContent = 'Could not save options: ' + optResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
@@ -407,15 +413,22 @@
     if (!approveBtn || approveBtn.disabled) return; // guards against double-click races
     approveBtn.disabled = true;
     approveBtn.textContent = 'Approving…';
-    const ok = await saveCurrent('approved');
-    if (!ok) {
+    try {
+      const ok = await saveCurrent('approved');
+      if (ok) {
+        updateProgress();
+        if (currentIndex < questions.length - 1) currentIndex++;
+        renderEditor();
+      }
+    } catch (e) {
+      document.getElementById('saveNote').textContent = 'Unexpected error: ' + (e?.message || e);
+    } finally {
+      // approveBtn is a static element that persists across renders (it
+      // lives outside the rebuilt editor panel), so it must be explicitly
+      // re-enabled here — it will NOT reset itself.
       approveBtn.disabled = false;
       approveBtn.textContent = 'Approve Question →';
-      return;
     }
-    updateProgress();
-    if (currentIndex < questions.length - 1) currentIndex++;
-    renderEditor(); // rebuilds the panel fresh, so buttons come back enabled
   }
 
   async function unapproveCurrent() {
@@ -596,6 +609,21 @@
 
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function escapeAttr(s) { return escapeHtml(s); }
+
+  // These three buttons live in the static footer — NOT inside the
+  // rebuilt editor panel — so they must be wired exactly ONCE. Wiring them
+  // inside renderEditor() (which runs on every navigation/approve) was the
+  // bug: it silently piled up an extra click listener on every render,
+  // so one tap could fire many old handlers at once (the "jumps to a
+  // random question" symptom), and approve's disabled state was never
+  // reset because these nodes are never actually recreated.
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (currentIndex > 0) { currentIndex--; renderEditor(); }
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (currentIndex < questions.length - 1) { currentIndex++; renderEditor(); }
+  });
+  document.getElementById('approveBtn').addEventListener('click', () => approveCurrent());
 
   (async () => {
     const session = await guard();
