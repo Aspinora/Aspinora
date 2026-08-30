@@ -172,6 +172,12 @@
       <p class="quote" id="quoteText">"Small steps today, big results tomorrow."</p>
     </section>
 
+    <section class="section reveal" id="adminSection" style="display:none; border-color:#ffd0a8; background:linear-gradient(120deg, #fff 0%, #fff3e8 100%);">
+      <h2>Admin</h2>
+      <p class="lead">Upload, review, and publish previous-year question papers for the mock tests.</p>
+      <a class="primary" href="/admin/dashboard.html" style="display:inline-block; text-decoration:none;">Open PYQ Admin Panel →</a>
+    </section>
+
     <section class="section reveal">
       <h2>Continue where you left off</h2>
       <p class="lead">Jump straight back into your preparation.</p>
@@ -332,11 +338,17 @@
       document.getElementById('menuProfileJoined').textContent = 'Joined ' + currentUser.joinedDate.toLocaleDateString('en-US', options);
     }
 
+    async function checkAdminAccess() {
+      const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+      if (isAdmin) document.getElementById('adminSection').style.display = '';
+    }
+
     (async () => {
       const ok = await loadUserAndGuardPage();
       if (!ok) return;
       initGreeting();
       initProfile();
+      checkAdminAccess();
     })();
 
     const menuButton = document.getElementById('menuButton');
