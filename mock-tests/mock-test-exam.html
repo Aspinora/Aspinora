@@ -59,7 +59,7 @@ button{font:inherit;cursor:pointer;border:0;background:none}
 /* ===== Main content ===== */
 .main{min-height:0;flex:1;display:flex;flex-direction:column}
 .content{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px}
-.question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px;min-height:0}
+.question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px;min-height:0;overflow:hidden}
 .question-fixed{flex:0 0 auto;padding-right:8px}
 .options-scroll{min-height:0;flex:1;overflow:auto;padding-right:8px}
 .question-number{font-size:19px;font-weight:800;margin-bottom:16px}
@@ -521,7 +521,7 @@ function loadQuestion(){
     const img = document.createElement('img');
     img.src = qImage;
     img.alt = 'Question figure';
-    img.style.cssText = 'display:block;width:100%;max-width:520px;margin-top:14px;border-radius:8px;border:1px solid #edf0f5';
+    img.style.cssText = 'display:block;width:320px;max-width:100%;height:auto;margin-top:14px;border-radius:8px;border:1px solid #edf0f5';
     img.addEventListener('click', () => openImageLightbox(qImage));
     qtextEl.appendChild(img);
   }
@@ -539,7 +539,7 @@ function loadQuestion(){
       const oImg = document.createElement('img');
       oImg.src = optImages[idx];
       oImg.alt = 'Option figure';
-      oImg.style.cssText = 'display:block;width:100%;max-width:340px;margin-top:10px;border-radius:6px;border:1px solid #edf0f5;cursor:zoom-in';
+      oImg.style.cssText = 'display:block;width:160px;max-width:100%;height:auto;margin-top:10px;border-radius:6px;border:1px solid #edf0f5;cursor:zoom-in';
       oImg.addEventListener('click', (e) => { e.stopPropagation(); openImageLightbox(optImages[idx]); });
       textSpan.appendChild(oImg);
     }
