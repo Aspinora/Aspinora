@@ -648,6 +648,14 @@
       const username = profile?.username || user.email.split('@')[0];
       const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
       applyLoggedInState(username, joinedDate, profile?.avatar_url || null);
+
+      // If the user was sent here to log in on their way to the DEST typing
+      // test, take them straight there now that they're signed in.
+      const pendingRedirect = sessionStorage.getItem('postLoginRedirect');
+      if (pendingRedirect) {
+        sessionStorage.removeItem('postLoginRedirect');
+        window.location.href = pendingRedirect;
+      }
     }
 
     async function performLogout() {
@@ -665,7 +673,14 @@
     async function goToDestTypingTest(e) {
       e.preventDefault();
       const { data: { session } } = await supabaseClient.auth.getSession();
-      window.location.href = session ? DEST_TEST_URL : DEST_LOGIN_URL;
+      if (session) {
+        window.location.href = DEST_TEST_URL;
+      } else {
+        // Remember where the user was headed so we can send them straight
+        // there once they finish logging in (see checkSessionAndUpdateUI).
+        sessionStorage.setItem('postLoginRedirect', DEST_TEST_URL);
+        window.location.href = DEST_LOGIN_URL;
+      }
     }
 
     document.getElementById('destTypingMenuLink').addEventListener('click', goToDestTypingTest);
