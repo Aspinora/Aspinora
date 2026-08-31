@@ -417,7 +417,7 @@
           <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
           <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
           <a class="menu-item" href="/mock-tests/"><span class="menu-icon orange">◈</span>Mock tests</a>
-          <a class="menu-item" href="https://aspinora.in/mock-tests/dest/"><span class="menu-icon green">⌨</span>Start DEST Typing Test</a>
+          <a class="menu-item" href="https://aspinora.in/mock-tests/dest/" id="destTypingMenuLink"><span class="menu-icon green">⌨</span>Start DEST Typing Test</a>
           <a class="menu-item" href="/score-calculator/"><span class="menu-icon blue">▤</span>Calculators</a>
           <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
           <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
@@ -484,7 +484,7 @@
       <a class="feature reveal" href="/plan-with-purpose/"><div class="feature-icon orange">◎</div><h3>Plan with purpose</h3><p>Turn big ambitions into clear, achievable daily steps.</p><span class="feature-arrow">→</span></a>
       <a class="feature reveal" href="/track-your-progress/"><div class="feature-icon blue">↗</div><h3>Track your progress</h3><p>See your momentum grow and stay accountable to your goals.</p><span class="feature-arrow">→</span></a>
       <a class="feature reveal" href="/learn-with-clarity/"><div class="feature-icon purple">✎</div><h3>Learn with clarity</h3><p>Organise your notes, practice, and insights in one place.</p><span class="feature-arrow">→</span></a>
-      <a class="feature reveal" href="https://aspinora.in/mock-tests/dest/"><div class="feature-icon green">⌨</div><h3>Start DEST Typing Test</h3><p>Practice and assess your typing speed for the DEST exam.</p><span class="feature-arrow">→</span></a>
+      <a class="feature reveal" href="https://aspinora.in/mock-tests/dest/" id="destTypingFeatureLink"><div class="feature-icon green">⌨</div><h3>Start DEST Typing Test</h3><p>Practice and assess your typing speed for the DEST exam.</p><span class="feature-arrow">→</span></a>
     </section>
 
     <section class="ecosystem">
@@ -655,6 +655,21 @@
       await supabaseClient.auth.signOut();
       setTimeout(() => { window.location.reload(); }, 500);
     }
+
+    /* ============================================================
+       DEST Typing Test — require login before redirecting
+    ============================================================ */
+    const DEST_TEST_URL = 'https://aspinora.in/mock-tests/dest/';
+    const DEST_LOGIN_URL = 'https://aspinora.in/auth/#login';
+
+    async function goToDestTypingTest(e) {
+      e.preventDefault();
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      window.location.href = session ? DEST_TEST_URL : DEST_LOGIN_URL;
+    }
+
+    document.getElementById('destTypingMenuLink').addEventListener('click', goToDestTypingTest);
+    document.getElementById('destTypingFeatureLink').addEventListener('click', goToDestTypingTest);
 
     document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
       menuPanel.classList.remove('open');
