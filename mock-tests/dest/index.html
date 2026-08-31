@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2T21NS52RF');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSC CGL DEST Typing Test Practice Simulator | Aspinora</title>
+  <meta name="description" content="Practice the SSC CGL Tier-II Data Entry Speed Test (DEST) with a realistic 15-minute timed typing simulator, category-wise qualifying standards, and a detailed error-analysis report." />
+  <style>
+    :root {
+      --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
+      --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+      --red: #e5484d; --gray: #d8dee8; --blue: #367dd7; --green: #239363;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
+    button { font: inherit; }
+    input, select, textarea { font: inherit; }
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+
+    /* ===== Shared site header (matches calculator/index.html) ===== */
+    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px; transition: background .2s ease, transform .2s ease; }
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+    .menu-wrap { position: relative; }
+    .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+    .menu-panel { position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px; background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow); opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .orange { background: #fff0e1; color: #f16d00; } .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; } .green { background: #eaf9f1; color: #239363; } .red { background: #ffe9e9; color: #e5484d; }
+    .menu-profile { margin-bottom: 6px; cursor: default; }
+    .menu-item.menu-profile:hover { background: transparent; color: #394255; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .page-hero { padding: 40px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .page-hero h1 { max-width: 700px; margin: 16px 0 12px; font-size: clamp(30px, 4vw, 46px); line-height: 1.08; letter-spacing: -1.8px; }
+    .page-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 720px; margin: 0; color: var(--muted); font-size: 16px; line-height: 1.65; }
+
+    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 30px 6%; border: 1px solid #f8e6d6; border-radius: 26px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .section h2 { margin: 0 0 6px; font-size: 22px; letter-spacing: -.5px; }
+    .section .lead { max-width: 700px; margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 13px; font-weight: 750; color: #394255; }
+    .field .hint { font-size: 11.5px; color: #a0a6b2; font-weight: 600; }
+    .field select, .field input { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; color: var(--ink); background: white; transition: border-color .18s ease, box-shadow .18s ease; }
+    .field select:focus, .field input:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 760px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .rule-box { border: 1px solid var(--line); background: #fffaf5; border-radius: 16px; padding: 16px 20px; margin-bottom: 14px; }
+    .rule-box strong { color: var(--ink); font-size: 13.5px; }
+    .rule-box ul { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.7; color: var(--muted); }
+
+    .disclaimer-box { margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: #eaf4ff; border: 1px solid #d3e8ff; color: #2e5f96; font-size: 12px; line-height: 1.6; }
+
+    .form-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    .primary, .secondary { border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; font-weight: 750; transition: all .2s ease; }
+    .primary { color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .primary:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .secondary { color: #4e586b; border: 1px solid #e8ebf0; background: white; }
+    .secondary:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+
+    label.ack { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; margin-top: 18px; line-height: 1.5; }
+    label.ack input { margin-top: 3px; }
+
+    .error-msg { display: none; margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: #fff0f0; border: 1px solid #ffd6d6; color: #c0323a; font-size: 13.5px; font-weight: 650; }
+    .error-msg.show { display: block; }
+
+    /* ===== Exam screen ===== */
+    .examBar { display: flex; justify-content: space-between; align-items: center; background: #fff7ef; border: 1px solid #ffe2ca; border-radius: 16px; padding: 12px 20px; font-size: 13px; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .timer { font-family: 'Courier New', monospace; font-size: 24px; font-weight: 800; letter-spacing: .03em; color: var(--ink); }
+    .timer.low { color: var(--red); }
+    .examGrid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 780px) { .examGrid { grid-template-columns: 1fr 1fr; } }
+    .passagePane, .typingPane { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; background: white; }
+    .paneLabel { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; font-weight: 750; }
+    .passageText { font-size: 16px; line-height: 1.85; max-height: 260px; overflow-y: auto; user-select: none; }
+    .passageText span.typed-ok { color: #b6bcc6; }
+    .passageText span.typed-bad { color: var(--red); text-decoration: underline; text-decoration-color: #f3c3bf; }
+    .passageText span.cursor { border-left: 2px solid var(--orange); }
+    textarea#typedInput { width: 100%; min-height: 220px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; line-height: 1.85; padding: 14px; resize: vertical; }
+    textarea#typedInput:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+    .integrityNote { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .integrityNote.flag { color: var(--red); font-weight: 650; }
+
+    /* ===== Report ===== */
+    .reportHead { text-align: center; padding: 10px 0 6px; }
+    .status-pill { display: inline-block; font-size: 13px; font-weight: 800; letter-spacing: .04em; padding: 7px 16px; border-radius: 99px; margin-top: 10px; }
+    .status-pill.pass { background: #eaf9f1; color: var(--green); border: 1px solid #bfe9d2; }
+    .status-pill.fail { background: #fff0f0; color: var(--red); border: 1px solid #ffd6d6; }
+    table.report { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    table.report td { padding: 9px 4px; border-bottom: 1px solid var(--line); }
+    table.report td:first-child { color: var(--muted); width: 60%; }
+    table.report td:last-child { text-align: right; font-weight: 750; }
+    .twoStandard { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .stdCard { border: 1px solid var(--line); padding: 14px 16px; border-radius: 14px; background: white; }
+    .stdCard .name { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; font-weight: 750; }
+    .stdCard .verdict { font-weight: 800; font-size: 15px; }
+    .verdict.pass { color: var(--green); } .verdict.fail { color: var(--red); }
+    .errList { font-size: 13px; margin-top: 12px; }
+    .errList .row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+    .sev { font-size: 10.5px; padding: 2px 7px; border-radius: 99px; font-weight: 750; flex-shrink: 0; }
+    .sev.FULL { background: #fff0f0; color: var(--red); } .sev.HALF { background: #fff7ef; color: #a56a2c; }
+
+    .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .footer-contact { font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="/aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+            </span>
+          </button>
+          <div class="menu-label">Explore Aspinora</div>
+          <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
+          <a class="menu-item" href="/mock-tests/"><span class="menu-icon orange">◈</span>Mock tests</a>
+          <a class="menu-item" href="/score-calculator/"><span class="menu-icon blue">▤</span>Calculators</a>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="page-hero">
+      <div class="eyebrow">SSC CGL Tier-II · DEST</div>
+      <h1>DEST <em>Typing Test</em> Practice Simulator</h1>
+      <p class="intro">Practice the SSC CGL Tier-II Data Entry Speed Test in exam-like conditions: a 15-minute timed passage, category-wise qualifying standards, and a detailed error-analysis report at the end.</p>
+    </section>
+
+    <div id="appRoot"></div>
+
+    <footer class="footer">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="/legal/#privacy-policy">Privacy Policy</a>
+        <a href="/legal/#terms-of-use">Terms of Use</a>
+        <a href="/legal/#disclaimer">Disclaimer</a>
+        <a href="/legal/#contact-us">Contact Us</a>
+      </nav>
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+
+/* ===== Shared site header behavior (matches calculator/index.html) ===== */
+const menuButton = document.getElementById('menuButton');
+const menuPanel = document.getElementById('menuPanel');
+menuButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  const isOpen = menuPanel.classList.toggle('open');
+  menuButton.setAttribute('aria-expanded', String(isOpen));
+});
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.menu-wrap')) {
+    menuPanel.classList.remove('open');
+    menuButton.setAttribute('aria-expanded', 'false');
+  }
+});
+document.querySelectorAll('[data-message]').forEach((button) => {
+  button.addEventListener('click', () => {
+    menuPanel.classList.remove('open');
+    menuButton.setAttribute('aria-expanded', 'false');
+  });
+});
+document.getElementById('homeButton').addEventListener('click', () => { window.location.href = '/'; });
+
+/* ===== Supabase client — same project as the rest of the site ===== */
+const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let currentUser = null;
+
+async function checkSessionAndUpdateMenu() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return;
+  currentUser = session.user;
+  const user = session.user;
+  const { data: profile } = await supabaseClient.from('profiles').select('username, created_at, avatar_url').eq('id', user.id).single();
+  const username = profile?.username || user.email.split('@')[0];
+  const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
+  const menuAvatar = document.getElementById('menuAvatar');
+  if (profile?.avatar_url) {
+    menuAvatar.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = profile.avatar_url; img.alt = username + '\u2019s profile photo';
+    menuAvatar.appendChild(img);
+  } else {
+    menuAvatar.textContent = username.charAt(0).toUpperCase();
+  }
+  document.getElementById('menuProfileName').textContent = username;
+  document.getElementById('menuProfileSub').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  document.getElementById('menuProfileItem').style.display = 'flex';
+  document.getElementById('menuAccountDivider').style.display = 'block';
+  document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+  document.getElementById('menuLogoutButton').style.display = 'flex';
+}
+document.getElementById('menuUpdateProfileButton').addEventListener('click', () => { window.location.href = '/edit-profile/'; });
+document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+  await supabaseClient.auth.signOut();
+  setTimeout(() => { window.location.href = '/'; }, 400);
+});
+checkSessionAndUpdateMenu();
+
+/* ============================================================================
+   DEST EVALUATION ENGINE (same logic as lib/*.js — see repo /dest/lib for the
+   modular, unit-tested source of truth; inlined here for a single-file page,
+   matching this site's one-file-per-page convention).
+   ============================================================================ */
+const Dest = {};
+Dest.STANDARD_VERSION = 'CGL-2025-v1';
+Dest.DEST_STANDARDS = { [Dest.STANDARD_VERSION]: {
+  general: { UR:20, OBC:25, EWS:25, SC:30, ST:30, ESM:30, OH:30, HH:30, VH:30, PWD_OTHER:30 },
+  higher:  { UR:5,  OBC:7,  EWS:7,  SC:7,  ST:7,  ESM:7,  OH:10, HH:10, VH:10, PWD_OTHER:10 },
+}};
+Dest.resolveStandard = function({category, standardType, standardVersion = Dest.STANDARD_VERSION}) {
+  const t = Dest.DEST_STANDARDS[standardVersion][standardType][category];
+  if (t === undefined) throw new Error('Unknown category/standard combination');
+  return { maxErrorPercent: t, standardVersion, standardType, category };
+};
+Dest.resolveBothStandards = function({category, standardVersion = Dest.STANDARD_VERSION}) {
+  return { general: Dest.resolveStandard({category, standardType:'general', standardVersion}), higher: Dest.resolveStandard({category, standardType:'higher', standardVersion}) };
+};
+const SHIFTED_SYMBOLS = new Set(['!','@','#','$','%','^','&','*','(',')','_','+','{','}','|',':','"','<','>','?','~']);
+Dest.calculateKeyDepressions = function(text) {
+  let characterCount = 0, keyDepressionCount = 0;
+  for (const ch of text) {
+    characterCount += 1; keyDepressionCount += 1;
+    const isUpper = ch.length===1 && ch !== ch.toLowerCase() && ch === ch.toUpperCase();
+    if (isUpper || SHIFTED_SYMBOLS.has(ch)) keyDepressionCount += 1;
+  }
+  const trimmed = text.trim();
+  const wordCount = trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+  const paragraphCount = text.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean).length || (trimmed?1:0);
+  return { characterCount, keyDepressionCount, wordCount, paragraphCount };
+};
+const CORE_WORD_RE = /^[A-Za-z0-9]+(?:['\u2019-][A-Za-z0-9]+)*/;
+const SENTENCE_END_RE = /[.!?]+$/;
+Dest.tokenize = function(text) {
+  const words = (text||'').split(/\s+/).filter(Boolean);
+  const tokens = []; let sentenceIndex = 0, atStart = true;
+  for (const raw of words) {
+    const leadingMatch = raw.match(/^[^A-Za-z0-9]*/);
+    const leadingPunct = leadingMatch ? leadingMatch[0] : '';
+    const rest = raw.slice(leadingPunct.length);
+    const coreMatch = rest.match(CORE_WORD_RE);
+    const core = coreMatch ? coreMatch[0] : rest;
+    const trailingPunct = rest.slice(core.length);
+    const isAllCaps = core.length>1 && core===core.toUpperCase() && core!==core.toLowerCase();
+    tokens.push({raw, core, coreLower: core.toLowerCase(), leadingPunct, trailingPunct, sentenceIndex, isSentenceStart: atStart, isAllCaps});
+    if (SENTENCE_END_RE.test(trailingPunct)) { sentenceIndex += 1; atStart = true; } else { atStart = false; }
+  }
+  return tokens;
+};
+(function(){
+  function alignTokens(expectedTokens, typedTokens) {
+    const n = expectedTokens.length, m = typedTokens.length;
+    const dp = Array.from({length:n+1}, ()=> new Array(m+1).fill(0));
+    for (let i=0;i<=n;i++) dp[i][0]=i;
+    for (let j=0;j<=m;j++) dp[0][j]=j;
+    for (let i=1;i<=n;i++) for (let j=1;j<=m;j++) {
+      const matchCost = expectedTokens[i-1].coreLower === typedTokens[j-1].coreLower ? 0 : 1;
+      dp[i][j] = Math.min(dp[i-1][j-1]+matchCost, dp[i-1][j]+1, dp[i][j-1]+1);
+    }
+    const ops = []; let i=n, j=m;
+    while (i>0 || j>0) {
+      if (i>0 && j>0) {
+        const matchCost = expectedTokens[i-1].coreLower === typedTokens[j-1].coreLower ? 0 : 1;
+        if (dp[i][j] === dp[i-1][j-1]+matchCost) { ops.push({op: matchCost===0?'match':'sub', expIdx:i-1, typIdx:j-1}); i--; j--; continue; }
+      }
+      if (i>0 && dp[i][j] === dp[i-1][j]+1) { ops.push({op:'del', expIdx:i-1, typIdx:null}); i--; continue; }
+      if (j>0 && dp[i][j] === dp[i][j-1]+1) { ops.push({op:'ins', expIdx:null, typIdx:j-1}); j--; continue; }
+      break;
+    }
+    ops.reverse(); return ops;
+  }
+  function levenshtein(a,b){
+    const dp = Array.from({length:a.length+1}, ()=> new Array(b.length+1).fill(0));
+    for (let i=0;i<=a.length;i++) dp[i][0]=i;
+    for (let j=0;j<=b.length;j++) dp[0][j]=j;
+    for (let i=1;i<=a.length;i++) for (let j=1;j<=b.length;j++){
+      const cost = a[i-1]===b[j-1]?0:1;
+      dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+    }
+    return dp[a.length][b.length];
+  }
+  function looksLikeMisspelling(e,t){ if(!e||!t) return false; const d=levenshtein(e,t); const longer=Math.max(e.length,t.length); if(d===0) return false; return d<=2 && d/longer<=0.4; }
+  function isSingularPluralMismatch(e,t){ if(e===t) return false; const strip=w=>w.endsWith('es')?w.slice(0,-2):w.endsWith('s')?w.slice(0,-1):w; return strip(e)===strip(t) && e!==t; }
+  function isProperNounInPassage(tok){ return !tok.isSentenceStart && /^[A-Z]/.test(tok.core) && tok.core.length>0; }
+  function classifyPunctuationAndCase(exp, typ, errors){
+    const expEndsSentence = /[.!?]$/.test(exp.trailingPunct), typEndsSentence = /[.!?]$/.test(typ.trailingPunct);
+    if (expEndsSentence && !typEndsSentence) errors.push(simple('missing_full_stop','HALF',exp,typ));
+    else if (!expEndsSentence && typEndsSentence) errors.push(simple('misplaced_full_stop','HALF',exp,typ));
+    const expUp = /^[A-Z]/.test(exp.core), typUp = /^[A-Z]/.test(typ.core);
+    if (exp.isSentenceStart && expUp && !typUp) errors.push(simple('missing_sentence_capital','HALF',exp,typ));
+    else if (!exp.isSentenceStart && isProperNounInPassage(exp) && !typUp) errors.push(simple('missing_proper_noun_capital','HALF',exp,typ));
+  }
+  function simple(type,severity,exp,typ){ return {type, severity, expected: exp?exp.raw:null, actual: typ?typ.raw:null, wordIndex: exp?exp.sentenceIndex:null, sentenceIndex: exp?exp.sentenceIndex:(typ?typ.sentenceIndex:null)}; }
+  function full(type,severity,exp,typ){ return simple(type,severity,exp,typ); }
+  Dest.evaluateAttempt = function(passageText, typedText, options={}){
+    const expectedTokens = Dest.tokenize(passageText), typedTokens = Dest.tokenize(typedText);
+    const ops = alignTokens(expectedTokens, typedTokens);
+    const errors = [];
+    ops.forEach((entry)=>{
+      if (entry.op==='match'){
+        const exp=expectedTokens[entry.expIdx], typ=typedTokens[entry.typIdx];
+        if (typ.isAllCaps && !exp.isAllCaps) errors.push(full('all_caps','FULL',exp,typ));
+        else classifyPunctuationAndCase(exp,typ,errors);
+        return;
+      }
+      if (entry.op==='sub'){
+        const exp=expectedTokens[entry.expIdx], typ=typedTokens[entry.typIdx];
+        const isLastExpected = entry.expIdx===expectedTokens.length-1, isLastTyped = entry.typIdx===typedTokens.length-1;
+        if (options.testEndedByTimeout && isLastExpected && isLastTyped && exp.coreLower.startsWith(typ.coreLower) && typ.coreLower.length>0 && typ.coreLower.length<exp.coreLower.length){
+          errors.push(full('incomplete_word','FULL',exp,typ)); return;
+        }
+        if (isSingularPluralMismatch(exp.coreLower, typ.coreLower)) errors.push(full('singular_plural','HALF',exp,typ));
+        else if (looksLikeMisspelling(exp.coreLower, typ.coreLower)) errors.push(full('wrong_spelling','HALF',exp,typ));
+        else errors.push(full('substitution','FULL',exp,typ));
+        classifyPunctuationAndCase(exp,typ,errors);
+        return;
+      }
+      if (entry.op==='del'){ errors.push(full('omission','FULL',expectedTokens[entry.expIdx],null)); return; }
+      if (entry.op==='ins'){
+        const typ=typedTokens[entry.typIdx];
+        const prev = entry.typIdx>0? typedTokens[entry.typIdx-1]:null;
+        const next = entry.typIdx<typedTokens.length-1? typedTokens[entry.typIdx+1]:null;
+        const isRep = (prev && prev.coreLower===typ.coreLower) || (next && next.coreLower===typ.coreLower);
+        const isTrailing = entry.typIdx===typedTokens.length-1;
+        const type = isRep ? 'repetition' : (isTrailing ? 'leftover_words' : 'addition');
+        errors.push(full(type,'FULL',null,typ));
+      }
+    });
+    let fullMistakes=0, halfMistakes=0;
+    for (const e of errors){ if(e.severity==='FULL') fullMistakes++; else if(e.severity==='HALF') halfMistakes++; }
+    return { errors, fullMistakes, halfMistakes, weightedMistakes: fullMistakes + halfMistakes*0.5 };
+  };
+})();
+Dest.calculateErrorPercentage = function({evaluationResult, candidateKeyDepressions}){
+  if (!candidateKeyDepressions || candidateKeyDepressions<=0) return { errorPercentage:100, denominator:0 };
+  return { errorPercentage: (evaluationResult.weightedMistakes/candidateKeyDepressions)*100, denominator: candidateKeyDepressions };
+};
+Dest.isWithinThreshold = (a,b) => Math.round(a*100) <= Math.round(b*100);
+Dest.calculateSpeedMetrics = function({charactersTyped, correctCharacters, elapsedSeconds}){
+  const mins = Math.max(elapsedSeconds/60, 1e-9), r2 = n => Math.round(n*100)/100;
+  return { grossWpm: r2((charactersTyped/5)/mins), netWpm: r2((correctCharacters/5)/mins) };
+};
+Dest.calculateCompletionPercentage = function({candidateKeyDepressions, passageKeyDepressions}){
+  if (!passageKeyDepressions) return 0;
+  return Math.round(Math.min(100,(candidateKeyDepressions/passageKeyDepressions)*100)*100)/100;
+};
+Dest.DEST_DURATION_SECONDS = 15*60;
+Dest.computeDeadline = (startedAtMs, dur=Dest.DEST_DURATION_SECONDS) => startedAtMs + dur*1000;
+Dest.getRemaining = (deadlineAtMs, nowMs=Date.now()) => { const r = Math.max(0, deadlineAtMs-nowMs); return { remainingMs:r, remainingSeconds: Math.ceil(r/1000), isTimeUp: r<=0 }; };
+Dest.formatMMSS = (s) => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+/* ============================================================================
+   FALLBACK PASSAGES — used only if `dest_passages` isn't populated yet
+   (i.e. before supabase/schema.sql + the generate-dest-passage Edge Function
+   have been deployed). Once that table has rows, these are never used.
+   ============================================================================ */
+const FALLBACK_PASSAGES = [
+  "India has emerged as a global leader in biotechnology, leveraging its scientific talent, innovative research, and robust infrastructure to address critical challenges in healthcare, agriculture, and industry. The biotechnology sector in India has grown significantly since the establishment of the Department of Biotechnology in 1986, which laid the foundation for advancements in this field. Today, India ranks among the top nations in biotechnology research and development, contributing to solutions that improve quality of life and drive economic growth.\n\nIn healthcare, India's biotechnology advancements have been transformative. The country has excelled in the development of vaccines, biologics, and diagnostic tools. Indian companies have played a pivotal role during recent public health emergencies by developing and manufacturing affordable vaccines, and these contributions were instrumental in the nation's vaccination drive and highlighted the capacity to produce large scale biotechnological solutions. Additionally, biosimilars developed in India have made life saving medicines accessible to patients worldwide, especially in low income countries.\n\nAgricultural biotechnology has also made a profound impact. The introduction of genetically improved seed varieties has helped farmers increase yields while reducing dependence on chemical inputs. Researchers continue to explore drought resistant and pest resistant crop varieties suited to local growing conditions, which is expected to strengthen food security for a growing population over the coming decades."
+];
+
+/* ============================================================================
+   APP STATE + SCREENS
+   ============================================================================ */
+const state = {
+  screen: 'setup', category: '', horizontal: 'None', standardType: 'general',
+  passage: null, passageId: null, passageMetrics: null,
+  startedAt: null, deadlineAt: null, timerHandle: null, timedOut: false,
+  integrity: { tabBlur:0, pasteAttempts:0, copyAttempts:0, focusLoss:0 },
+  result: null, saveStatus: null,
+};
+
+const root = document.getElementById('appRoot');
+function render() {
+  if (state.screen === 'setup') return renderSetup();
+  if (state.screen === 'instructions') return renderInstructions();
+  if (state.screen === 'confirm') return renderConfirm();
+  if (state.screen === 'exam') return renderExam();
+  if (state.screen === 'report') return renderReport();
+}
+
+function categoryFromSelections(category, horizontal) {
+  // Horizontal categories (PWD/ESM/OH/VH/HH) map onto the DEST_STANDARDS keys
+  // directly; "None" keeps the base reservation category.
+  if (horizontal && horizontal !== 'None' && horizontal !== 'PWD') return horizontal;
+  return category;
+}
+
+function renderSetup() {
+  root.innerHTML = `
+    <section class="section">
+      <h2>Before you start — your practice configuration</h2>
+      <p class="lead">SSC applies two different DEST qualifying standards depending on the post. Choose your category and which standard applies to the post you're preparing for.</p>
+      <div class="form-grid">
+        <div class="field">
+          <label for="setupCategory">Category <span style="color:var(--red);">*</span></label>
+          <select id="setupCategory">
+            <option value="" disabled selected>-- Select category --</option>
+            <option value="UR">UR (General)</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="EWS">EWS</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="setupHorizontal">Horizontal category</label>
+          <select id="setupHorizontal">
+            <option value="None">None</option>
+            <option value="ESM">ESM (Ex-Servicemen)</option>
+            <option value="OH">OH (Orthopaedically Handicapped)</option>
+            <option value="VH">VH (Visually Handicapped)</option>
+            <option value="HH">HH (Hearing Handicapped)</option>
+            <option value="PWD_OTHER">PwD — Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:16px;">
+        <div class="field">
+          <label>Which DEST standard applies to your target post? <span style="color:var(--red);">*</span></label>
+          <select id="setupStandardType">
+            <option value="general">Practice for any CGL post (general DEST standard)</option>
+            <option value="higher">Practice for a post requiring the higher DEST/CPT standard</option>
+          </select>
+          <span class="hint">Not sure? Check your post's notification — most CGL posts use the general standard; only specific posts (e.g. Tax Assistant-type) use the higher standard.</span>
+        </div>
+      </div>
+      <div class="error-msg" id="setupErrorMsg"></div>
+      <div class="form-actions">
+        <button class="primary" id="setupContinueBtn">Continue&nbsp; →</button>
+      </div>
+    </section>`;
+
+  document.getElementById('setupContinueBtn').addEventListener('click', () => {
+    const category = document.getElementById('setupCategory').value;
+    const horizontal = document.getElementById('setupHorizontal').value;
+    const standardType = document.getElementById('setupStandardType').value;
+    const errEl = document.getElementById('setupErrorMsg');
+    if (!category) { errEl.textContent = 'Please select your category before continuing.'; errEl.classList.add('show'); return; }
+    errEl.classList.remove('show');
+    state.category = categoryFromSelections(category, horizontal);
+    state.horizontal = horizontal;
+    state.standardType = standardType;
+    state.screen = 'instructions';
+    render();
+  });
+}
+
+function renderInstructions() {
+  root.innerHTML = `
+    <section class="section">
+      <h2>Before you begin</h2>
+      <p class="lead">This practice session mirrors the format of SSC CGL Tier-II Paper-I Section-IV (DEST). Read the following carefully.</p>
+      <div class="rule-box">
+        <strong>General instructions</strong>
+        <ul>
+          <li>Total duration is 15 minutes.</li>
+          <li>The countdown timer is timestamp-based — refreshing the page will not grant extra time.</li>
+          <li>When the timer reaches zero, your attempt is finalized automatically. You do not need to submit manually.</li>
+          <li>The passage is approximately 2,000 key depressions — this is descriptive, not a minimum you must reach to qualify.</li>
+        </ul>
+      </div>
+      <div class="rule-box">
+        <strong>Typing test conditions</strong>
+        <ul>
+          <li>Pasting, cut/copy, and drag-and-drop are disabled during the test.</li>
+          <li>Switching tabs or losing window focus is logged as an integrity signal, not used to auto-fail you.</li>
+          <li>Your result is calculated by a deterministic Aspinora evaluation engine — no AI model scores your typing.</li>
+        </ul>
+      </div>
+      <div class="disclaimer-box">
+        Aspinora DEST Simulator is an independent educational practice tool. It is not affiliated with, endorsed by, or operated by the Staff Selection Commission (SSC), TCS, or any government agency. SSC may modify examination procedures, evaluation standards, or post-specific qualifying requirements — always refer to the latest SSC notification for the actual examination.
+      </div>
+      <label class="ack">
+        <input type="checkbox" id="ackBox" />
+        I have read and understood the instructions above.
+      </label>
+      <div class="form-actions">
+        <button class="secondary" id="prevBtn">Previous</button>
+        <button class="primary" id="nextBtn" disabled>Next</button>
+      </div>
+    </section>`;
+  const ack = document.getElementById('ackBox');
+  const nextBtn = document.getElementById('nextBtn');
+  ack.addEventListener('change', () => { nextBtn.disabled = !ack.checked; });
+  document.getElementById('prevBtn').addEventListener('click', () => { state.screen = 'setup'; render(); });
+  nextBtn.addEventListener('click', () => { state.screen = 'confirm'; render(); });
+}
+
+function renderConfirm() {
+  const std = Dest.resolveStandard({ category: state.category, standardType: state.standardType });
+  root.innerHTML = `
+    <section class="section">
+      <h2>Ready to begin?</h2>
+      <p class="lead">Your selected practice configuration is locked in below. Once you begin, it cannot be changed for this attempt.</p>
+      <div class="rule-box">
+        <ul>
+          <li><strong>Category:</strong> ${state.category}</li>
+          <li><strong>Standard:</strong> ${state.standardType === 'higher' ? 'Higher DEST standard (applicable posts)' : 'General DEST standard'}</li>
+          <li><strong>Maximum permitted errors:</strong> ${std.maxErrorPercent}%</li>
+          <li><strong>Duration:</strong> 15:00</li>
+        </ul>
+      </div>
+      <div class="form-actions">
+        <button class="secondary" id="prevBtn">Previous</button>
+        <button class="primary" id="beginBtn">I am ready to begin</button>
+      </div>
+    </section>`;
+  document.getElementById('prevBtn').addEventListener('click', () => { state.screen = 'instructions'; render(); });
+  document.getElementById('beginBtn').addEventListener('click', beginExam);
+}
+
+/* Fetch one available passage from Supabase, falling back to a local
+   passage if the dest_passages table isn't populated yet. */
+async function fetchPassage() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('dest_passages')
+      .select('id, text, key_depression_count')
+      .eq('status', 'available')
+      .limit(20);
+    if (error || !data || data.length === 0) throw error || new Error('empty pool');
+    const row = data[Math.floor(Math.random() * data.length)];
+    return { id: row.id, text: row.text };
+  } catch (e) {
+    console.warn('dest_passages unavailable, using local fallback passage:', e.message || e);
+    const text = FALLBACK_PASSAGES[Math.floor(Math.random() * FALLBACK_PASSAGES.length)];
+    return { id: null, text };
+  }
+}
+
+async function beginExam() {
+  const beginBtn = document.getElementById('beginBtn');
+  if (beginBtn) { beginBtn.disabled = true; beginBtn.textContent = 'Loading passage…'; }
+  const { id, text } = await fetchPassage();
+  state.passageId = id;
+  state.passage = text;
+  state.passageMetrics = Dest.calculateKeyDepressions(text);
+  state.screen = 'exam';
+  state.startedAt = Date.now();
+  state.deadlineAt = Dest.computeDeadline(state.startedAt);
+  state.timedOut = false;
+  render();
+  startTimerLoop();
+}
+
+function startTimerLoop() {
+  const tick = () => {
+    const timerEl = document.getElementById('timerDisplay');
+    if (!timerEl) return;
+    const { remainingSeconds, isTimeUp } = Dest.getRemaining(state.deadlineAt);
+    timerEl.textContent = Dest.formatMMSS(remainingSeconds);
+    timerEl.classList.toggle('low', remainingSeconds <= 60);
+    if (isTimeUp) { state.timedOut = true; finalizeAttempt(); return; }
+    state.timerHandle = requestAnimationFrame(tick);
+  };
+  state.timerHandle = requestAnimationFrame(tick);
+}
+
+function renderExam() {
+  const { remainingSeconds } = Dest.getRemaining(state.deadlineAt);
+  root.innerHTML = `
+    <div class="examBar">
+      <div><strong>Category ${state.category}</strong> &nbsp;·&nbsp; ${state.standardType === 'higher' ? 'Higher standard' : 'General standard'} &nbsp;·&nbsp; QWERTY layout</div>
+      <div class="timer" id="timerDisplay">${Dest.formatMMSS(remainingSeconds)}</div>
+    </div>
+    <div class="examGrid">
+      <div class="passagePane">
+        <div class="paneLabel">Passage to type</div>
+        <div class="passageText" id="passageText"></div>
+      </div>
+      <div class="typingPane">
+        <div class="paneLabel">Your input</div>
+        <textarea id="typedInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Start typing here..."></textarea>
+        <div class="integrityNote" id="integrityNote">No integrity flags recorded.</div>
+        <div class="form-actions">
+          <button class="primary" id="submitBtn">Submit</button>
+        </div>
+      </div>
+    </div>`;
+
+  renderPassagePreview('');
+  const textarea = document.getElementById('typedInput');
+  textarea.focus();
+  textarea.addEventListener('input', (e) => renderPassagePreview(e.target.value));
+  textarea.addEventListener('paste', (e) => { e.preventDefault(); state.integrity.pasteAttempts++; updateIntegrityNote(); });
+  textarea.addEventListener('copy', (e) => { e.preventDefault(); });
+  textarea.addEventListener('cut', (e) => { e.preventDefault(); });
+  textarea.addEventListener('drop', (e) => { e.preventDefault(); });
+  textarea.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+  document.getElementById('passageText').addEventListener('copy', (e) => { e.preventDefault(); state.integrity.copyAttempts++; updateIntegrityNote(); });
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  window.addEventListener('blur', onWindowBlur);
+  document.getElementById('submitBtn').addEventListener('click', () => finalizeAttempt());
+}
+
+function onVisibilityChange() { if (document.hidden && state.screen === 'exam') { state.integrity.tabBlur++; updateIntegrityNote(); } }
+function onWindowBlur() { if (state.screen === 'exam') { state.integrity.focusLoss++; updateIntegrityNote(); } }
+function updateIntegrityNote() {
+  const note = document.getElementById('integrityNote');
+  if (!note) return;
+  const { tabBlur, pasteAttempts, copyAttempts, focusLoss } = state.integrity;
+  const total = tabBlur + pasteAttempts + copyAttempts + focusLoss;
+  if (total === 0) { note.textContent = 'No integrity flags recorded.'; note.classList.remove('flag'); return; }
+  note.textContent = `Integrity signals — tab switches: ${tabBlur}, focus loss: ${focusLoss}, paste attempts: ${pasteAttempts}, copy attempts: ${copyAttempts}. These are deterrents, not a cheat-proof guarantee.`;
+  note.classList.add('flag');
+}
+
+function renderPassagePreview(typed) {
+  const container = document.getElementById('passageText');
+  if (!container) return;
+  const passage = state.passage;
+  let html = '';
+  for (let i = 0; i < passage.length; i++) {
+    const ch = passage[i];
+    const display = ch === '\n' ? '<br/>' : ch;
+    if (i < typed.length) html += typed[i] === ch ? `<span class="typed-ok">${escapeHtml(display)}</span>` : `<span class="typed-bad">${escapeHtml(display)}</span>`;
+    else if (i === typed.length) html += `<span class="cursor">${escapeHtml(display)}</span>`;
+    else html += escapeHtml(display);
+  }
+  container.innerHTML = html;
+}
+function escapeHtml(s) { if (s === '<br/>') return s; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function finalizeAttempt() {
+  if (state.timerHandle) cancelAnimationFrame(state.timerHandle);
+  document.removeEventListener('visibilitychange', onVisibilityChange);
+  window.removeEventListener('blur', onWindowBlur);
+
+  const textarea = document.getElementById('typedInput');
+  const typedText = textarea ? textarea.value : '';
+  const elapsedSeconds = Math.min(Dest.DEST_DURATION_SECONDS, (Date.now() - state.startedAt) / 1000);
+
+  const evaluation = Dest.evaluateAttempt(state.passage, typedText, { testEndedByTimeout: state.timedOut });
+  const candidateMetrics = Dest.calculateKeyDepressions(typedText);
+  const errorPct = Dest.calculateErrorPercentage({ evaluationResult: evaluation, candidateKeyDepressions: candidateMetrics.keyDepressionCount });
+  const speed = Dest.calculateSpeedMetrics({ charactersTyped: candidateMetrics.characterCount, correctCharacters: Math.max(0, candidateMetrics.characterCount - evaluation.fullMistakes - evaluation.halfMistakes), elapsedSeconds });
+  const completion = Dest.calculateCompletionPercentage({ candidateKeyDepressions: candidateMetrics.keyDepressionCount, passageKeyDepressions: state.passageMetrics.keyDepressionCount });
+  const both = Dest.resolveBothStandards({ category: state.category });
+  const generalPass = Dest.isWithinThreshold(errorPct.errorPercentage, both.general.maxErrorPercent);
+  const higherPass = Dest.isWithinThreshold(errorPct.errorPercentage, both.higher.maxErrorPercent);
+  const applicablePass = state.standardType === 'higher' ? higherPass : generalPass;
+
+  state.result = { typedText, elapsedSeconds, evaluation, candidateMetrics, errorPct, speed, completion, both, generalPass, higherPass, applicablePass };
+  state.screen = 'report';
+  render();
+
+  // Background save — never blocks the report from showing (same pattern
+  // as autoSaveSubmission() in calculator/index.html).
+  saveAttemptSilently();
+}
+
+async function saveAttemptSilently() {
+  const r = state.result;
+  if (!currentUser) { console.warn('Not signed in — skipping dest_attempts save.'); return; }
+  try {
+    const row = {
+      user_id: currentUser.id,
+      passage_id: state.passageId,
+      passage_snapshot_hash: null,
+      category: state.category,
+      standard_type: state.standardType,
+      standard_version: Dest.STANDARD_VERSION,
+      state: 'EVALUATED',
+      started_at: new Date(state.startedAt).toISOString(),
+      deadline_at: new Date(state.deadlineAt).toISOString(),
+      submitted_at: new Date().toISOString(),
+      duration_seconds: Math.round(r.elapsedSeconds),
+      passage_key_depressions: state.passageMetrics.keyDepressionCount,
+      candidate_key_depressions: r.candidateMetrics.keyDepressionCount,
+      characters_typed: r.candidateMetrics.characterCount,
+      words_typed: r.candidateMetrics.wordCount,
+      full_mistakes: r.evaluation.fullMistakes,
+      half_mistakes: r.evaluation.halfMistakes,
+      effective_mistakes: r.evaluation.weightedMistakes,
+      error_percentage: r.errorPct.errorPercentage,
+      gross_wpm: r.speed.grossWpm,
+      net_wpm: r.speed.netWpm,
+      completion_percentage: r.completion,
+      qualified: r.applicablePass,
+      tab_blur_count: state.integrity.tabBlur,
+      paste_attempts: state.integrity.pasteAttempts,
+      copy_attempts: state.integrity.copyAttempts,
+      focus_loss_count: state.integrity.focusLoss,
+    };
+    const { error } = await supabaseClient.from('dest_attempts').insert(row);
+    if (error) throw error;
+    state.saveStatus = 'ok';
+  } catch (e) {
+    console.warn('Background dest_attempts save failed (schema may not be deployed yet):', e.message || e);
+    state.saveStatus = 'err';
+  }
+}
+
+function renderReport() {
+  const r = state.result;
+  const applicableStd = state.standardType === 'higher' ? r.both.higher : r.both.general;
+  root.innerHTML = `
+    <section class="section">
+      <div class="reportHead">
+        <h2 style="margin-bottom:0;">SSC CGL DEST Practice Result</h2>
+        <div class="status-pill ${r.applicablePass ? 'pass' : 'fail'}">${r.applicablePass ? 'QUALIFIED' : 'NOT QUALIFIED'} — Aspinora practice simulation, not an official SSC result</div>
+      </div>
+      <table class="report">
+        <tr><td>Time used</td><td>${Dest.formatMMSS(Math.round(r.elapsedSeconds))}</td></tr>
+        <tr><td>Passage key depressions</td><td>${state.passageMetrics.keyDepressionCount.toLocaleString()}</td></tr>
+        <tr><td>Candidate key depressions (Aspinora practice calculation)</td><td>${r.candidateMetrics.keyDepressionCount.toLocaleString()}</td></tr>
+        <tr><td>Completion</td><td>${r.completion.toFixed(2)}%</td></tr>
+        <tr><td>Full mistakes</td><td>${r.evaluation.fullMistakes}</td></tr>
+        <tr><td>Half mistakes</td><td>${r.evaluation.halfMistakes}</td></tr>
+        <tr><td>Effective (weighted) mistakes</td><td>${r.evaluation.weightedMistakes.toFixed(2)}</td></tr>
+        <tr><td>Calculated practice error rate</td><td>${r.errorPct.errorPercentage.toFixed(2)}%</td></tr>
+        <tr><td>Practice gross WPM</td><td>${r.speed.grossWpm.toFixed(2)}</td></tr>
+        <tr><td>Practice net WPM</td><td>${r.speed.netWpm.toFixed(2)}</td></tr>
+      </table>
+
+      <h2>DEST standard comparison</h2>
+      <div class="twoStandard">
+        <div class="stdCard"><div class="name">General standard — ${state.category}</div><div>Max permitted errors: ${r.both.general.maxErrorPercent}%</div><div class="verdict ${r.generalPass ? 'pass' : 'fail'}">${r.generalPass ? 'PASS' : 'FAIL'}</div></div>
+        <div class="stdCard"><div class="name">Higher standard — ${state.category}</div><div>Max permitted errors: ${r.both.higher.maxErrorPercent}%</div><div class="verdict ${r.higherPass ? 'pass' : 'fail'}">${r.higherPass ? 'PASS' : 'FAIL'}</div></div>
+      </div>
+      <p class="lead">Your selected practice target used the <strong>${state.standardType === 'higher' ? 'higher' : 'general'}</strong> standard (max ${applicableStd.maxErrorPercent}%) for the QUALIFIED / NOT QUALIFIED status above.</p>
+
+      <h2>Error detail</h2>
+      <div class="errList">
+        ${r.evaluation.errors.length === 0 ? '<div class="row">No mistakes detected.</div>' :
+          r.evaluation.errors.slice(0, 25).map(e => `
+            <div class="row"><span>${e.type.replace(/_/g,' ')} ${e.expected ? '— expected "' + escapeHtml(e.expected) + '"' : ''} ${e.actual ? ', typed "' + escapeHtml(e.actual) + '"' : ''}</span><span class="sev ${e.severity}">${e.severity}</span></div>`).join('')}
+        ${r.evaluation.errors.length > 25 ? `<div class="row">+ ${r.evaluation.errors.length - 25} more...</div>` : ''}
+      </div>
+      <div class="disclaimer-box">
+        Standard version: ${Dest.STANDARD_VERSION}. Error-percentage denominator: candidate's typed key depressions (Aspinora practice methodology — SSC has not published an official denominator for CGL DEST). This is a preparation simulation and not an official SSC/TCS result.
+        ${!currentUser ? ' Sign in to save your attempt history and see progress analytics.' : (state.saveStatus === 'err' ? ' (Your attempt could not be saved — this page works standalone even before the database is fully set up.)' : '')}
+      </div>
+      <div class="form-actions">
+        <button class="secondary" id="retryBtn">Practice again</button>
+      </div>
+    </section>`;
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    state.screen = 'setup';
+    state.integrity = { tabBlur:0, pasteAttempts:0, copyAttempts:0, focusLoss:0 };
+    render();
+  });
+}
+
+render();
+</script>
+</body>
+</html>
