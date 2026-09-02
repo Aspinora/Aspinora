@@ -94,7 +94,10 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><img src="../aspinora-logo.png" alt="Aspinora" class="brand-mark"><div class="brand-name">Aspi<span>nora</span></div></div>
+    <div class="brand">
+      <img src="../aspinora-logo.png" alt="Aspinora" class="brand-mark">
+      <div class="brand-name">Aspi<span>nora</span></div>
+    </div>
     <div class="paper-title" id="paperTitle">Loading…</div>
     <div class="progress-pill" id="progressPill">0 / 0 reviewed</div>
     <button class="btn btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -102,11 +105,15 @@
   </header>
 
   <div class="body">
-    <nav class="nav" id="navPanel"><div style="color:#9aa3b2;font-size:13px">Loading questions…</div></nav>
+    <nav class="nav" id="navPanel">
+      <div style="color:#9aa3b2;font-size:13px">Loading questions…</div>
+    </nav>
+
     <main class="editor">
       <div class="editor-inner" id="editorInner">
         <div style="color:#9aa3b2;font-size:14px">Select a question to review.</div>
       </div>
+
       <div class="footer-nav" id="footerNav" style="display:none">
         <button class="btn btn-ghost" id="prevBtn">← Previous</button>
         <button class="btn btn-green" id="approveBtn">Approve Question →</button>
@@ -122,13 +129,16 @@
     <h2>Crop image from source PDF</h2>
     <div class="crop-target-label" id="cropTargetLabel">Question image</div>
     <p>Drag a rectangle around the diagram/figure (works with touch too), then crop &amp; upload.</p>
+
     <div class="page-input-row">
       <label style="font-size:12.5px;font-weight:700">Page:</label>
       <input type="number" id="pageJumpInput" min="1" value="1">
       <button class="btn btn-ghost" id="pageJumpBtn">Go</button>
       <span id="pageLoadStatus" style="font-size:12.5px;color:#9aa3b2"></span>
     </div>
+
     <canvas id="cropCanvas"></canvas>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close-modal>Cancel</button>
       <button class="btn btn-primary" id="cropUploadBtn" disabled>Crop &amp; Upload</button>
@@ -138,783 +148,2354 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
   const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
-  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const SUPABASE_PUBLISHABLE_KEY =
+    'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+
+  const supabaseClient =
+    supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   const params = new URLSearchParams(window.location.search);
   const paperId = params.get('paper_id');
-  if (!paperId) document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">Missing paper_id in URL.</p>';
+
+  if (!paperId) {
+    document.body.innerHTML =
+      '<p style="padding:40px;font-family:sans-serif">Missing paper_id in URL.</p>';
+  }
 
   let paper = null;
   let currentUserId = null;
-  let sections = [];      // [{id, name, order_index}]
-  let questions = [];     // flat, in nav order, each with .options[], .images[]
+  let sections = [];
+  let questions = [];
   let currentIndex = 0;
   let pdfSignedUrl = null;
-  let pdfDoc = null; // pdf.js document, lazy-loaded
+  let pdfDoc = null;
 
   async function guard() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) { window.location.href = '/auth'; return null; }
-    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
-    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = '/auth'; return null; }
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      window.location.href = '/auth';
+      return null;
+    }
+
+    const { data: isAdmin } =
+      await supabaseClient.rpc('is_admin');
+
+    if (!isAdmin) {
+      await supabaseClient.auth.signOut();
+      window.location.href = '/auth';
+      return null;
+    }
+
     currentUserId = session.user.id;
     return session;
   }
 
   async function loadAll() {
-    const { data: paperRow, error: paperErr } = await supabaseClient.from('pyq_papers').select('*').eq('id', paperId).single();
-    if (paperErr || !paperRow) { document.getElementById('editorInner').innerHTML = 'Paper not found.'; return; }
-    paper = paperRow;
-    document.getElementById('paperTitle').textContent = `${paper.exam_name} ${paper.year} — ${paper.tier} (${paper.exam_date}${paper.shift !== 'Single Shift' ? ' ' + paper.shift : ''})`;
+    const {
+      data: paperRow,
+      error: paperErr
+    } = await supabaseClient
+      .from('pyq_papers')
+      .select('*')
+      .eq('id', paperId)
+      .single();
 
-    const { data: sectionRows } = await supabaseClient.from('pyq_sections').select('*').eq('paper_id', paperId).order('order_index');
+    if (paperErr || !paperRow) {
+      document.getElementById('editorInner').innerHTML =
+        'Paper not found.';
+      return;
+    }
+
+    paper = paperRow;
+
+    document.getElementById('paperTitle').textContent =
+      `${paper.exam_name} ${paper.year} — ${paper.tier} (${paper.exam_date}${paper.shift !== 'Single Shift' ? ' ' + paper.shift : ''})`;
+
+    const { data: sectionRows } =
+      await supabaseClient
+        .from('pyq_sections')
+        .select('*')
+        .eq('paper_id', paperId)
+        .order('order_index');
+
     sections = sectionRows || [];
 
-    const { data: questionRows } = await supabaseClient.from('pyq_questions').select('*').eq('paper_id', paperId).order('question_number');
-    const { data: optionRows } = await supabaseClient.from('pyq_options').select('*').in('question_id', (questionRows||[]).map(q=>q.id).length ? (questionRows||[]).map(q=>q.id) : ['00000000-0000-0000-0000-000000000000']).order('option_index');
-    const { data: imageRows } = await supabaseClient.from('pyq_question_images').select('*').in('question_id', (questionRows||[]).map(q=>q.id).length ? (questionRows||[]).map(q=>q.id) : ['00000000-0000-0000-0000-000000000000']);
+    const {
+      data: questionRows
+    } = await supabaseClient
+      .from('pyq_questions')
+      .select('*')
+      .eq('paper_id', paperId)
+      .order('question_number');
 
-    questions = (questionRows || []).map(q => ({
-      ...q,
-      options: (optionRows||[]).filter(o => o.question_id === q.id).sort((a,b)=>a.option_index-b.option_index),
-      images: (imageRows||[]).filter(im => im.question_id === q.id),
-    })).sort((a,b) => {
-      const sa = sections.findIndex(s=>s.id===a.section_id), sb = sections.findIndex(s=>s.id===b.section_id);
-      return sa !== sb ? sa - sb : a.question_number - b.question_number;
-    });
+    const questionIds =
+      (questionRows || []).map(q => q.id);
+
+    const {
+      data: optionRows
+    } = await supabaseClient
+      .from('pyq_options')
+      .select('*')
+      .in(
+        'question_id',
+        questionIds.length
+          ? questionIds
+          : ['00000000-0000-0000-0000-000000000000']
+      )
+      .order('option_index');
+
+    const {
+      data: imageRows
+    } = await supabaseClient
+      .from('pyq_question_images')
+      .select('*')
+      .in(
+        'question_id',
+        questionIds.length
+          ? questionIds
+          : ['00000000-0000-0000-0000-000000000000']
+      );
+
+    questions =
+      (questionRows || [])
+        .map(q => ({
+          ...q,
+          options:
+            (optionRows || [])
+              .filter(o => o.question_id === q.id)
+              .sort((a, b) => a.option_index - b.option_index),
+
+          images:
+            (imageRows || [])
+              .filter(im => im.question_id === q.id)
+        }))
+        .sort((a, b) => {
+          const sa =
+            sections.findIndex(s => s.id === a.section_id);
+
+          const sb =
+            sections.findIndex(s => s.id === b.section_id);
+
+          return sa !== sb
+            ? sa - sb
+            : a.question_number - b.question_number;
+        });
 
     renderNav();
     updateProgress();
-    if (questions.length) { currentIndex = questions.findIndex(q => q.review_status !== 'approved'); if (currentIndex < 0) currentIndex = 0; renderEditor(); }
+
+    if (questions.length) {
+      currentIndex =
+        questions.findIndex(
+          q => q.review_status !== 'approved'
+        );
+
+      if (currentIndex < 0) {
+        currentIndex = 0;
+      }
+
+      renderEditor();
+    }
   }
 
   function updateProgress() {
     const total = questions.length;
-    const approved = questions.filter(q => q.review_status === 'approved').length;
-    document.getElementById('progressPill').innerHTML = `<b>${approved}</b> / ${total} reviewed`;
-    document.getElementById('publishBtn').disabled = !(total > 0 && approved === total) || paper.status === 'published';
-    document.getElementById('publishBtn').textContent = paper && paper.status === 'published' ? 'Published ✓' : 'Publish PYQ';
+
+    const approved =
+      questions.filter(
+        q => q.review_status === 'approved'
+      ).length;
+
+    document.getElementById('progressPill').innerHTML =
+      `<b>${approved}</b> / ${total} reviewed`;
+
+    document.getElementById('publishBtn').disabled =
+      !(total > 0 && approved === total) ||
+      paper.status === 'published';
+
+    document.getElementById('publishBtn').textContent =
+      paper && paper.status === 'published'
+        ? 'Published ✓'
+        : 'Publish PYQ';
   }
 
   function renderNav() {
-    const navEl = document.getElementById('navPanel');
+    const navEl =
+      document.getElementById('navPanel');
+
     navEl.innerHTML = '';
-    // Precompute index once instead of calling questions.indexOf() per button
-    // (that was an O(n) scan per question, compounding on large papers).
-    const indexById = new Map(questions.map((q, i) => [q.id, i]));
+
+    const indexById =
+      new Map(
+        questions.map((q, i) => [q.id, i])
+      );
+
     sections.forEach(sec => {
-      const h = document.createElement('h3');
+      const h =
+        document.createElement('h3');
+
       h.textContent = sec.name;
+
       navEl.appendChild(h);
-      const grid = document.createElement('div');
+
+      const grid =
+        document.createElement('div');
+
       grid.className = 'qgrid';
-      questions.filter(q => q.section_id === sec.id).forEach(q => {
-        const idx = indexById.get(q.id);
-        const btn = document.createElement('button');
-        let cls = q.review_status === 'approved' ? 'approved' : q.review_status === 'rejected' ? 'rejected' : (q.extraction_status === 'needs_review' ? 'needs_review' : 'pending');
-        btn.className = `qnum ${cls}${idx === currentIndex ? ' current' : ''}`;
-        btn.textContent = q.question_number;
-        btn.addEventListener('click', () => { currentIndex = idx; renderEditor(); });
-        grid.appendChild(btn);
-      });
+
+      questions
+        .filter(q => q.section_id === sec.id)
+        .forEach(q => {
+          const idx =
+            indexById.get(q.id);
+
+          const btn =
+            document.createElement('button');
+
+          let cls =
+            q.review_status === 'approved'
+              ? 'approved'
+              : q.review_status === 'rejected'
+                ? 'rejected'
+                : (
+                    q.extraction_status === 'needs_review'
+                      ? 'needs_review'
+                      : 'pending'
+                  );
+
+          btn.className =
+            `qnum ${cls}${idx === currentIndex ? ' current' : ''}`;
+
+          btn.textContent =
+            q.question_number;
+
+          btn.addEventListener(
+            'click',
+            () => {
+              currentIndex = idx;
+              renderEditor();
+            }
+          );
+
+          grid.appendChild(btn);
+        });
+
       navEl.appendChild(grid);
     });
   }
 
   function renderEditor() {
-    const q = questions[currentIndex];
-    const inner = document.getElementById('editorInner');
-    document.getElementById('footerNav').style.display = questions.length ? 'flex' : 'none';
-    if (!q) { inner.innerHTML = 'No questions extracted.'; return; }
+    const q =
+      questions[currentIndex];
 
-    const confPct = q.confidence != null ? Math.round(q.confidence * 100) : null;
-    const warn = q.extraction_warnings ? `<div class="warn-banner">⚠️ <div>${escapeHtml(q.extraction_warnings)}</div></div>` : '';
+    const inner =
+      document.getElementById('editorInner');
+
+    document.getElementById('footerNav').style.display =
+      questions.length ? 'flex' : 'none';
+
+    if (!q) {
+      inner.innerHTML =
+        'No questions extracted.';
+      return;
+    }
+
+    const confPct =
+      q.confidence != null
+        ? Math.round(q.confidence * 100)
+        : null;
+
+    const warn =
+      q.extraction_warnings
+        ? `<div class="warn-banner">⚠️ <div>${escapeHtml(q.extraction_warnings)}</div></div>`
+        : '';
 
     inner.innerHTML = `
       ${warn}
+
       <div class="meta-row">
-        <span class="meta-chip">Q${q.question_number}</span>
-        <span class="meta-chip">Page ${q.source_page ?? '—'} of source PDF</span>
-        ${confPct !== null ? `<span class="meta-chip ${confPct < 75 ? 'conf-low' : ''}">Confidence ${confPct}%</span>` : ''}
-        <span class="meta-chip">Status: ${q.review_status}</span>
+        <span class="meta-chip">
+          Q${q.question_number}
+        </span>
+
+        <span class="meta-chip">
+          Page ${q.source_page ?? '—'} of source PDF
+        </span>
+
+        ${
+          confPct !== null
+            ? `<span class="meta-chip ${confPct < 75 ? 'conf-low' : ''}">
+                Confidence ${confPct}%
+              </span>`
+            : ''
+        }
+
+        <span class="meta-chip">
+          Status: ${q.review_status}
+        </span>
       </div>
 
-      <label class="field-label">Section / Subject</label>
+      <label class="field-label">
+        Section / Subject
+      </label>
+
       <select id="fSection"></select>
 
-      <label class="field-label">External Question ID (optional)</label>
-      <input type="text" id="fExternalId" value="${escapeAttr(q.external_question_id || '')}">
+      <label class="field-label">
+        External Question ID (optional)
+      </label>
 
-      <label class="field-label">Question text</label>
-      <textarea id="fQuestionText" rows="4">${escapeHtml(q.question_text || '')}</textarea>
+      <input
+        type="text"
+        id="fExternalId"
+        value="${escapeAttr(q.external_question_id || '')}"
+      >
 
-      <label class="field-label">Options — select the correct one</label>
+      <label class="field-label">
+        Question text
+      </label>
+
+      <textarea
+        id="fQuestionText"
+        rows="4"
+      >${escapeHtml(q.question_text || '')}</textarea>
+
+      <label class="field-label">
+        Options — select the correct one
+      </label>
+
       <div id="optionsWrap"></div>
 
-      <label class="field-label">Question image</label>
+      <label class="field-label">
+        Question image
+      </label>
+
       <div class="image-box" id="imageBox"></div>
 
       <div class="action-bar">
-        <button class="btn btn-primary" id="saveBtn">Save changes</button>
-        ${q.review_status === 'approved'
-          ? `<button class="btn btn-ghost" id="unapproveBtn">Un-approve</button>`
-          : `<button class="btn btn-red" id="flagBtn">${q.review_status === 'rejected' ? 'Unflag' : 'Mark extraction incorrect'}</button>`}
+        <button
+          class="btn btn-primary"
+          id="saveBtn"
+        >
+          Save changes
+        </button>
+
+        ${
+          q.review_status === 'approved'
+            ? `
+              <button
+                class="btn btn-ghost"
+                id="unapproveBtn"
+              >
+                Un-approve
+              </button>
+            `
+            : `
+              <button
+                class="btn btn-red"
+                id="flagBtn"
+              >
+                ${
+                  q.review_status === 'rejected'
+                    ? 'Unflag'
+                    : 'Mark extraction incorrect'
+                }
+              </button>
+            `
+        }
       </div>
-      <div class="save-note" id="saveNote"></div>
+
+      <div
+        class="save-note"
+        id="saveNote"
+      ></div>
     `;
 
-    const sectionSel = document.getElementById('fSection');
+    const sectionSel =
+      document.getElementById('fSection');
+
     sections.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.id; opt.textContent = s.name;
-      if (s.id === q.section_id) opt.selected = true;
+      const opt =
+        document.createElement('option');
+
+      opt.value = s.id;
+      opt.textContent = s.name;
+
+      if (s.id === q.section_id) {
+        opt.selected = true;
+      }
+
       sectionSel.appendChild(opt);
     });
 
-    const optionsWrap = document.getElementById('optionsWrap');
-    [0,1,2,3].forEach(i => {
-      const opt = q.options.find(o => o.option_index === i) || { option_text: '', option_image_url: null };
-      const row = document.createElement('div');
+    const optionsWrap =
+      document.getElementById('optionsWrap');
+
+    [0, 1, 2, 3].forEach(i => {
+      const opt =
+        q.options.find(
+          o => o.option_index === i
+        ) || {
+          option_text: '',
+          option_image_url: null
+        };
+
+      const row =
+        document.createElement('div');
+
       row.innerHTML = `
         <div class="option-row">
-          <span class="option-label">${String.fromCharCode(65+i)}</span>
-          <input type="radio" name="correctOpt" value="${i}" ${q.correct_option_index === i ? 'checked' : ''}>
-          <textarea data-opt-idx="${i}" rows="1">${escapeHtml(opt.option_text || '')}</textarea>
+          <span class="option-label">
+            ${String.fromCharCode(65 + i)}
+          </span>
+
+          <input
+            type="radio"
+            name="correctOpt"
+            value="${i}"
+            ${
+              q.correct_option_index === i
+                ? 'checked'
+                : ''
+            }
+          >
+
+          <textarea
+            data-opt-idx="${i}"
+            rows="1"
+          >${escapeHtml(opt.option_text || '')}</textarea>
         </div>
-        <div class="option-image-box" id="optionImageBox${i}"></div>
+
+        <div
+          class="option-image-box"
+          id="optionImageBox${i}"
+        ></div>
       `;
+
       optionsWrap.appendChild(row);
-      renderOptionImageBox(q, i, opt.option_image_url || null);
+
+      renderOptionImageBox(
+        q,
+        i,
+        opt.option_image_url || null
+      );
     });
 
     renderImageBox(q);
 
-    document.getElementById('saveBtn').addEventListener('click', () => saveCurrent());
-    const flagBtn = document.getElementById('flagBtn');
-    if (flagBtn) flagBtn.addEventListener('click', () => toggleFlag());
-    const unapproveBtn = document.getElementById('unapproveBtn');
-    if (unapproveBtn) unapproveBtn.addEventListener('click', () => unapproveCurrent());
-    document.getElementById('prevBtn').disabled = currentIndex === 0;
-    document.getElementById('nextBtn').disabled = currentIndex === questions.length - 1;
+    document
+      .getElementById('saveBtn')
+      .addEventListener(
+        'click',
+        () => saveCurrent()
+      );
+
+    const flagBtn =
+      document.getElementById('flagBtn');
+
+    if (flagBtn) {
+      flagBtn.addEventListener(
+        'click',
+        () => toggleFlag()
+      );
+    }
+
+    const unapproveBtn =
+      document.getElementById('unapproveBtn');
+
+    if (unapproveBtn) {
+      unapproveBtn.addEventListener(
+        'click',
+        () => unapproveCurrent()
+      );
+    }
+
+    document.getElementById('prevBtn').disabled =
+      currentIndex === 0;
+
+    document.getElementById('nextBtn').disabled =
+      currentIndex === questions.length - 1;
 
     renderNav();
   }
 
   function renderImageBox(q) {
-    const box = document.getElementById('imageBox');
+    const box =
+      document.getElementById('imageBox');
+
     if (q.images.length) {
       box.innerHTML = `
-        <img src="${q.images[0].image_url}" alt="Question image">
+        <img
+          src="${q.images[0].image_url}"
+          alt="Question image"
+        >
+
         <div class="image-actions">
-          <button class="btn btn-ghost" id="replaceImageBtn">Replace image</button>
-          <button class="btn btn-red" id="deleteImageBtn">Delete image</button>
+          <button
+            class="btn btn-ghost"
+            id="replaceImageBtn"
+          >
+            Replace image
+          </button>
+
+          <button
+            class="btn btn-red"
+            id="deleteImageBtn"
+          >
+            Delete image
+          </button>
         </div>
       `;
-      document.getElementById('replaceImageBtn').addEventListener('click', () => openCropModal({ type: 'question' }));
-      document.getElementById('deleteImageBtn').addEventListener('click', () => deleteImage());
+
+      document
+        .getElementById('replaceImageBtn')
+        .addEventListener(
+          'click',
+          () => openCropModal({
+            type: 'question'
+          })
+        );
+
+      document
+        .getElementById('deleteImageBtn')
+        .addEventListener(
+          'click',
+          () => deleteImage()
+        );
+
     } else {
       box.innerHTML = `
-        <div class="no-image-note">${q.needs_image ? 'The extractor flagged this question as needing a diagram/figure image.' : 'No image attached. Add one if this question needs a diagram.'}</div>
+        <div class="no-image-note">
+          ${
+            q.needs_image
+              ? 'The extractor flagged this question as needing a diagram/figure image.'
+              : 'No image attached. Add one if this question needs a diagram.'
+          }
+        </div>
+
         <div class="image-actions">
-          <button class="btn btn-primary" id="addImageBtn">Add image from PDF page</button>
+          <button
+            class="btn btn-primary"
+            id="addImageBtn"
+          >
+            Add image from PDF page
+          </button>
         </div>
       `;
-      document.getElementById('addImageBtn').addEventListener('click', () => openCropModal({ type: 'question' }));
+
+      document
+        .getElementById('addImageBtn')
+        .addEventListener(
+          'click',
+          () => openCropModal({
+            type: 'question'
+          })
+        );
     }
   }
 
-  function renderOptionImageBox(q, optIdx, imageUrl) {
-    const box = document.getElementById(`optionImageBox${optIdx}`);
+  function renderOptionImageBox(
+    q,
+    optIdx,
+    imageUrl
+  ) {
+    const box =
+      document.getElementById(
+        `optionImageBox${optIdx}`
+      );
+
     if (!box) return;
+
     if (imageUrl) {
       box.innerHTML = `
-        <img src="${imageUrl}" alt="Option ${String.fromCharCode(65+optIdx)} image">
+        <img
+          src="${imageUrl}"
+          alt="Option ${String.fromCharCode(65 + optIdx)} image"
+        >
+
         <div class="image-actions">
-          <button class="btn btn-ghost" data-opt-replace="${optIdx}">Replace</button>
-          <button class="btn btn-red" data-opt-delete="${optIdx}">Delete</button>
+          <button
+            class="btn btn-ghost"
+            data-opt-replace="${optIdx}"
+          >
+            Replace
+          </button>
+
+          <button
+            class="btn btn-red"
+            data-opt-delete="${optIdx}"
+          >
+            Delete
+          </button>
         </div>
       `;
-      box.querySelector(`[data-opt-replace="${optIdx}"]`).addEventListener('click', () => openCropModal({ type: 'option', index: optIdx }));
-      box.querySelector(`[data-opt-delete="${optIdx}"]`).addEventListener('click', () => deleteOptionImage(optIdx));
+
+      box
+        .querySelector(
+          `[data-opt-replace="${optIdx}"]`
+        )
+        .addEventListener(
+          'click',
+          () => openCropModal({
+            type: 'option',
+            index: optIdx
+          })
+        );
+
+      box
+        .querySelector(
+          `[data-opt-delete="${optIdx}"]`
+        )
+        .addEventListener(
+          'click',
+          () => deleteOptionImage(optIdx)
+        );
+
     } else {
       box.innerHTML = `
         <div class="image-actions">
-          <button class="btn btn-ghost" data-opt-add="${optIdx}">+ Add image for option ${String.fromCharCode(65+optIdx)}</button>
+          <button
+            class="btn btn-ghost"
+            data-opt-add="${optIdx}"
+          >
+            + Add image for option
+            ${String.fromCharCode(65 + optIdx)}
+          </button>
         </div>
       `;
-      box.querySelector(`[data-opt-add="${optIdx}"]`).addEventListener('click', () => openCropModal({ type: 'option', index: optIdx }));
+
+      box
+        .querySelector(
+          `[data-opt-add="${optIdx}"]`
+        )
+        .addEventListener(
+          'click',
+          () => openCropModal({
+            type: 'option',
+            index: optIdx
+          })
+        );
     }
   }
 
-  async function saveCurrent(reviewStatusOverride) {
-    const q = questions[currentIndex];
-    const noteEl = document.getElementById('saveNote');
-    const sectionId = document.getElementById('fSection').value;
-    const externalId = document.getElementById('fExternalId').value.trim() || null;
-    const questionText = document.getElementById('fQuestionText').value;
-    const correctRadio = document.querySelector('input[name=correctOpt]:checked');
-    const correctIdx = correctRadio ? parseInt(correctRadio.value) : null;
-    const optionTexts = [0,1,2,3].map(i => document.querySelector(`textarea[data-opt-idx="${i}"]`).value);
+  async function saveCurrent(
+    reviewStatusOverride
+  ) {
+    const q =
+      questions[currentIndex];
+
+    const noteEl =
+      document.getElementById('saveNote');
+
+    const sectionId =
+      document.getElementById('fSection').value;
+
+    const externalId =
+      document
+        .getElementById('fExternalId')
+        .value
+        .trim() || null;
+
+    const questionText =
+      document.getElementById(
+        'fQuestionText'
+      ).value;
+
+    const correctRadio =
+      document.querySelector(
+        'input[name=correctOpt]:checked'
+      );
+
+    const correctIdx =
+      correctRadio
+        ? parseInt(correctRadio.value)
+        : null;
+
+    const optionTexts =
+      [0, 1, 2, 3].map(
+        i =>
+          document.querySelector(
+            `textarea[data-opt-idx="${i}"]`
+          ).value
+      );
 
     const questionUpdate = {
       section_id: sectionId,
       external_question_id: externalId,
       question_text: questionText,
-      correct_option_index: correctIdx,
+      correct_option_index: correctIdx
     };
-    if (reviewStatusOverride) questionUpdate.review_status = reviewStatusOverride;
 
-    // Run the question update and the options upsert in PARALLEL (not
-    // sequentially), and batch all 4 options into ONE upsert call instead
-    // of up to 4 separate update/insert round trips. This is the fix for
-    // approving feeling slow after many questions — it was making ~7+
-    // sequential network round trips per click.
-    let qResult, optResult;
+    if (reviewStatusOverride) {
+      questionUpdate.review_status =
+        reviewStatusOverride;
+    }
+
+    let qResult;
+    let optResult;
+
     try {
-      [qResult, optResult] = await Promise.all([
-        supabaseClient.from('pyq_questions').update(questionUpdate).eq('id', q.id),
-        supabaseClient.from('pyq_options').upsert(
-          [0,1,2,3].map(i => ({ question_id: q.id, option_index: i, option_text: optionTexts[i] })),
-          { onConflict: 'question_id,option_index' }
-        ),
+      [
+        qResult,
+        optResult
+      ] = await Promise.all([
+        supabaseClient
+          .from('pyq_questions')
+          .update(questionUpdate)
+          .eq('id', q.id),
+
+        supabaseClient
+          .from('pyq_options')
+          .upsert(
+            [0, 1, 2, 3].map(i => ({
+              question_id: q.id,
+              option_index: i,
+              option_text: optionTexts[i]
+            })),
+            {
+              onConflict:
+                'question_id,option_index'
+            }
+          )
       ]);
     } catch (e) {
-      noteEl.textContent = 'Network error while saving: ' + (e?.message || e);
-      noteEl.style.color = 'var(--red)';
+      noteEl.textContent =
+        'Network error while saving: ' +
+        (e?.message || e);
+
+      noteEl.style.color =
+        'var(--red)';
+
       return false;
     }
 
-    if (qResult.error) { noteEl.textContent = 'Could not save: ' + qResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
-    if (optResult.error) { noteEl.textContent = 'Could not save options: ' + optResult.error.message; noteEl.style.color = 'var(--red)'; return false; }
+    if (qResult.error) {
+      noteEl.textContent =
+        'Could not save: ' +
+        qResult.error.message;
 
-    // reflect edits locally
-    q.section_id = sectionId; q.external_question_id = externalId; q.question_text = questionText; q.correct_option_index = correctIdx;
-    if (reviewStatusOverride) q.review_status = reviewStatusOverride;
-    optionTexts.forEach((t,i) => { const o = q.options.find(o=>o.option_index===i); if (o) o.option_text = t; else q.options.push({option_index:i, option_text:t}); });
+      noteEl.style.color =
+        'var(--red)';
 
-    // Audit log is fire-and-forget — it's just a trail, never worth
-    // blocking the UI on.
-    supabaseClient.from('pyq_review_log').insert({
-      question_id: q.id, admin_id: currentUserId,
-      action: reviewStatusOverride === 'approved' ? 'approved' : 'edited',
+      return false;
+    }
+
+    if (optResult.error) {
+      noteEl.textContent =
+        'Could not save options: ' +
+        optResult.error.message;
+
+      noteEl.style.color =
+        'var(--red)';
+
+      return false;
+    }
+
+    q.section_id = sectionId;
+    q.external_question_id = externalId;
+    q.question_text = questionText;
+    q.correct_option_index = correctIdx;
+
+    if (reviewStatusOverride) {
+      q.review_status =
+        reviewStatusOverride;
+    }
+
+    optionTexts.forEach((t, i) => {
+      const o =
+        q.options.find(
+          o => o.option_index === i
+        );
+
+      if (o) {
+        o.option_text = t;
+      } else {
+        q.options.push({
+          option_index: i,
+          option_text: t
+        });
+      }
     });
 
-    if (!reviewStatusOverride) { noteEl.textContent = 'Saved.'; noteEl.style.color = '#1c8f57'; }
+    supabaseClient
+      .from('pyq_review_log')
+      .insert({
+        question_id: q.id,
+        admin_id: currentUserId,
+        action:
+          reviewStatusOverride === 'approved'
+            ? 'approved'
+            : 'edited'
+      });
+
+    if (!reviewStatusOverride) {
+      noteEl.textContent = 'Saved.';
+      noteEl.style.color = '#1c8f57';
+    }
+
     return true;
   }
 
   async function approveCurrent() {
-    const approveBtn = document.getElementById('approveBtn');
-    if (!approveBtn || approveBtn.disabled) return; // guards against double-click races
+    const approveBtn =
+      document.getElementById(
+        'approveBtn'
+      );
+
+    if (
+      !approveBtn ||
+      approveBtn.disabled
+    ) {
+      return;
+    }
+
     approveBtn.disabled = true;
-    approveBtn.textContent = 'Approving…';
+    approveBtn.textContent =
+      'Approving…';
+
     try {
-      const ok = await saveCurrent('approved');
+      const ok =
+        await saveCurrent('approved');
+
       if (ok) {
         updateProgress();
-        if (currentIndex < questions.length - 1) currentIndex++;
+
+        if (
+          currentIndex <
+          questions.length - 1
+        ) {
+          currentIndex++;
+        }
+
         renderEditor();
       }
+
     } catch (e) {
-      document.getElementById('saveNote').textContent = 'Unexpected error: ' + (e?.message || e);
+      document.getElementById(
+        'saveNote'
+      ).textContent =
+        'Unexpected error: ' +
+        (e?.message || e);
+
     } finally {
-      // approveBtn is a static element that persists across renders (it
-      // lives outside the rebuilt editor panel), so it must be explicitly
-      // re-enabled here — it will NOT reset itself.
       approveBtn.disabled = false;
-      approveBtn.textContent = 'Approve Question →';
+      approveBtn.textContent =
+        'Approve Question →';
     }
   }
 
   async function unapproveCurrent() {
-    const q = questions[currentIndex];
-    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: 'pending' }).eq('id', q.id);
-    if (error) { document.getElementById('saveNote').textContent = 'Could not un-approve: ' + error.message; return; }
+    const q =
+      questions[currentIndex];
+
+    const { error } =
+      await supabaseClient
+        .from('pyq_questions')
+        .update({
+          review_status: 'pending'
+        })
+        .eq('id', q.id);
+
+    if (error) {
+      document.getElementById(
+        'saveNote'
+      ).textContent =
+        'Could not un-approve: ' +
+        error.message;
+
+      return;
+    }
+
     q.review_status = 'pending';
-    supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: currentUserId, action: 'edited', notes: 'Un-approved' });
+
+    supabaseClient
+      .from('pyq_review_log')
+      .insert({
+        question_id: q.id,
+        admin_id: currentUserId,
+        action: 'edited',
+        notes: 'Un-approved'
+      });
+
     updateProgress();
     renderEditor();
   }
 
   async function toggleFlag() {
-    const q = questions[currentIndex];
-    const newStatus = q.review_status === 'rejected' ? 'pending' : 'rejected';
-    const { error } = await supabaseClient.from('pyq_questions').update({ review_status: newStatus }).eq('id', q.id);
-    if (error) { document.getElementById('saveNote').textContent = 'Could not update: ' + error.message; return; }
-    q.review_status = newStatus;
-    supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: currentUserId, action: newStatus === 'rejected' ? 'flagged' : 'edited', notes: newStatus === 'rejected' ? 'Marked extraction incorrect' : 'Unflagged' });
-    updateProgress();
-    renderEditor();
-  }
+    const q =
+      questions[currentIndex];
 
-  async function deleteImage() {
-    const q = questions[currentIndex];
-    if (!q.images.length) return;
-    const img = q.images[0];
-    await supabaseClient.from('pyq_question_images').delete().eq('id', img.id);
-    q.images = [];
-    renderImageBox(q);
-  }
+    const newStatus =
+      q.review_status === 'rejected'
+        ? 'pending'
+        : 'rejected';
 
-  async function deleteOptionImage(optIdx) {
-    const q = questions[currentIndex];
-    const opt = q.options.find(o => o.option_index === optIdx);
-    if (!opt) return;
-    const { error } = await supabaseClient.from('pyq_options').update({ option_image_url: null }).eq('id', opt.id);
-    if (error) { alert('Could not remove image: ' + error.message); return; }
-    opt.option_image_url = null;
-    renderOptionImageBox(q, optIdx, null);
-  }
-
-  // ================= CROP MODAL =================
-  const cropModal = document.getElementById('cropModal');
-  const cropCanvas = document.getElementById('cropCanvas');
-  const ctx = cropCanvas.getContext('2d');
-  let dragStart = null, dragRect = null, currentPageImageData = null;
-  let cropTarget = { type: 'question' }; // or { type: 'option', index: 0..3 }
-
-  document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', () => cropModal.classList.remove('show')));
-
-  async function ensurePdfLoaded() {
-    if (pdfDoc) return pdfDoc;
-    const { data, error } = await supabaseClient.storage.from('pyq-source-pdfs').createSignedUrl(paper.source_pdf_path, 3600);
-    if (error) throw new Error('Could not get PDF: ' + error.message);
-    pdfSignedUrl = data.signedUrl;
-    pdfDoc = await pdfjsLib.getDocument(pdfSignedUrl).promise;
-    return pdfDoc;
-  }
-
-  async function openCropModal(target) {
-    cropTarget = target || { type: 'question' };
-    document.getElementById('cropTargetLabel').textContent =
-      cropTarget.type === 'option' ? `Option ${String.fromCharCode(65 + cropTarget.index)} image` : 'Question image';
-    const q = questions[currentIndex];
-    document.getElementById('pageJumpInput').value = q.source_page || 1;
-    cropModal.classList.add('show');
-    document.getElementById('cropUploadBtn').disabled = true;
-    dragRect = null;
-    try {
-      document.getElementById('pageLoadStatus').textContent = 'Loading PDF…';
-      await ensurePdfLoaded();
-      await renderPdfPage(q.source_page || 1);
-    } catch (e) {
-      document.getElementById('pageLoadStatus').textContent = e.message;
-    }
-  }
-
-  document.getElementById('pageJumpBtn').addEventListener('click', async () => {
-    const pageNum = parseInt(document.getElementById('pageJumpInput').value) || 1;
-    document.getElementById('pageLoadStatus').textContent = 'Loading…';
-    try { await renderPdfPage(pageNum); document.getElementById('pageLoadStatus').textContent = ''; }
-    catch (e) { document.getElementById('pageLoadStatus').textContent = e.message; }
-  });
-
-  async function renderPdfPage(pageNum) {
-    const doc = await ensurePdfLoaded();
-    const page = await doc.getPage(Math.max(1, Math.min(pageNum, doc.numPages)));
-    const viewport = page.getViewport({ scale: 1.5 });
-    cropCanvas.width = viewport.width;
-    cropCanvas.height = viewport.height;
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    currentPageImageData = ctx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
-    document.getElementById('pageLoadStatus').textContent = `Page ${pageNum} of ${doc.numPages}`;
-    dragRect = null;
-    document.getElementById('cropUploadBtn').disabled = true;
-  }
-
-  function canvasPos(e) {
-    const rect = cropCanvas.getBoundingClientRect();
-    const scaleX = cropCanvas.width / rect.width, scaleY = cropCanvas.height / rect.height;
-    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
-  }
-
-  // Pointer Events unify mouse AND touch input (iPad included) into one API —
-  // plain mousedown/mousemove/mouseup does not reliably fire for touch drags.
-  cropCanvas.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    cropCanvas.setPointerCapture(e.pointerId);
-    dragStart = canvasPos(e);
-    dragRect = null;
-  });
-  cropCanvas.addEventListener('pointermove', (e) => {
-    if (!dragStart) return;
-    e.preventDefault();
-    const p = canvasPos(e);
-    dragRect = { x: Math.min(dragStart.x,p.x), y: Math.min(dragStart.y,p.y), w: Math.abs(p.x-dragStart.x), h: Math.abs(p.y-dragStart.y) };
-    ctx.putImageData(currentPageImageData, 0, 0);
-    ctx.strokeStyle = '#ff7800'; ctx.lineWidth = 2;
-    ctx.strokeRect(dragRect.x, dragRect.y, dragRect.w, dragRect.h);
-  });
-  function endDrag(e) {
-    if (!dragStart) return;
-    dragStart = null;
-    document.getElementById('cropUploadBtn').disabled = !(dragRect && dragRect.w > 5 && dragRect.h > 5);
-  }
-  cropCanvas.addEventListener('pointerup', endDrag);
-  cropCanvas.addEventListener('pointercancel', endDrag);
-
-  document.getElementById('cropUploadBtn').addEventListener('click', async () => {
-  if (!dragRect) return;
-  const btn = document.getElementById('cropUploadBtn');
-  btn.disabled = true;
-  btn.textContent = 'Uploading…';
-  try {
-    // Restore the clean PDF image before extracting pixels.
-    ctx.putImageData(currentPageImageData, 0, 0);
-    const cropCanvasOut = document.createElement('canvas');
-    cropCanvasOut.width = Math.round(dragRect.w);
-    cropCanvasOut.height = Math.round(dragRect.h);
-    cropCanvasOut.getContext('2d').putImageData(
-      ctx.getImageData(
-        Math.round(dragRect.x),
-        Math.round(dragRect.y),
-        Math.round(dragRect.w),
-        Math.round(dragRect.h)
-      ),
-      0,
-      0
-    );
-    const blob = await new Promise((resolve, reject) => {
-      cropCanvasOut.toBlob(
-        result => result ? resolve(result) : reject(new Error('Could not create image')),
-        'image/png'
-      );
-    });
-    const q = questions[currentIndex];
-    const suffix =
-      cropTarget.type === 'option'
-        ? `opt${cropTarget.index}`
-        : 'question';
-    const newPath =
-      `${paperId}/${q.id}_${suffix}_${Date.now()}.png`;
-    // ============================================================
-    // 1. UPLOAD NEW IMAGE FIRST
-    // ============================================================
-    const { error: uploadError } = await supabaseClient
-      .storage
-      .from('pyq-images')
-      .upload(newPath, blob, {
-        contentType: 'image/png',
-        upsert: false
-      });
-    if (uploadError) {
-      throw new Error('Upload failed: ' + uploadError.message);
-    }
-    const { data: publicData } =
-      supabaseClient.storage
-        .from('pyq-images')
-        .getPublicUrl(newPath);
-    const newPublicUrl = publicData.publicUrl;
-    // ============================================================
-    // Helper: convert our public Storage URL back to its path
-    // ============================================================
-    function storagePathFromPublicUrl(url) {
-      if (!url) return null;
-      const marker =
-        '/storage/v1/object/public/pyq-images/';
-      const index = url.indexOf(marker);
-      if (index === -1) return null;
-      return decodeURIComponent(
-        url.substring(index + marker.length)
-      );
-    }
-    // ============================================================
-    // Helper: delete an old Storage object and verify deletion
-    // ============================================================
-    async function deleteOldStorageFile(oldUrl) {
-      const oldPath = storagePathFromPublicUrl(oldUrl);
-      if (!oldPath) {
-        console.warn(
-          'Could not determine old Storage path from URL:',
-          oldUrl
-        );
-        return false;
-      }
-      const { error: deleteError } =
-        await supabaseClient
-          .storage
-          .from('pyq-images')
-          .remove([oldPath]);
-      if (deleteError) {
-        throw new Error(
-          'New image was saved, but old image could not be deleted: ' +
-          deleteError.message
-        );
-      }
-      // Verify the old object is gone.
-      const parts = oldPath.split('/');
-      const oldFileName = parts.pop();
-      const oldFolder = parts.join('/');
-      const { data: remaining, error: verifyError } =
-        await supabaseClient
-          .storage
-          .from('pyq-images')
-          .list(oldFolder, {
-            search: oldFileName,
-            limit: 100
-          });
-      if (verifyError) {
-        throw new Error(
-          'New image was saved and old image was requested for deletion, ' +
-          'but deletion could not be verified: ' +
-          verifyError.message
-        );
-      }
-      const stillExists =
-        (remaining || []).some(
-          item => item.name === oldFileName
-        );
-      if (stillExists) {
-        throw new Error(
-          'New image was saved, but the old image still exists in Storage.'
-        );
-      }
-      return true;
-    }
-    // ============================================================
-    // OPTION IMAGE
-    // ============================================================
-    if (cropTarget.type === 'option') {
-      const opt =
-        q.options.find(
-          o => o.option_index === cropTarget.index
-        );
-      if (!opt) {
-        throw new Error(
-          'Could not find the selected option.'
-        );
-      }
-      // Remember the OLD image before replacing it.
-      const oldImageUrl = opt.option_image_url || null;
-      // ----------------------------------------------------------
-      // 2. UPDATE DATABASE TO NEW IMAGE
-      // ----------------------------------------------------------
-      const { error: dbError } =
-        await supabaseClient
-          .from('pyq_options')
-          .update({
-            option_image_url: newPublicUrl
-          })
-          .eq('id', opt.id);
-      if (dbError) {
-        // New file was uploaded but database update failed.
-        // Remove the newly uploaded file so we don't create
-        // an orphan.
-        await supabaseClient
-          .storage
-          .from('pyq-images')
-          .remove([newPath])
-          .catch(() => {});
-        throw new Error(
-          'Could not save option image: ' +
-          dbError.message
-        );
-      }
-      // Update local state only after DB succeeded.
-      opt.option_image_url = newPublicUrl;
-      // ----------------------------------------------------------
-      // 3. DELETE OLD STORAGE FILE
-      // ----------------------------------------------------------
-      if (oldImageUrl && oldImageUrl !== newPublicUrl) {
-        await deleteOldStorageFile(oldImageUrl);
-      }
-      // Audit log.
+    const { error } =
       await supabaseClient
-        .from('pyq_review_log')
-        .insert({
-          question_id: q.id,
-          admin_id: currentUserId,
-          action: 'image_replaced',
-          notes:
-            `Option ${String.fromCharCode(65 + cropTarget.index)} image replaced`
-        });
-      btn.disabled = false;
-      btn.textContent = 'Crop & Upload';
-      cropModal.classList.remove('show');
-      renderOptionImageBox(
-        q,
-        cropTarget.index,
-        newPublicUrl
-      );
+        .from('pyq_questions')
+        .update({
+          review_status: newStatus
+        })
+        .eq('id', q.id);
+
+    if (error) {
+      document.getElementById(
+        'saveNote'
+      ).textContent =
+        'Could not update: ' +
+        error.message;
+
       return;
     }
-    // ============================================================
-    // QUESTION IMAGE
-    // ============================================================
-    const oldImage =
-      q.images.length
-        ? q.images[0]
-        : null;
-    const oldImageUrl =
-      oldImage?.image_url || null;
-    // ------------------------------------------------------------
-    // 2. INSERT NEW DB IMAGE FIRST
-    // ------------------------------------------------------------
-    const {
-      data: newImageRow,
-      error: insertError
-    } = await supabaseClient
-      .from('pyq_question_images')
-      .insert({
-        question_id: q.id,
-        image_url: newPublicUrl,
-        page_number:
-          parseInt(
-            document.getElementById('pageJumpInput').value
-          ) || null
-      })
-      .select()
-      .single();
-    if (insertError || !newImageRow) {
-      // New file was uploaded but DB insert failed.
-      // Clean up the new Storage file.
-      await supabaseClient
-        .storage
-        .from('pyq-images')
-        .remove([newPath])
-        .catch(() => {});
-      throw new Error(
-        'Could not save question image: ' +
-        (insertError?.message || 'Database insert failed')
-      );
-    }
-    // ------------------------------------------------------------
-    // 3. DELETE OLD DB RECORD
-    // ------------------------------------------------------------
-    if (oldImage) {
-      const { error: oldDbDeleteError } =
-        await supabaseClient
-          .from('pyq_question_images')
-          .delete()
-          .eq('id', oldImage.id);
-      if (oldDbDeleteError) {
-        // IMPORTANT:
-        // The new image is already safely saved.
-        // Do NOT delete the new image.
-        //
-        // The old DB row can be cleaned manually/retried later.
-        throw new Error(
-          'New image was saved, but the old image record could not be removed: ' +
-          oldDbDeleteError.message
-        );
-      }
-    }
-    // Update local state.
-    q.images = [newImageRow];
-    // ------------------------------------------------------------
-    // 4. DELETE OLD STORAGE FILE
-    // ------------------------------------------------------------
-    if (oldImageUrl && oldImageUrl !== newPublicUrl) {
-      await deleteOldStorageFile(oldImageUrl);
-    }
-    // Audit log.
-    await supabaseClient
+
+    q.review_status =
+      newStatus;
+
+    supabaseClient
       .from('pyq_review_log')
       .insert({
         question_id: q.id,
         admin_id: currentUserId,
-        action: 'image_replaced'
+        action:
+          newStatus === 'rejected'
+            ? 'flagged'
+            : 'edited',
+        notes:
+          newStatus === 'rejected'
+            ? 'Marked extraction incorrect'
+            : 'Unflagged'
       });
-    btn.disabled = false;
-    btn.textContent = 'Crop & Upload';
-    cropModal.classList.remove('show');
-    renderImageBox(q);
-  } catch (error) {
-    console.error('Image replacement failed:', error);
-    alert(
-      'Image replacement encountered a problem:\n\n' +
-      (error?.message || error)
-    );
-    btn.disabled = false;
-    btn.textContent = 'Crop & Upload';
+
+    updateProgress();
+    renderEditor();
   }
-});
 
-  document.getElementById('publishBtn').addEventListener('click', async () => {
-  if (!confirm(
-    'Publish this PYQ? It will immediately become visible to students in the mock test list. ' +
-    'After successful publication, the original source PDF will be permanently deleted from Storage. ' +
-    'The questions, options, images, and review data will be retained.'
-  )) return;
+  /*
+   * ============================================================
+   * DELETE QUESTION IMAGE
+   * ============================================================
+   *
+   * Removes:
+   *   1. pyq_question_images database record
+   *   2. Corresponding pyq-images Storage object
+   *   3. Verifies that the Storage object is gone
+   *
+   * The database reference is removed first so the database never
+   * points to an image that has already been deleted from Storage.
+   */
+  async function deleteImage() {
+    const q =
+      questions[currentIndex];
 
-  const btn = document.getElementById('publishBtn');
+    if (
+      !q ||
+      !q.images ||
+      !q.images.length
+    ) {
+      return;
+    }
 
-  btn.disabled = true;
-  btn.textContent = 'Publishing…';
+    const img =
+      q.images[0];
 
-  try {
-    const { data, error } = await supabaseClient.functions.invoke(
-      'publish-pyq-paper-v2',
-      {
-        body: { paper_id: paperId }
+    const storageMarker =
+      '/storage/v1/object/public/pyq-images/';
+
+    try {
+      if (!img.image_url) {
+        throw new Error(
+          'This image has no Storage URL.'
+        );
+      }
+
+      const markerIndex =
+        img.image_url.indexOf(
+          storageMarker
+        );
+
+      if (markerIndex === -1) {
+        throw new Error(
+          'Could not determine the pyq-images Storage path from this image URL.'
+        );
+      }
+
+      const storagePath =
+        decodeURIComponent(
+          img.image_url.substring(
+            markerIndex +
+            storageMarker.length
+          )
+        );
+
+      /*
+       * STEP 1:
+       * Delete the database reference.
+       */
+      const {
+        error: dbError
+      } =
+        await supabaseClient
+          .from('pyq_question_images')
+          .delete()
+          .eq('id', img.id);
+
+      if (dbError) {
+        throw new Error(
+          'Could not remove the question image database record: ' +
+          dbError.message
+        );
+      }
+
+      /*
+       * Update local UI immediately after the DB deletion succeeds.
+       */
+      q.images = [];
+      renderImageBox(q);
+
+      /*
+       * STEP 2:
+       * Delete the actual Storage object.
+       */
+      const {
+        error: storageError
+      } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .remove([storagePath]);
+
+      if (storageError) {
+        throw new Error(
+          'The database reference was removed, but the Storage file may remain as an orphan: ' +
+          storageError.message
+        );
+      }
+
+      /*
+       * STEP 3:
+       * Verify that the Storage object is really gone.
+       */
+      const pathParts =
+        storagePath.split('/');
+
+      const fileName =
+        pathParts.pop();
+
+      const folderPath =
+        pathParts.join('/');
+
+      const {
+        data: remainingFiles,
+        error: verifyError
+      } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .list(
+            folderPath,
+            {
+              search: fileName,
+              limit: 100
+            }
+          );
+
+      if (verifyError) {
+        throw new Error(
+          'The database reference was removed and Storage deletion was requested, but verification failed. The Storage file may remain as an orphan: ' +
+          verifyError.message
+        );
+      }
+
+      if (
+        (remainingFiles || [])
+          .some(
+            file =>
+              file.name === fileName
+          )
+      ) {
+        throw new Error(
+          'The database reference was removed, but the Storage file still exists and may remain as an orphan.'
+        );
+      }
+
+      /*
+       * STEP 4:
+       * Audit log.
+       */
+      const {
+        error: logError
+      } =
+        await supabaseClient
+          .from('pyq_review_log')
+          .insert({
+            question_id: q.id,
+            admin_id: currentUserId,
+            action: 'image_deleted'
+          });
+
+      if (logError) {
+        console.error(
+          'Review log insert failed:',
+          logError.message
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        'Question image deletion failed:',
+        error
+      );
+
+      alert(
+        'Could not completely delete the question image:\n\n' +
+        (error?.message || error)
+      );
+    }
+  }
+
+  /*
+   * ============================================================
+   * DELETE OPTION IMAGE
+   * ============================================================
+   *
+   * Removes:
+   *   1. option_image_url from pyq_options
+   *   2. Corresponding pyq-images Storage object
+   *   3. Verifies that the Storage object is gone
+   */
+  async function deleteOptionImage(
+    optIdx
+  ) {
+    const q =
+      questions[currentIndex];
+
+    const opt =
+      q?.options?.find(
+        o =>
+          o.option_index === optIdx
+      );
+
+    if (
+      !opt ||
+      !opt.option_image_url
+    ) {
+      return;
+    }
+
+    const imageUrl =
+      opt.option_image_url;
+
+    const storageMarker =
+      '/storage/v1/object/public/pyq-images/';
+
+    try {
+      const markerIndex =
+        imageUrl.indexOf(
+          storageMarker
+        );
+
+      if (markerIndex === -1) {
+        throw new Error(
+          'Could not determine the pyq-images Storage path from this image URL.'
+        );
+      }
+
+      const storagePath =
+        decodeURIComponent(
+          imageUrl.substring(
+            markerIndex +
+            storageMarker.length
+          )
+        );
+
+      /*
+       * STEP 1:
+       * Remove the Storage URL from the database.
+       */
+      const {
+        error: dbError
+      } =
+        await supabaseClient
+          .from('pyq_options')
+          .update({
+            option_image_url: null
+          })
+          .eq('id', opt.id);
+
+      if (dbError) {
+        throw new Error(
+          'Could not remove the option image database reference: ' +
+          dbError.message
+        );
+      }
+
+      /*
+       * Update local UI.
+       */
+      opt.option_image_url = null;
+
+      renderOptionImageBox(
+        q,
+        optIdx,
+        null
+      );
+
+      /*
+       * STEP 2:
+       * Delete actual Storage object.
+       */
+      const {
+        error: storageError
+      } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .remove([storagePath]);
+
+      if (storageError) {
+        throw new Error(
+          'The database reference was removed, but the Storage file may remain as an orphan: ' +
+          storageError.message
+        );
+      }
+
+      /*
+       * STEP 3:
+       * Verify Storage deletion.
+       */
+      const pathParts =
+        storagePath.split('/');
+
+      const fileName =
+        pathParts.pop();
+
+      const folderPath =
+        pathParts.join('/');
+
+      const {
+        data: remainingFiles,
+        error: verifyError
+      } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .list(
+            folderPath,
+            {
+              search: fileName,
+              limit: 100
+            }
+          );
+
+      if (verifyError) {
+        throw new Error(
+          'The database reference was removed and Storage deletion was requested, but verification failed. The Storage file may remain as an orphan: ' +
+          verifyError.message
+        );
+      }
+
+      if (
+        (remainingFiles || [])
+          .some(
+            file =>
+              file.name === fileName
+          )
+      ) {
+        throw new Error(
+          'The database reference was removed, but the Storage file still exists and may remain as an orphan.'
+        );
+      }
+
+      /*
+       * STEP 4:
+       * Audit log.
+       */
+      const {
+        error: logError
+      } =
+        await supabaseClient
+          .from('pyq_review_log')
+          .insert({
+            question_id: q.id,
+            admin_id: currentUserId,
+            action: 'image_deleted',
+            notes:
+              `Option ${String.fromCharCode(65 + optIdx)} image deleted`
+          });
+
+      if (logError) {
+        console.error(
+          'Review log insert failed:',
+          logError.message
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        'Option image deletion failed:',
+        error
+      );
+
+      alert(
+        'Could not completely delete the option image:\n\n' +
+        (error?.message || error)
+      );
+    }
+  }
+
+  // ================= CROP MODAL =================
+
+  const cropModal =
+    document.getElementById(
+      'cropModal'
+    );
+
+  const cropCanvas =
+    document.getElementById(
+      'cropCanvas'
+    );
+
+  const ctx =
+    cropCanvas.getContext('2d');
+
+  let dragStart = null;
+  let dragRect = null;
+  let currentPageImageData = null;
+
+  let cropTarget = {
+    type: 'question'
+  };
+
+  document
+    .querySelectorAll(
+      '[data-close-modal]'
+    )
+    .forEach(
+      b =>
+        b.addEventListener(
+          'click',
+          () =>
+            cropModal.classList.remove(
+              'show'
+            )
+        )
+    );
+
+  async function ensurePdfLoaded() {
+    if (pdfDoc) {
+      return pdfDoc;
+    }
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .storage
+        .from('pyq-source-pdfs')
+        .createSignedUrl(
+          paper.source_pdf_path,
+          3600
+        );
+
+    if (error) {
+      throw new Error(
+        'Could not get PDF: ' +
+        error.message
+      );
+    }
+
+    pdfSignedUrl =
+      data.signedUrl;
+
+    pdfDoc =
+      await pdfjsLib
+        .getDocument(
+          pdfSignedUrl
+        )
+        .promise;
+
+    return pdfDoc;
+  }
+
+  async function openCropModal(
+    target
+  ) {
+    cropTarget =
+      target || {
+        type: 'question'
+      };
+
+    document.getElementById(
+      'cropTargetLabel'
+    ).textContent =
+      cropTarget.type === 'option'
+        ? `Option ${String.fromCharCode(
+            65 + cropTarget.index
+          )} image`
+        : 'Question image';
+
+    const q =
+      questions[currentIndex];
+
+    document.getElementById(
+      'pageJumpInput'
+    ).value =
+      q.source_page || 1;
+
+    cropModal.classList.add(
+      'show'
+    );
+
+    document.getElementById(
+      'cropUploadBtn'
+    ).disabled = true;
+
+    dragRect = null;
+
+    try {
+      document.getElementById(
+        'pageLoadStatus'
+      ).textContent =
+        'Loading PDF…';
+
+      await ensurePdfLoaded();
+
+      await renderPdfPage(
+        q.source_page || 1
+      );
+
+    } catch (e) {
+      document.getElementById(
+        'pageLoadStatus'
+      ).textContent =
+        e.message;
+    }
+  }
+
+  document.getElementById(
+    'pageJumpBtn'
+  ).addEventListener(
+    'click',
+    async () => {
+      const pageNum =
+        parseInt(
+          document.getElementById(
+            'pageJumpInput'
+          ).value
+        ) || 1;
+
+      document.getElementById(
+        'pageLoadStatus'
+      ).textContent =
+        'Loading…';
+
+      try {
+        await renderPdfPage(
+          pageNum
+        );
+
+        document.getElementById(
+          'pageLoadStatus'
+        ).textContent = '';
+
+      } catch (e) {
+        document.getElementById(
+          'pageLoadStatus'
+        ).textContent =
+          e.message;
+      }
+    }
+  );
+
+  async function renderPdfPage(
+    pageNum
+  ) {
+    const doc =
+      await ensurePdfLoaded();
+
+    const page =
+      await doc.getPage(
+        Math.max(
+          1,
+          Math.min(
+            pageNum,
+            doc.numPages
+          )
+        )
+      );
+
+    const viewport =
+      page.getViewport({
+        scale: 1.5
+      });
+
+    cropCanvas.width =
+      viewport.width;
+
+    cropCanvas.height =
+      viewport.height;
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise;
+
+    currentPageImageData =
+      ctx.getImageData(
+        0,
+        0,
+        cropCanvas.width,
+        cropCanvas.height
+      );
+
+    document.getElementById(
+      'pageLoadStatus'
+    ).textContent =
+      `Page ${pageNum} of ${doc.numPages}`;
+
+    dragRect = null;
+
+    document.getElementById(
+      'cropUploadBtn'
+    ).disabled = true;
+  }
+
+  function canvasPos(e) {
+    const rect =
+      cropCanvas.getBoundingClientRect();
+
+    const scaleX =
+      cropCanvas.width /
+      rect.width;
+
+    const scaleY =
+      cropCanvas.height /
+      rect.height;
+
+    return {
+      x:
+        (e.clientX - rect.left) *
+        scaleX,
+
+      y:
+        (e.clientY - rect.top) *
+        scaleY
+    };
+  }
+
+  cropCanvas.addEventListener(
+    'pointerdown',
+    e => {
+      e.preventDefault();
+
+      cropCanvas.setPointerCapture(
+        e.pointerId
+      );
+
+      dragStart =
+        canvasPos(e);
+
+      dragRect = null;
+    }
+  );
+
+  cropCanvas.addEventListener(
+    'pointermove',
+    e => {
+      if (!dragStart) {
+        return;
+      }
+
+      e.preventDefault();
+
+      const p =
+        canvasPos(e);
+
+      dragRect = {
+        x:
+          Math.min(
+            dragStart.x,
+            p.x
+          ),
+
+        y:
+          Math.min(
+            dragStart.y,
+            p.y
+          ),
+
+        w:
+          Math.abs(
+            p.x -
+            dragStart.x
+          ),
+
+        h:
+          Math.abs(
+            p.y -
+            dragStart.y
+          )
+      };
+
+      ctx.putImageData(
+        currentPageImageData,
+        0,
+        0
+      );
+
+      ctx.strokeStyle =
+        '#ff7800';
+
+      ctx.lineWidth = 2;
+
+      ctx.strokeRect(
+        dragRect.x,
+        dragRect.y,
+        dragRect.w,
+        dragRect.h
+      );
+    }
+  );
+
+  function endDrag(e) {
+    if (!dragStart) {
+      return;
+    }
+
+    dragStart = null;
+
+    document.getElementById(
+      'cropUploadBtn'
+    ).disabled =
+      !(
+        dragRect &&
+        dragRect.w > 5 &&
+        dragRect.h > 5
+      );
+  }
+
+  cropCanvas.addEventListener(
+    'pointerup',
+    endDrag
+  );
+
+  cropCanvas.addEventListener(
+    'pointercancel',
+    endDrag
+  );
+
+  document.getElementById(
+    'cropUploadBtn'
+  ).addEventListener(
+    'click',
+    async () => {
+      if (!dragRect) {
+        return;
+      }
+
+      const btn =
+        document.getElementById(
+          'cropUploadBtn'
+        );
+
+      btn.disabled = true;
+      btn.textContent =
+        'Uploading…';
+
+      try {
+        /*
+         * Restore clean PDF image.
+         */
+        ctx.putImageData(
+          currentPageImageData,
+          0,
+          0
+        );
+
+        const cropCanvasOut =
+          document.createElement(
+            'canvas'
+          );
+
+        cropCanvasOut.width =
+          Math.round(
+            dragRect.w
+          );
+
+        cropCanvasOut.height =
+          Math.round(
+            dragRect.h
+          );
+
+        cropCanvasOut
+          .getContext('2d')
+          .putImageData(
+            ctx.getImageData(
+              Math.round(
+                dragRect.x
+              ),
+              Math.round(
+                dragRect.y
+              ),
+              Math.round(
+                dragRect.w
+              ),
+              Math.round(
+                dragRect.h
+              )
+            ),
+            0,
+            0
+          );
+
+        const blob =
+          await new Promise(
+            (resolve, reject) => {
+              cropCanvasOut.toBlob(
+                result =>
+                  result
+                    ? resolve(result)
+                    : reject(
+                        new Error(
+                          'Could not create image'
+                        )
+                      ),
+                'image/png'
+              );
+            }
+          );
+
+        const q =
+          questions[currentIndex];
+
+        const suffix =
+          cropTarget.type === 'option'
+            ? `opt${cropTarget.index}`
+            : 'question';
+
+        const newPath =
+          `${paperId}/${q.id}_${suffix}_${Date.now()}.png`;
+
+        /*
+         * ========================================================
+         * 1. UPLOAD NEW IMAGE FIRST
+         * ========================================================
+         */
+        const {
+          error: uploadError
+        } =
+          await supabaseClient
+            .storage
+            .from('pyq-images')
+            .upload(
+              newPath,
+              blob,
+              {
+                contentType:
+                  'image/png',
+                upsert: false
+              }
+            );
+
+        if (uploadError) {
+          throw new Error(
+            'Upload failed: ' +
+            uploadError.message
+          );
+        }
+
+        const {
+          data: publicData
+        } =
+          supabaseClient
+            .storage
+            .from('pyq-images')
+            .getPublicUrl(
+              newPath
+            );
+
+        const newPublicUrl =
+          publicData.publicUrl;
+
+        /*
+         * Convert public Storage URL back to path.
+         */
+        function storagePathFromPublicUrl(
+          url
+        ) {
+          if (!url) {
+            return null;
+          }
+
+          const marker =
+            '/storage/v1/object/public/pyq-images/';
+
+          const index =
+            url.indexOf(marker);
+
+          if (index === -1) {
+            return null;
+          }
+
+          return decodeURIComponent(
+            url.substring(
+              index +
+              marker.length
+            )
+          );
+        }
+
+        /*
+         * Delete and verify old Storage object.
+         */
+        async function deleteOldStorageFile(
+          oldUrl
+        ) {
+          const oldPath =
+            storagePathFromPublicUrl(
+              oldUrl
+            );
+
+          if (!oldPath) {
+            console.warn(
+              'Could not determine old Storage path from URL:',
+              oldUrl
+            );
+
+            return false;
+          }
+
+          const {
+            error: deleteError
+          } =
+            await supabaseClient
+              .storage
+              .from('pyq-images')
+              .remove([
+                oldPath
+              ]);
+
+          if (deleteError) {
+            throw new Error(
+              'New image was saved, but old image could not be deleted: ' +
+              deleteError.message
+            );
+          }
+
+          const parts =
+            oldPath.split('/');
+
+          const oldFileName =
+            parts.pop();
+
+          const oldFolder =
+            parts.join('/');
+
+          const {
+            data: remaining,
+            error: verifyError
+          } =
+            await supabaseClient
+              .storage
+              .from('pyq-images')
+              .list(
+                oldFolder,
+                {
+                  search:
+                    oldFileName,
+                  limit: 100
+                }
+              );
+
+          if (verifyError) {
+            throw new Error(
+              'New image was saved and old image was requested for deletion, but deletion could not be verified: ' +
+              verifyError.message
+            );
+          }
+
+          const stillExists =
+            (remaining || [])
+              .some(
+                item =>
+                  item.name ===
+                  oldFileName
+              );
+
+          if (stillExists) {
+            throw new Error(
+              'New image was saved, but the old image still exists in Storage.'
+            );
+          }
+
+          return true;
+        }
+
+        /*
+         * ========================================================
+         * OPTION IMAGE
+         * ========================================================
+         */
+        if (
+          cropTarget.type ===
+          'option'
+        ) {
+          const opt =
+            q.options.find(
+              o =>
+                o.option_index ===
+                cropTarget.index
+            );
+
+          if (!opt) {
+            throw new Error(
+              'Could not find the selected option.'
+            );
+          }
+
+          const oldImageUrl =
+            opt.option_image_url ||
+            null;
+
+          /*
+           * Update DB with new image.
+           */
+          const {
+            error: dbError
+          } =
+            await supabaseClient
+              .from('pyq_options')
+              .update({
+                option_image_url:
+                  newPublicUrl
+              })
+              .eq(
+                'id',
+                opt.id
+              );
+
+          if (dbError) {
+            /*
+             * New file was uploaded but DB update failed.
+             * Clean up new Storage file.
+             */
+            await supabaseClient
+              .storage
+              .from('pyq-images')
+              .remove([
+                newPath
+              ])
+              .catch(
+                () => {}
+              );
+
+            throw new Error(
+              'Could not save option image: ' +
+              dbError.message
+            );
+          }
+
+          opt.option_image_url =
+            newPublicUrl;
+
+          /*
+           * Delete old image.
+           */
+          if (
+            oldImageUrl &&
+            oldImageUrl !==
+              newPublicUrl
+          ) {
+            await deleteOldStorageFile(
+              oldImageUrl
+            );
+          }
+
+          /*
+           * Audit log.
+           */
+          await supabaseClient
+            .from('pyq_review_log')
+            .insert({
+              question_id: q.id,
+              admin_id:
+                currentUserId,
+              action:
+                'image_replaced',
+              notes:
+                `Option ${String.fromCharCode(
+                  65 +
+                  cropTarget.index
+                )} image replaced`
+            });
+
+          btn.disabled = false;
+
+          btn.textContent =
+            'Crop & Upload';
+
+          cropModal.classList.remove(
+            'show'
+          );
+
+          renderOptionImageBox(
+            q,
+            cropTarget.index,
+            newPublicUrl
+          );
+
+          return;
+        }
+
+        /*
+         * ========================================================
+         * QUESTION IMAGE
+         * ========================================================
+         */
+
+        const oldImage =
+          q.images.length
+            ? q.images[0]
+            : null;
+
+        const oldImageUrl =
+          oldImage?.image_url ||
+          null;
+
+        /*
+         * Insert new DB image first.
+         */
+        const {
+          data: newImageRow,
+          error: insertError
+        } =
+          await supabaseClient
+            .from(
+              'pyq_question_images'
+            )
+            .insert({
+              question_id:
+                q.id,
+
+              image_url:
+                newPublicUrl,
+
+              page_number:
+                parseInt(
+                  document.getElementById(
+                    'pageJumpInput'
+                  ).value
+                ) || null
+            })
+            .select()
+            .single();
+
+        if (
+          insertError ||
+          !newImageRow
+        ) {
+          await supabaseClient
+            .storage
+            .from('pyq-images')
+            .remove([
+              newPath
+            ])
+            .catch(
+              () => {}
+            );
+
+          throw new Error(
+            'Could not save question image: ' +
+            (
+              insertError?.message ||
+              'Database insert failed'
+            )
+          );
+        }
+
+        /*
+         * Delete old DB record.
+         */
+        if (oldImage) {
+          const {
+            error:
+              oldDbDeleteError
+          } =
+            await supabaseClient
+              .from(
+                'pyq_question_images'
+              )
+              .delete()
+              .eq(
+                'id',
+                oldImage.id
+              );
+
+          if (
+            oldDbDeleteError
+          ) {
+            /*
+             * New image is already safely saved.
+             * Do not delete the new image.
+             */
+            throw new Error(
+              'New image was saved, but the old image record could not be removed: ' +
+              oldDbDeleteError.message
+            );
+          }
+        }
+
+        q.images = [
+          newImageRow
+        ];
+
+        /*
+         * Delete old Storage object.
+         */
+        if (
+          oldImageUrl &&
+          oldImageUrl !==
+            newPublicUrl
+        ) {
+          await deleteOldStorageFile(
+            oldImageUrl
+          );
+        }
+
+        /*
+         * Audit log.
+         */
+        await supabaseClient
+          .from('pyq_review_log')
+          .insert({
+            question_id:
+              q.id,
+            admin_id:
+              currentUserId,
+            action:
+              'image_replaced'
+          });
+
+        btn.disabled = false;
+
+        btn.textContent =
+          'Crop & Upload';
+
+        cropModal.classList.remove(
+          'show'
+        );
+
+        renderImageBox(q);
+
+      } catch (error) {
+        console.error(
+          'Image replacement failed:',
+          error
+        );
+
+        alert(
+          'Image replacement encountered a problem:\n\n' +
+          (error?.message ||
+            error)
+        );
+
+        btn.disabled = false;
+
+        btn.textContent =
+          'Crop & Upload';
+      }
+    }
+  );
+
+  /*
+   * ============================================================
+   * PUBLISH PYQ
+   * ============================================================
+   */
+  document.getElementById(
+    'publishBtn'
+  ).addEventListener(
+    'click',
+    async () => {
+      if (
+        !confirm(
+          'Publish this PYQ? It will immediately become visible to students in the mock test list. ' +
+          'After successful publication, the original source PDF will be permanently deleted from Storage. ' +
+          'The questions, options, images, and review data will be retained.'
+        )
+      ) {
+        return;
+      }
+
+      const btn =
+        document.getElementById(
+          'publishBtn'
+        );
+
+      btn.disabled = true;
+      btn.textContent =
+        'Publishing…';
+
+      try {
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .functions
+            .invoke(
+              'publish-pyq-paper-v2',
+              {
+                body: {
+                  paper_id:
+                    paperId
+                }
+              }
+            );
+
+        if (error) {
+          throw new Error(
+            error.message ||
+            'Could not publish the PYQ.'
+          );
+        }
+
+        if (
+          !data ||
+          data.success !== true ||
+          data.published !== true
+        ) {
+          throw new Error(
+            data?.error ||
+            'Publication could not be verified.'
+          );
+        }
+
+        paper.status =
+          'published';
+
+        paper.is_published =
+          true;
+
+        paper.source_pdf_path =
+          null;
+
+        updateProgress();
+
+        if (data.warning) {
+          alert(
+            'PYQ published successfully.\n\n' +
+            'Source PDF was deleted, but there was a metadata warning:\n\n' +
+            data.warning
+          );
+        } else {
+          alert(
+            'Published successfully.\n\n' +
+            'The PYQ is now available to students and the original source PDF has been permanently removed from Storage.'
+          );
+        }
+
+      } catch (e) {
+        console.error(
+          'Publish error:',
+          e
+        );
+
+        btn.disabled = false;
+
+        btn.textContent =
+          'Publish PYQ';
+
+        alert(
+          'Could not publish the PYQ:\n\n' +
+          (e?.message || e)
+        );
+      }
+    }
+  );
+
+  function escapeHtml(s) {
+    return String(s).replace(
+      /[&<>"]/g,
+      c =>
+        ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;'
+        }[c])
+    );
+  }
+
+  function escapeAttr(s) {
+    return escapeHtml(s);
+  }
+
+  /*
+   * These footer buttons are static elements.
+   * They are wired exactly once.
+   */
+  document
+    .getElementById('prevBtn')
+    .addEventListener(
+      'click',
+      () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderEditor();
+        }
       }
     );
 
-    if (error) {
-      throw new Error(error.message || 'Could not publish the PYQ.');
-    }
+  document
+    .getElementById('nextBtn')
+    .addEventListener(
+      'click',
+      () => {
+        if (
+          currentIndex <
+          questions.length - 1
+        ) {
+          currentIndex++;
+          renderEditor();
+        }
+      }
+    );
 
-    if (!data || data.success !== true || data.published !== true) {
-      throw new Error(data?.error || 'Publication could not be verified.');
-    }
+  document
+    .getElementById('approveBtn')
+    .addEventListener(
+      'click',
+      () =>
+        approveCurrent()
+    );
 
-    // The Edge Function has already verified publication and PDF cleanup.
-    paper.status = 'published';
-    paper.is_published = true;
-    paper.source_pdf_path = null;
-
-    updateProgress();
-
-    if (data.warning) {
-      alert(
-        'PYQ published successfully.\n\n' +
-        'Source PDF was deleted, but there was a metadata warning:\n\n' +
-        data.warning
-      );
-    } else {
-      alert(
-        'Published successfully.\n\n' +
-        'The PYQ is now available to students and the original source PDF has been permanently removed from Storage.'
-      );
-    }
-
-  } catch (e) {
-    console.error('Publish error:', e);
-
-    // Do NOT mark the UI as published if the request failed.
-    btn.disabled = false;
-    btn.textContent = 'Publish PYQ';
-
-    alert('Could not publish the PYQ:\n\n' + (e?.message || e));
-  }
-});
-
-  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function escapeAttr(s) { return escapeHtml(s); }
-
-  // These three buttons live in the static footer — NOT inside the
-  // rebuilt editor panel — so they must be wired exactly ONCE. Wiring them
-  // inside renderEditor() (which runs on every navigation/approve) was the
-  // bug: it silently piled up an extra click listener on every render,
-  // so one tap could fire many old handlers at once (the "jumps to a
-  // random question" symptom), and approve's disabled state was never
-  // reset because these nodes are never actually recreated.
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    if (currentIndex > 0) { currentIndex--; renderEditor(); }
-  });
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    if (currentIndex < questions.length - 1) { currentIndex++; renderEditor(); }
-  });
-  document.getElementById('approveBtn').addEventListener('click', () => approveCurrent());
-
+  /*
+   * ============================================================
+   * INITIALIZE
+   * ============================================================
+   */
   (async () => {
-    const session = await guard();
-    if (!session || !paperId) return;
+    const session =
+      await guard();
+
+    if (
+      !session ||
+      !paperId
+    ) {
+      return;
+    }
+
     await loadAll();
   })();
 </script>
