@@ -56,6 +56,43 @@
     .dash-hero h1 em { color: var(--orange); font-style: normal; }
     .quote { max-width: 640px; margin: 0; color: var(--muted); font-size: 16.5px; line-height: 1.65; font-style: italic; }
 
+    /* ============================================================
+       Daily Principle — cinematic quote card (no images, pure CSS)
+    ============================================================ */
+    .dp-section { margin-top: 20px; }
+    .dp-card {
+      --dp-glow-x: 50%; --dp-glow-y: 30%; --dp-glow-size: 60%; --dp-tilt: 0deg;
+      --dp-base: #0c0d10; --dp-base-2: #16171b; --dp-accent: #c9a05a; --dp-accent-soft: rgba(201, 160, 90, .16);
+      --dp-line: rgba(255, 255, 255, .08);
+      position: relative; isolation: isolate; overflow: hidden; border-radius: 30px;
+      padding: clamp(2.25rem, 6vw, 4rem) clamp(1.75rem, 6vw, 3.5rem);
+      min-height: clamp(240px, 34vw, 320px);
+      display: flex; flex-direction: column; justify-content: center;
+      background: var(--dp-base); color: rgba(255,255,255,.94);
+      font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+      box-shadow: 0 24px 60px -20px rgba(10, 8, 4, .35);
+    }
+    .dp-card::before {
+      content: ""; position: absolute; inset: -20%; z-index: 0;
+      background:
+        radial-gradient(ellipse 45% 55% at var(--dp-glow-x) var(--dp-glow-y), var(--dp-accent-soft) 0%, transparent var(--dp-glow-size)),
+        linear-gradient(160deg, var(--dp-base-2) 0%, var(--dp-base) 55%, #050506 100%);
+      transform: rotate(var(--dp-tilt));
+    }
+    .dp-card::after {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(circle at 85% 92%, rgba(255,255,255,.05), transparent 40%);
+    }
+    .dp-card__mark { position: relative; z-index: 1; font-size: clamp(2.2rem, 5vw, 3rem); line-height: 1; color: var(--dp-accent); opacity: .55; margin-bottom: .4rem; }
+    .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1.35rem, 2.8vw, 2rem); line-height: 1.32; font-weight: 500; letter-spacing: -.01em; max-width: 36ch; margin: 0 0 1.5rem; }
+    .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .7rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .88rem; letter-spacing: .02em; color: rgba(255,255,255,.6); }
+    .dp-card__author::before { content: ""; display: inline-block; width: 26px; height: 1px; background: var(--dp-line); }
+    .dp-card__author--original { color: var(--dp-accent); opacity: .85; }
+    @media (prefers-reduced-motion: no-preference) { .dp-card::before { animation: dpBreathe 10s ease-in-out infinite; } }
+    @keyframes dpBreathe { 0%, 100% { opacity: 1; } 50% { opacity: .85; } }
+    .dp-card--loading .dp-card__quote, .dp-card--loading .dp-card__author { opacity: 0; }
+    @media (max-width: 760px) { .dp-card { border-radius: 22px; min-height: 220px; } }
+
     /* Sections */
     .section { scroll-margin-top: 20px; margin-top: 20px; padding: 32px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
     .section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.6px; }
@@ -170,7 +207,16 @@
       <p class="dash-label" id="dashLabel">Dashboard</p>
       <div class="status-pill"><span class="pulse-dot"></span>Active session</div>
       <h1 id="greetingText">Good morning, <em>there.</em></h1>
-      <p class="quote" id="quoteText">"Small steps today, big results tomorrow."</p>
+    </section>
+
+    <section class="dp-section reveal" id="dailyPrincipleSection">
+      <div id="dailyPrinciple">
+        <div class="dp-card dp-card--loading">
+          <span class="dp-card__mark" aria-hidden="true">&ldquo;</span>
+          <p class="dp-card__quote"></p>
+          <div class="dp-card__author"></div>
+        </div>
+      </div>
     </section>
 
     <section class="section reveal" id="adminSection" style="display:none; border-color:#ffd0a8; background:linear-gradient(120deg, #fff 0%, #fff3e8 100%);">
@@ -226,7 +272,7 @@
         <h3>Aspinora Ecosystem</h3>
         <div class="eco-grid">
           <button class="eco-card reveal" data-message="Aspinora Brain coming soon."><div class="eco-icon orange">✦</div><h4>Aspinora Brain</h4><p>Your AI-powered study companion.</p><span class="eco-arrow">→</span></button>
-          <button class="eco-card reveal" data-message="Aspinora Journal coming soon."><div class="eco-icon blue">✎</div><h4>Aspinora Journal</h4><p>Reflect and track your thinking.</p><span class="eco-arrow">→</span></button>
+          <a class="eco-card reveal" href="https://journal.aspinora.in/"><div class="eco-icon blue">✎</div><h4>Aspinora Journal</h4><p>Reflect and track your thinking.</p><span class="eco-arrow">→</span></a>
           <button class="eco-card reveal" data-message="Aspinora Challenges coming soon."><div class="eco-icon purple">◈</div><h4>Aspinora Challenges</h4><p>Daily and weekly streaks.</p><span class="eco-arrow">→</span></button>
           <a class="eco-card reveal" href="/roadmap/"><div class="eco-icon green">↗</div><h4>Aspinora Roadmap</h4><p>Your structured preparation plan.</p><span class="eco-arrow">→</span></a>
           <button class="eco-card reveal" data-message="Aspinora Labs coming soon."><div class="eco-icon orange">▣</div><h4>Aspinora Labs</h4><p>Experimental tools, built in the open.</p><span class="eco-arrow">→</span></button>
@@ -301,32 +347,11 @@
       return 'Good night';
     }
 
-    const QUOTES = [
-      "Small steps today, big results tomorrow.",
-      "Discipline beats motivation on the hard days.",
-      "You don't need to be perfect, just consistent.",
-      "Every topic you finish is one less thing standing between you and your goal.",
-      "Progress hides in the boring, repeated days.",
-      "Trust the process, revise the plan, not the goal.",
-      "The exam rewards preparation, not panic.",
-      "Focus on today's page, not tomorrow's fear.",
-      "Your future self is counting on today's effort.",
-      "Consistency is the quiet superpower of every topper.",
-      "One more revision. One more mock. One more step closer.",
-      "Doubt kills more dreams than failure ever will — keep going.",
-      "You're not behind. You're exactly where your journey needs you to be.",
-      "Great scores are built one focused hour at a time.",
-      "The syllabus doesn't care about your mood — show up anyway."
-    ];
-
     function initGreeting() {
       const hour = new Date().getHours();
       const greeting = getGreeting(hour);
       document.getElementById('greetingText').innerHTML = `${greeting}, <em>${currentUser.username}</em>.`;
       document.getElementById('dashLabel').textContent = currentUser.username + '\u2019s Dashboard';
-
-      const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById('quoteText').textContent = `"${randomQuote}"`;
     }
 
     function initProfile() {
@@ -350,12 +375,124 @@
       if (isAdmin) document.getElementById('adminSection').style.display = '';
     }
 
+    /* ============================================================
+       DAILY PRINCIPLE — cinematic quote card
+       Global quote pool lives in Supabase (`quotes` + `user_quote_views`).
+       get_daily_quote() picks/recycles a quote for this user without ever
+       calling Gemini. The generate-daily-quotes edge function only calls
+       Gemini when the active pool has genuinely run low (<50 quotes) —
+       pinging it here is a cheap DB count almost every time.
+    ============================================================ */
+    const DP_THEME_FAMILY = {
+      discipline: 'discipline', responsibility: 'discipline',
+      character: 'dignity', dignity: 'dignity', 'self-respect': 'dignity',
+      mortality: 'mortality', time: 'mortality',
+      resilience: 'resilience', 'becoming-stronger': 'resilience', 'losing-everything': 'resilience',
+      ambition: 'ambition', legacy: 'ambition',
+      solitude: 'solitude',
+      fear: 'fear-courage', courage: 'fear-courage',
+      comfort: 'comfort-danger', 'wasted-potential': 'comfort-danger',
+      consequences: 'comfort-danger', 'pain-and-sacrifice': 'comfort-danger',
+    };
+    const DP_FAMILIES = {
+      discipline: { base: '#120f0c', base2: '#221b14', accent: '#c97a3d', variants: [
+        { x: '30%', y: '20%', size: '55%', tilt: '-4deg' }, { x: '70%', y: '15%', size: '50%', tilt: '3deg' }, { x: '50%', y: '85%', size: '60%', tilt: '0deg' } ] },
+      dignity: { base: '#0f1116', base2: '#1c1f28', accent: '#b7a16c', variants: [
+        { x: '50%', y: '10%', size: '70%', tilt: '0deg' }, { x: '20%', y: '40%', size: '55%', tilt: '-2deg' }, { x: '80%', y: '30%', size: '55%', tilt: '2deg' } ] },
+      mortality: { base: '#050506', base2: '#0d0f13', accent: '#5b6674', variants: [
+        { x: '50%', y: '50%', size: '35%', tilt: '0deg' }, { x: '65%', y: '20%', size: '30%', tilt: '1deg' }, { x: '35%', y: '75%', size: '32%', tilt: '-1deg' } ] },
+      resilience: { base: '#0b0c0e', base2: '#17191d', accent: '#d8a657', variants: [
+        { x: '50%', y: '95%', size: '65%', tilt: '0deg' }, { x: '15%', y: '85%', size: '55%', tilt: '-3deg' }, { x: '85%', y: '90%', size: '55%', tilt: '3deg' } ] },
+      ambition: { base: '#090a12', base2: '#141a2c', accent: '#7ea2d1', variants: [
+        { x: '50%', y: '5%', size: '75%', tilt: '0deg' }, { x: '30%', y: '10%', size: '65%', tilt: '-2deg' }, { x: '70%', y: '8%', size: '65%', tilt: '2deg' } ] },
+      solitude: { base: '#0d1013', base2: '#171c21', accent: '#7d93a3', variants: [
+        { x: '50%', y: '50%', size: '80%', tilt: '0deg' }, { x: '40%', y: '60%', size: '70%', tilt: '1deg' }, { x: '60%', y: '40%', size: '70%', tilt: '-1deg' } ] },
+      'fear-courage': { base: '#08090a', base2: '#131414', accent: '#e8dcc8', variants: [
+        { x: '50%', y: '35%', size: '30%', tilt: '0deg' }, { x: '35%', y: '30%', size: '28%', tilt: '2deg' }, { x: '65%', y: '40%', size: '28%', tilt: '-2deg' } ] },
+      'comfort-danger': { base: '#100d0a', base2: '#1e1712', accent: '#a97452', variants: [
+        { x: '50%', y: '25%', size: '60%', tilt: '0deg' }, { x: '25%', y: '20%', size: '50%', tilt: '-3deg' }, { x: '75%', y: '25%', size: '50%', tilt: '3deg' } ] },
+      default: { base: '#0c0d10', base2: '#16171b', accent: '#c9a05a', variants: [
+        { x: '50%', y: '30%', size: '60%', tilt: '0deg' }, { x: '30%', y: '25%', size: '55%', tilt: '-2deg' }, { x: '70%', y: '25%', size: '55%', tilt: '2deg' } ] },
+    };
+    function dpHash(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; }
+      return Math.abs(h);
+    }
+    function dpFamilyFor(theme) {
+      const key = DP_THEME_FAMILY[(theme || '').toLowerCase()];
+      return DP_FAMILIES[key] || DP_FAMILIES.default;
+    }
+    function dpSoftRgba(hex, mood) {
+      const clean = hex.replace('#', '');
+      const r = parseInt(clean.substring(0, 2), 16), g = parseInt(clean.substring(2, 4), 16), b = parseInt(clean.substring(4, 6), 16);
+      const dim = new Set(['dark', 'somber', 'still']), lift = new Set(['elevating', 'defiant', 'sharp']);
+      let alpha = 0.16;
+      if (dim.has((mood || '').toLowerCase())) alpha = 0.1;
+      if (lift.has((mood || '').toLowerCase())) alpha = 0.22;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+    function dpApplyAtmosphere(cardEl, quote) {
+      const family = dpFamilyFor(quote.theme);
+      const v = family.variants[dpHash(quote.id) % family.variants.length];
+      cardEl.style.setProperty('--dp-base', family.base);
+      cardEl.style.setProperty('--dp-base-2', family.base2);
+      cardEl.style.setProperty('--dp-accent', family.accent);
+      cardEl.style.setProperty('--dp-accent-soft', dpSoftRgba(family.accent, quote.mood));
+      cardEl.style.setProperty('--dp-glow-x', v.x);
+      cardEl.style.setProperty('--dp-glow-y', v.y);
+      cardEl.style.setProperty('--dp-glow-size', v.size);
+      cardEl.style.setProperty('--dp-tilt', v.tilt);
+    }
+    function dpRenderQuote(cardEl, quote) {
+      dpApplyAtmosphere(cardEl, quote);
+      cardEl.classList.remove('dp-card--loading');
+      cardEl.querySelector('.dp-card__quote').textContent = quote.quote_text;
+      const authorEl = cardEl.querySelector('.dp-card__author');
+      authorEl.textContent = quote.author;
+      authorEl.classList.toggle('dp-card__author--original', quote.author_type === 'original');
+    }
+    function dpPingTopUp() {
+      supabaseClient.functions.invoke('generate-daily-quotes', { body: {} })
+        .catch((err) => console.warn('[daily-principle] top-up ping failed (non-fatal):', err));
+    }
+    async function initDailyPrinciple() {
+      const cardEl = document.querySelector('#dailyPrinciple .dp-card');
+      try {
+        const { data, error } = await supabaseClient.rpc('get_daily_quote');
+        if (error) throw error;
+        let quote = Array.isArray(data) ? data[0] : data;
+
+        if (!quote) {
+          const { error: genError } = await supabaseClient.functions.invoke('generate-daily-quotes', { body: { force: true } });
+          if (genError) throw genError;
+          const retry = await supabaseClient.rpc('get_daily_quote');
+          if (retry.error) throw retry.error;
+          quote = Array.isArray(retry.data) ? retry.data[0] : retry.data;
+        } else {
+          dpPingTopUp();
+        }
+
+        if (!quote) {
+          cardEl.querySelector('.dp-card__quote').textContent = 'The library is still being written.';
+          cardEl.classList.remove('dp-card--loading');
+          return;
+        }
+        dpRenderQuote(cardEl, quote);
+      } catch (err) {
+        console.error('[daily-principle] failed to load quote:', err);
+        cardEl.querySelector('.dp-card__quote').textContent = 'Could not load today\u2019s principle.';
+        cardEl.classList.remove('dp-card--loading');
+      }
+    }
+
     (async () => {
       const ok = await loadUserAndGuardPage();
       if (!ok) return;
       initGreeting();
       initProfile();
       checkAdminAccess();
+      initDailyPrinciple();
     })();
 
     const menuButton = document.getElementById('menuButton');
