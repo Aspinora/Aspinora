@@ -58,40 +58,55 @@
 
     /* ============================================================
        Daily Principle — cinematic quote card (no images, pure CSS)
+       Multi-layer atmosphere: base color wash -> primary light source ->
+       secondary glow -> faint abstract lines -> grain texture.
+       Colors are set per-theme via custom properties (see JS); this is
+       never a flat near-black box.
     ============================================================ */
     .dp-section { margin-top: 20px; }
     .dp-card {
-      --dp-glow-x: 50%; --dp-glow-y: 30%; --dp-glow-size: 60%; --dp-tilt: 0deg;
-      --dp-base: #0c0d10; --dp-base-2: #16171b; --dp-accent: #c9a05a; --dp-accent-soft: rgba(201, 160, 90, .16);
-      --dp-line: rgba(255, 255, 255, .08);
-      position: relative; isolation: isolate; overflow: hidden; border-radius: 30px;
-      padding: clamp(2.25rem, 6vw, 4rem) clamp(1.75rem, 6vw, 3.5rem);
-      min-height: clamp(240px, 34vw, 320px);
+      --dp-base1: #241a35; --dp-base2: #120e1c;
+      --dp-accent: #8f6fd8; --dp-accent2: #4a3a6b;
+      --dp-glow-x: 50%; --dp-glow-y: 25%; --dp-glow-size: 65%;
+      --dp-glow2-x: 85%; --dp-glow2-y: 90%; --dp-glow2-size: 45%;
+      --dp-tilt: 0deg; --dp-line: rgba(255, 255, 255, .1);
+      position: relative; isolation: isolate; overflow: hidden; border-radius: 22px;
+      padding: clamp(1.4rem, 3.4vw, 2.15rem) clamp(1.3rem, 3.6vw, 2.25rem);
+      min-height: clamp(148px, 18vw, 196px);
       display: flex; flex-direction: column; justify-content: center;
-      background: var(--dp-base); color: rgba(255,255,255,.94);
+      background: linear-gradient(155deg, var(--dp-base1) 0%, var(--dp-base2) 100%);
+      color: rgba(255,255,255,.96);
       font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
-      box-shadow: 0 24px 60px -20px rgba(10, 8, 4, .35);
+      box-shadow: 0 18px 44px -18px rgba(10, 8, 4, .4);
     }
+    /* Layer 1: primary + secondary radial light sources, screen-blended for glow */
     .dp-card::before {
-      content: ""; position: absolute; inset: -20%; z-index: 0;
+      content: ""; position: absolute; inset: -25%; z-index: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse 45% 55% at var(--dp-glow-x) var(--dp-glow-y), var(--dp-accent-soft) 0%, transparent var(--dp-glow-size)),
-        linear-gradient(160deg, var(--dp-base-2) 0%, var(--dp-base) 55%, #050506 100%);
+        radial-gradient(ellipse 50% 60% at var(--dp-glow-x) var(--dp-glow-y), var(--dp-accent) 0%, transparent var(--dp-glow-size)),
+        radial-gradient(ellipse 40% 45% at var(--dp-glow2-x) var(--dp-glow2-y), var(--dp-accent2) 0%, transparent var(--dp-glow2-size));
+      mix-blend-mode: screen; opacity: .5;
       transform: rotate(var(--dp-tilt));
     }
+    /* Layer 2: faint abstract diagonal lines + grain texture, low-opacity overlay */
     .dp-card::after {
       content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-      background: radial-gradient(circle at 85% 92%, rgba(255,255,255,.05), transparent 40%);
+      background:
+        repeating-linear-gradient(115deg, transparent 0 38px, rgba(255,255,255,.05) 38px 39px, transparent 39px 78px),
+        radial-gradient(circle at 88% 8%, rgba(255,255,255,.08), transparent 42%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay; opacity: .35;
     }
-    .dp-card__mark { position: relative; z-index: 1; font-size: clamp(2.2rem, 5vw, 3rem); line-height: 1; color: var(--dp-accent); opacity: .55; margin-bottom: .4rem; }
-    .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1.35rem, 2.8vw, 2rem); line-height: 1.32; font-weight: 500; letter-spacing: -.01em; max-width: 36ch; margin: 0 0 1.5rem; }
-    .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .7rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .88rem; letter-spacing: .02em; color: rgba(255,255,255,.6); }
-    .dp-card__author::before { content: ""; display: inline-block; width: 26px; height: 1px; background: var(--dp-line); }
-    .dp-card__author--original { color: var(--dp-accent); opacity: .85; }
-    @media (prefers-reduced-motion: no-preference) { .dp-card::before { animation: dpBreathe 10s ease-in-out infinite; } }
-    @keyframes dpBreathe { 0%, 100% { opacity: 1; } 50% { opacity: .85; } }
+    .dp-card__mark { position: relative; z-index: 1; font-size: clamp(1.5rem, 3.2vw, 1.9rem); line-height: 1; color: var(--dp-accent); opacity: .7; margin-bottom: .3rem; }
+    .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1rem, 1.9vw, 1.3rem); line-height: 1.34; font-weight: 500; letter-spacing: -.01em; max-width: 34ch; margin: 0 0 1.1rem; }
+    .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .82rem; letter-spacing: .02em; color: rgba(255,255,255,.68); }
+    .dp-card__author::before { content: ""; display: inline-block; width: 22px; height: 1px; background: var(--dp-line); }
+    .dp-card__author--original { color: var(--dp-accent); opacity: .9; }
+    @media (prefers-reduced-motion: no-preference) { .dp-card::before { animation: dpBreathe 11s ease-in-out infinite; } }
+    @keyframes dpBreathe { 0%, 100% { opacity: .5; } 50% { opacity: .38; } }
     .dp-card--loading .dp-card__quote, .dp-card--loading .dp-card__author { opacity: 0; }
-    @media (max-width: 760px) { .dp-card { border-radius: 22px; min-height: 220px; } }
+    @media (max-width: 760px) { .dp-card { border-radius: 18px; min-height: 168px; padding: 1.35rem 1.25rem; } }
+
 
     /* Sections */
     .section { scroll-margin-top: 20px; margin-top: 20px; padding: 32px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
@@ -394,25 +409,71 @@
       comfort: 'comfort-danger', 'wasted-potential': 'comfort-danger',
       consequences: 'comfort-danger', 'pain-and-sacrifice': 'comfort-danger',
     };
+    // Each family: 3-5 named, deterministically-selected atmospheres.
+    // Rich color, never flat black — base1/base2 form the color wash,
+    // accent/accent2 are the primary + secondary light sources.
     const DP_FAMILIES = {
-      discipline: { base: '#120f0c', base2: '#221b14', accent: '#c97a3d', variants: [
-        { x: '30%', y: '20%', size: '55%', tilt: '-4deg' }, { x: '70%', y: '15%', size: '50%', tilt: '3deg' }, { x: '50%', y: '85%', size: '60%', tilt: '0deg' } ] },
-      dignity: { base: '#0f1116', base2: '#1c1f28', accent: '#b7a16c', variants: [
-        { x: '50%', y: '10%', size: '70%', tilt: '0deg' }, { x: '20%', y: '40%', size: '55%', tilt: '-2deg' }, { x: '80%', y: '30%', size: '55%', tilt: '2deg' } ] },
-      mortality: { base: '#050506', base2: '#0d0f13', accent: '#5b6674', variants: [
-        { x: '50%', y: '50%', size: '35%', tilt: '0deg' }, { x: '65%', y: '20%', size: '30%', tilt: '1deg' }, { x: '35%', y: '75%', size: '32%', tilt: '-1deg' } ] },
-      resilience: { base: '#0b0c0e', base2: '#17191d', accent: '#d8a657', variants: [
-        { x: '50%', y: '95%', size: '65%', tilt: '0deg' }, { x: '15%', y: '85%', size: '55%', tilt: '-3deg' }, { x: '85%', y: '90%', size: '55%', tilt: '3deg' } ] },
-      ambition: { base: '#090a12', base2: '#141a2c', accent: '#7ea2d1', variants: [
-        { x: '50%', y: '5%', size: '75%', tilt: '0deg' }, { x: '30%', y: '10%', size: '65%', tilt: '-2deg' }, { x: '70%', y: '8%', size: '65%', tilt: '2deg' } ] },
-      solitude: { base: '#0d1013', base2: '#171c21', accent: '#7d93a3', variants: [
-        { x: '50%', y: '50%', size: '80%', tilt: '0deg' }, { x: '40%', y: '60%', size: '70%', tilt: '1deg' }, { x: '60%', y: '40%', size: '70%', tilt: '-1deg' } ] },
-      'fear-courage': { base: '#08090a', base2: '#131414', accent: '#e8dcc8', variants: [
-        { x: '50%', y: '35%', size: '30%', tilt: '0deg' }, { x: '35%', y: '30%', size: '28%', tilt: '2deg' }, { x: '65%', y: '40%', size: '28%', tilt: '-2deg' } ] },
-      'comfort-danger': { base: '#100d0a', base2: '#1e1712', accent: '#a97452', variants: [
-        { x: '50%', y: '25%', size: '60%', tilt: '0deg' }, { x: '25%', y: '20%', size: '50%', tilt: '-3deg' }, { x: '75%', y: '25%', size: '50%', tilt: '3deg' } ] },
-      default: { base: '#0c0d10', base2: '#16171b', accent: '#c9a05a', variants: [
-        { x: '50%', y: '30%', size: '60%', tilt: '0deg' }, { x: '30%', y: '25%', size: '55%', tilt: '-2deg' }, { x: '70%', y: '25%', size: '55%', tilt: '2deg' } ] },
+      discipline: { variants: [
+        { name: 'warm-horizon',   base1: '#3a2415', base2: '#1c120a', accent: '#ff9d52', accent2: '#c0501f', x: '30%', y: '15%', size: '60%', x2: '90%', y2: '95%', size2: '45%', tilt: '-3deg' },
+        { name: 'burning-ember',  base1: '#33170f', base2: '#170a06', accent: '#ff7a3d', accent2: '#7a2e12', x: '70%', y: '20%', size: '55%', x2: '10%', y2: '90%', size2: '40%', tilt: '3deg' },
+        { name: 'forward-light',  base1: '#2c1d10', base2: '#151009', accent: '#f2b25c', accent2: '#8a4a20', x: '50%', y: '10%', size: '70%', x2: '75%', y2: '85%', size2: '40%', tilt: '0deg' },
+        { name: 'steel-and-amber',base1: '#241d1a', base2: '#12100e', accent: '#e2a35d', accent2: '#5c6470', x: '25%', y: '85%', size: '55%', x2: '80%', y2: '15%', size2: '40%', tilt: '-2deg' },
+        { name: 'dawn-pressure',  base1: '#3d2412', base2: '#190f08', accent: '#ffb15e', accent2: '#8f3a1c', x: '60%', y: '90%', size: '60%', x2: '20%', y2: '10%', size2: '35%', tilt: '2deg' },
+      ] },
+      dignity: { variants: [
+        { name: 'burnished-bronze', base1: '#3a2513', base2: '#1b120a', accent: '#d4af6a', accent2: '#7a5228', x: '50%', y: '10%', size: '65%', x2: '85%', y2: '85%', size2: '40%', tilt: '0deg' },
+        { name: 'muted-gold',       base1: '#33270f', base2: '#181206', accent: '#e6c471', accent2: '#8c6a2e', x: '20%', y: '35%', size: '55%', x2: '80%', y2: '15%', size2: '40%', tilt: '-2deg' },
+        { name: 'warm-stone',       base1: '#2c241c', base2: '#15110c', accent: '#c9ab7e', accent2: '#5c4a33', x: '80%', y: '30%', size: '55%', x2: '20%', y2: '90%', size2: '35%', tilt: '2deg' },
+        { name: 'burgundy-honor',   base1: '#3a1420', base2: '#1a0910', accent: '#d98a9a', accent2: '#7a2338', x: '50%', y: '15%', size: '65%', x2: '85%', y2: '90%', size2: '40%', tilt: '0deg' },
+        { name: 'antique-brass',    base1: '#332a12', base2: '#171208', accent: '#c9a35a', accent2: '#6e5322', x: '35%', y: '80%', size: '60%', x2: '75%', y2: '10%', size2: '35%', tilt: '-1deg' },
+      ] },
+      mortality: { variants: [
+        { name: 'fading-light',  base1: '#241f38', base2: '#100d1c', accent: '#8f8bc4', accent2: '#3d3564', x: '50%', y: '50%', size: '40%', x2: '80%', y2: '85%', size2: '30%', tilt: '0deg' },
+        { name: 'smoky-violet',  base1: '#2a1e34', base2: '#120c1a', accent: '#a184c9', accent2: '#4a2f5e', x: '65%', y: '25%', size: '35%', x2: '20%', y2: '80%', size2: '30%', tilt: '1deg' },
+        { name: 'blue-hour',     base1: '#182338', base2: '#0b101c', accent: '#7c93c4', accent2: '#334666', x: '35%', y: '75%', size: '38%', x2: '75%', y2: '15%', size2: '28%', tilt: '-1deg' },
+        { name: 'quiet-dusk',    base1: '#221f36', base2: '#0f0d1a', accent: '#9088bd', accent2: '#403a63', x: '50%', y: '85%', size: '45%', x2: '25%', y2: '15%', size2: '30%', tilt: '0deg' },
+        { name: 'violet-silence',base1: '#271b30', base2: '#110b17', accent: '#a67fc4', accent2: '#4c2f5c', x: '75%', y: '60%', size: '38%', x2: '15%', y2: '30%', size2: '28%', tilt: '2deg' },
+      ] },
+      resilience: { variants: [
+        { name: 'storm-break',    base1: '#1c2c3d', base2: '#0c1420', accent: '#e8a355', accent2: '#324a63', x: '50%', y: '90%', size: '55%', x2: '20%', y2: '15%', size2: '40%', tilt: '0deg' },
+        { name: 'distant-sun',    base1: '#1a2938', base2: '#0b131e', accent: '#f0b06a', accent2: '#2c4258', x: '75%', y: '85%', size: '50%', x2: '25%', y2: '20%', size2: '35%', tilt: '-2deg' },
+        { name: 'surviving-fire', base1: '#22293a', base2: '#0e131e', accent: '#e59148', accent2: '#3a4a63', x: '30%', y: '80%', size: '55%', x2: '80%', y2: '20%', size2: '35%', tilt: '2deg' },
+        { name: 'after-the-storm',base1: '#1e2c3a', base2: '#0d141f', accent: '#d9a866', accent2: '#33495f', x: '55%', y: '95%', size: '60%', x2: '15%', y2: '10%', size2: '35%', tilt: '0deg' },
+        { name: 'cracked-sky',    base1: '#243040', base2: '#0f1622', accent: '#eeae63', accent2: '#3b5169', x: '40%', y: '85%', size: '52%', x2: '85%', y2: '15%', size2: '38%', tilt: '-1deg' },
+      ] },
+      ambition: { variants: [
+        { name: 'rising-horizon', base1: '#131e3a', base2: '#080c1a', accent: '#e0a25c', accent2: '#3a5a8f', x: '50%', y: '92%', size: '65%', x2: '50%', y2: '5%', size2: '50%', tilt: '0deg' },
+        { name: 'distant-gold',   base1: '#111c33', base2: '#070b18', accent: '#e6b06a', accent2: '#325284', x: '75%', y: '95%', size: '55%', x2: '25%', y2: '10%', size2: '45%', tilt: '-2deg' },
+        { name: 'infinite-indigo',base1: '#161f40', base2: '#090c1c', accent: '#8fa8e0', accent2: '#2c3f6b', x: '50%', y: '15%', size: '70%', x2: '50%', y2: '95%', size2: '35%', tilt: '0deg' },
+        { name: 'night-ascent',   base1: '#131a33', base2: '#080a17', accent: '#a3bce6', accent2: '#2e4270', x: '30%', y: '90%', size: '55%', x2: '80%', y2: '10%', size2: '40%', tilt: '2deg' },
+        { name: 'far-light',      base1: '#101a36', base2: '#070a19', accent: '#dba566', accent2: '#33487a', x: '65%', y: '90%', size: '60%', x2: '20%', y2: '15%', size2: '40%', tilt: '-1deg' },
+      ] },
+      solitude: { variants: [
+        { name: 'quiet-distance', base1: '#182a2e', base2: '#0a1517', accent: '#7fa3ad', accent2: '#2f4a50', x: '50%', y: '50%', size: '75%', x2: '80%', y2: '80%', size2: '30%', tilt: '0deg' },
+        { name: 'muted-teal',     base1: '#152a28', base2: '#091514', accent: '#6fada3', accent2: '#294845', x: '40%', y: '60%', size: '65%', x2: '75%', y2: '20%', size2: '30%', tilt: '1deg' },
+        { name: 'still-water',    base1: '#172a30', base2: '#0a161a', accent: '#7ba8b8', accent2: '#2c4a55', x: '60%', y: '40%', size: '65%', x2: '20%', y2: '80%', size2: '28%', tilt: '-1deg' },
+        { name: 'gray-thought',   base1: '#1c2427', base2: '#0d1214', accent: '#8fa0a5', accent2: '#3c4a4e', x: '45%', y: '55%', size: '70%', x2: '85%', y2: '15%', size2: '30%', tilt: '0deg' },
+        { name: 'soft-solitude',  base1: '#152628', base2: '#081314', accent: '#77a1a3', accent2: '#2a4142', x: '55%', y: '45%', size: '72%', x2: '15%', y2: '85%', size2: '30%', tilt: '2deg' },
+      ] },
+      'fear-courage': { variants: [
+        { name: 'standing-firm',  base1: '#3a1a1a', base2: '#190a0a', accent: '#e2694a', accent2: '#7a2818', x: '50%', y: '35%', size: '32%', x2: '75%', y2: '80%', size2: '25%', tilt: '0deg' },
+        { name: 'burnt-courage',  base1: '#3d2012', base2: '#1a0d07', accent: '#e88449', accent2: '#832f14', x: '35%', y: '30%', size: '30%', x2: '80%', y2: '20%', size2: '25%', tilt: '2deg' },
+        { name: 'crimson-edge',   base1: '#3a1420', base2: '#180810', accent: '#d9556e', accent2: '#761f31', x: '65%', y: '40%', size: '30%', x2: '20%', y2: '75%', size2: '25%', tilt: '-2deg' },
+        { name: 'controlled-fire',base1: '#361c14', base2: '#170b07', accent: '#e07347', accent2: '#722d18', x: '50%', y: '25%', size: '35%', x2: '50%', y2: '85%', size2: '25%', tilt: '0deg' },
+        { name: 'facing-the-dark',base1: '#301518', base2: '#140708', accent: '#c85a52', accent2: '#6b1f1f', x: '45%', y: '45%', size: '28%', x2: '85%', y2: '15%', size2: '22%', tilt: '1deg' },
+      ] },
+      'comfort-danger': { variants: [
+        { name: 'gilded-cage',   base1: '#332212', base2: '#170f07', accent: '#d4964f', accent2: '#7a4a1e', x: '50%', y: '20%', size: '60%', x2: '85%', y2: '85%', size2: '35%', tilt: '0deg' },
+        { name: 'slow-fade',     base1: '#2e2313', base2: '#150f07', accent: '#c68a52', accent2: '#6b4623', x: '25%', y: '25%', size: '55%', x2: '75%', y2: '80%', size2: '32%', tilt: '-2deg' },
+        { name: 'warm-trap',     base1: '#362510', base2: '#180f06', accent: '#dd9e57', accent2: '#7d4f20', x: '70%', y: '30%', size: '58%', x2: '20%', y2: '85%', size2: '32%', tilt: '2deg' },
+        { name: 'fading-comfort',base1: '#302210', base2: '#160f07', accent: '#c98f56', accent2: '#6f4a26', x: '50%', y: '80%', size: '55%', x2: '50%', y2: '10%', size2: '30%', tilt: '0deg' },
+        { name: 'quiet-cost',    base1: '#2c2011', base2: '#140d06', accent: '#bd8850', accent2: '#63421f', x: '40%', y: '30%', size: '55%', x2: '85%', y2: '75%', size2: '30%', tilt: '-1deg' },
+      ] },
+      default: { variants: [
+        { name: 'quiet-atmosphere', base1: '#1c2233', base2: '#0b0e18', accent: '#8fa0d8', accent2: '#3a4468', x: '50%', y: '25%', size: '60%', x2: '80%', y2: '85%', size2: '35%', tilt: '0deg' },
+        { name: 'muted-light',      base1: '#232030', base2: '#0f0d17', accent: '#a894c9', accent2: '#463b60', x: '30%', y: '20%', size: '55%', x2: '75%', y2: '80%', size2: '32%', tilt: '-2deg' },
+        { name: 'soft-depth',       base1: '#1a2833', base2: '#0a121a', accent: '#7fb0c4', accent2: '#334f5f', x: '65%', y: '80%', size: '58%', x2: '25%', y2: '15%', size2: '32%', tilt: '2deg' },
+      ] },
     };
     function dpHash(str) {
       let h = 0;
@@ -423,26 +484,21 @@
       const key = DP_THEME_FAMILY[(theme || '').toLowerCase()];
       return DP_FAMILIES[key] || DP_FAMILIES.default;
     }
-    function dpSoftRgba(hex, mood) {
-      const clean = hex.replace('#', '');
-      const r = parseInt(clean.substring(0, 2), 16), g = parseInt(clean.substring(2, 4), 16), b = parseInt(clean.substring(4, 6), 16);
-      const dim = new Set(['dark', 'somber', 'still']), lift = new Set(['elevating', 'defiant', 'sharp']);
-      let alpha = 0.16;
-      if (dim.has((mood || '').toLowerCase())) alpha = 0.1;
-      if (lift.has((mood || '').toLowerCase())) alpha = 0.22;
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
     function dpApplyAtmosphere(cardEl, quote) {
       const family = dpFamilyFor(quote.theme);
       const v = family.variants[dpHash(quote.id) % family.variants.length];
-      cardEl.style.setProperty('--dp-base', family.base);
-      cardEl.style.setProperty('--dp-base-2', family.base2);
-      cardEl.style.setProperty('--dp-accent', family.accent);
-      cardEl.style.setProperty('--dp-accent-soft', dpSoftRgba(family.accent, quote.mood));
+      cardEl.style.setProperty('--dp-base1', v.base1);
+      cardEl.style.setProperty('--dp-base2', v.base2);
+      cardEl.style.setProperty('--dp-accent', v.accent);
+      cardEl.style.setProperty('--dp-accent2', v.accent2);
       cardEl.style.setProperty('--dp-glow-x', v.x);
       cardEl.style.setProperty('--dp-glow-y', v.y);
       cardEl.style.setProperty('--dp-glow-size', v.size);
+      cardEl.style.setProperty('--dp-glow2-x', v.x2);
+      cardEl.style.setProperty('--dp-glow2-y', v.y2);
+      cardEl.style.setProperty('--dp-glow2-size', v.size2);
       cardEl.style.setProperty('--dp-tilt', v.tilt);
+      cardEl.dataset.dpVariant = v.name;
     }
     function dpRenderQuote(cardEl, quote) {
       dpApplyAtmosphere(cardEl, quote);
