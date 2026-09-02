@@ -559,48 +559,281 @@
   cropCanvas.addEventListener('pointercancel', endDrag);
 
   document.getElementById('cropUploadBtn').addEventListener('click', async () => {
-    if (!dragRect) return;
-    const btn = document.getElementById('cropUploadBtn');
-    btn.disabled = true; btn.textContent = 'Uploading…';
-    // The orange selection rectangle was drawn directly onto this canvas
-    // as a drag guide — restore the clean, unmarked page render before
-    // reading pixels, or the crop's edges pick up the orange stroke color.
+  if (!dragRect) return;
+  const btn = document.getElementById('cropUploadBtn');
+  btn.disabled = true;
+  btn.textContent = 'Uploading…';
+  try {
+    // Restore the clean PDF image before extracting pixels.
     ctx.putImageData(currentPageImageData, 0, 0);
     const cropCanvasOut = document.createElement('canvas');
-    cropCanvasOut.width = dragRect.w; cropCanvasOut.height = dragRect.h;
+    cropCanvasOut.width = Math.round(dragRect.w);
+    cropCanvasOut.height = Math.round(dragRect.h);
     cropCanvasOut.getContext('2d').putImageData(
-      ctx.getImageData(dragRect.x, dragRect.y, dragRect.w, dragRect.h), 0, 0
+      ctx.getImageData(
+        Math.round(dragRect.x),
+        Math.round(dragRect.y),
+        Math.round(dragRect.w),
+        Math.round(dragRect.h)
+      ),
+      0,
+      0
     );
-    const blob = await new Promise(res => cropCanvasOut.toBlob(res, 'image/png'));
+    const blob = await new Promise((resolve, reject) => {
+      cropCanvasOut.toBlob(
+        result => result ? resolve(result) : reject(new Error('Could not create image')),
+        'image/png'
+      );
+    });
     const q = questions[currentIndex];
-    const suffix = cropTarget.type === 'option' ? `opt${cropTarget.index}` : 'question';
-    const path = `${paperId}/${q.id}_${suffix}_${Date.now()}.png`;
-    const { error: upErr } = await supabaseClient.storage.from('pyq-images').upload(path, blob, { contentType: 'image/png' });
-    if (upErr) { alert('Upload failed: ' + upErr.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
-    const { data: pub } = supabaseClient.storage.from('pyq-images').getPublicUrl(path);
-    const userId = currentUserId;
-
-    if (cropTarget.type === 'option') {
-      const opt = q.options.find(o => o.option_index === cropTarget.index);
-      if (opt) {
-        const { error } = await supabaseClient.from('pyq_options').update({ option_image_url: pub.publicUrl }).eq('id', opt.id);
-        if (error) { alert('Could not save option image: ' + error.message); btn.disabled = false; btn.textContent = 'Crop & Upload'; return; }
-        opt.option_image_url = pub.publicUrl;
-      }
-      await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: userId, action: 'image_replaced', notes: `Option ${String.fromCharCode(65+cropTarget.index)} image set` });
-      btn.disabled = false; btn.textContent = 'Crop & Upload';
-      cropModal.classList.remove('show');
-      renderOptionImageBox(q, cropTarget.index, pub.publicUrl);
-    } else {
-      if (q.images.length) await supabaseClient.from('pyq_question_images').delete().eq('question_id', q.id);
-      const { data: imgRow } = await supabaseClient.from('pyq_question_images').insert({ question_id: q.id, image_url: pub.publicUrl, page_number: parseInt(document.getElementById('pageJumpInput').value)||null }).select().single();
-      q.images = imgRow ? [imgRow] : [];
-      await supabaseClient.from('pyq_review_log').insert({ question_id: q.id, admin_id: userId, action: 'image_replaced' });
-      btn.disabled = false; btn.textContent = 'Crop & Upload';
-      cropModal.classList.remove('show');
-      renderImageBox(q);
+    const suffix =
+      cropTarget.type === 'option'
+        ? `opt${cropTarget.index}`
+        : 'question';
+    const newPath =
+      `${paperId}/${q.id}_${suffix}_${Date.now()}.png`;
+    // ============================================================
+    // 1. UPLOAD NEW IMAGE FIRST
+    // ============================================================
+    const { error: uploadError } = await supabaseClient
+      .storage
+      .from('pyq-images')
+      .upload(newPath, blob, {
+        contentType: 'image/png',
+        upsert: false
+      });
+    if (uploadError) {
+      throw new Error('Upload failed: ' + uploadError.message);
     }
-  });
+    const { data: publicData } =
+      supabaseClient.storage
+        .from('pyq-images')
+        .getPublicUrl(newPath);
+    const newPublicUrl = publicData.publicUrl;
+    // ============================================================
+    // Helper: convert our public Storage URL back to its path
+    // ============================================================
+    function storagePathFromPublicUrl(url) {
+      if (!url) return null;
+      const marker =
+        '/storage/v1/object/public/pyq-images/';
+      const index = url.indexOf(marker);
+      if (index === -1) return null;
+      return decodeURIComponent(
+        url.substring(index + marker.length)
+      );
+    }
+    // ============================================================
+    // Helper: delete an old Storage object and verify deletion
+    // ============================================================
+    async function deleteOldStorageFile(oldUrl) {
+      const oldPath = storagePathFromPublicUrl(oldUrl);
+      if (!oldPath) {
+        console.warn(
+          'Could not determine old Storage path from URL:',
+          oldUrl
+        );
+        return false;
+      }
+      const { error: deleteError } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .remove([oldPath]);
+      if (deleteError) {
+        throw new Error(
+          'New image was saved, but old image could not be deleted: ' +
+          deleteError.message
+        );
+      }
+      // Verify the old object is gone.
+      const parts = oldPath.split('/');
+      const oldFileName = parts.pop();
+      const oldFolder = parts.join('/');
+      const { data: remaining, error: verifyError } =
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .list(oldFolder, {
+            search: oldFileName,
+            limit: 100
+          });
+      if (verifyError) {
+        throw new Error(
+          'New image was saved and old image was requested for deletion, ' +
+          'but deletion could not be verified: ' +
+          verifyError.message
+        );
+      }
+      const stillExists =
+        (remaining || []).some(
+          item => item.name === oldFileName
+        );
+      if (stillExists) {
+        throw new Error(
+          'New image was saved, but the old image still exists in Storage.'
+        );
+      }
+      return true;
+    }
+    // ============================================================
+    // OPTION IMAGE
+    // ============================================================
+    if (cropTarget.type === 'option') {
+      const opt =
+        q.options.find(
+          o => o.option_index === cropTarget.index
+        );
+      if (!opt) {
+        throw new Error(
+          'Could not find the selected option.'
+        );
+      }
+      // Remember the OLD image before replacing it.
+      const oldImageUrl = opt.option_image_url || null;
+      // ----------------------------------------------------------
+      // 2. UPDATE DATABASE TO NEW IMAGE
+      // ----------------------------------------------------------
+      const { error: dbError } =
+        await supabaseClient
+          .from('pyq_options')
+          .update({
+            option_image_url: newPublicUrl
+          })
+          .eq('id', opt.id);
+      if (dbError) {
+        // New file was uploaded but database update failed.
+        // Remove the newly uploaded file so we don't create
+        // an orphan.
+        await supabaseClient
+          .storage
+          .from('pyq-images')
+          .remove([newPath])
+          .catch(() => {});
+        throw new Error(
+          'Could not save option image: ' +
+          dbError.message
+        );
+      }
+      // Update local state only after DB succeeded.
+      opt.option_image_url = newPublicUrl;
+      // ----------------------------------------------------------
+      // 3. DELETE OLD STORAGE FILE
+      // ----------------------------------------------------------
+      if (oldImageUrl && oldImageUrl !== newPublicUrl) {
+        await deleteOldStorageFile(oldImageUrl);
+      }
+      // Audit log.
+      await supabaseClient
+        .from('pyq_review_log')
+        .insert({
+          question_id: q.id,
+          admin_id: currentUserId,
+          action: 'image_replaced',
+          notes:
+            `Option ${String.fromCharCode(65 + cropTarget.index)} image replaced`
+        });
+      btn.disabled = false;
+      btn.textContent = 'Crop & Upload';
+      cropModal.classList.remove('show');
+      renderOptionImageBox(
+        q,
+        cropTarget.index,
+        newPublicUrl
+      );
+      return;
+    }
+    // ============================================================
+    // QUESTION IMAGE
+    // ============================================================
+    const oldImage =
+      q.images.length
+        ? q.images[0]
+        : null;
+    const oldImageUrl =
+      oldImage?.image_url || null;
+    // ------------------------------------------------------------
+    // 2. INSERT NEW DB IMAGE FIRST
+    // ------------------------------------------------------------
+    const {
+      data: newImageRow,
+      error: insertError
+    } = await supabaseClient
+      .from('pyq_question_images')
+      .insert({
+        question_id: q.id,
+        image_url: newPublicUrl,
+        page_number:
+          parseInt(
+            document.getElementById('pageJumpInput').value
+          ) || null
+      })
+      .select()
+      .single();
+    if (insertError || !newImageRow) {
+      // New file was uploaded but DB insert failed.
+      // Clean up the new Storage file.
+      await supabaseClient
+        .storage
+        .from('pyq-images')
+        .remove([newPath])
+        .catch(() => {});
+      throw new Error(
+        'Could not save question image: ' +
+        (insertError?.message || 'Database insert failed')
+      );
+    }
+    // ------------------------------------------------------------
+    // 3. DELETE OLD DB RECORD
+    // ------------------------------------------------------------
+    if (oldImage) {
+      const { error: oldDbDeleteError } =
+        await supabaseClient
+          .from('pyq_question_images')
+          .delete()
+          .eq('id', oldImage.id);
+      if (oldDbDeleteError) {
+        // IMPORTANT:
+        // The new image is already safely saved.
+        // Do NOT delete the new image.
+        //
+        // The old DB row can be cleaned manually/retried later.
+        throw new Error(
+          'New image was saved, but the old image record could not be removed: ' +
+          oldDbDeleteError.message
+        );
+      }
+    }
+    // Update local state.
+    q.images = [newImageRow];
+    // ------------------------------------------------------------
+    // 4. DELETE OLD STORAGE FILE
+    // ------------------------------------------------------------
+    if (oldImageUrl && oldImageUrl !== newPublicUrl) {
+      await deleteOldStorageFile(oldImageUrl);
+    }
+    // Audit log.
+    await supabaseClient
+      .from('pyq_review_log')
+      .insert({
+        question_id: q.id,
+        admin_id: currentUserId,
+        action: 'image_replaced'
+      });
+    btn.disabled = false;
+    btn.textContent = 'Crop & Upload';
+    cropModal.classList.remove('show');
+    renderImageBox(q);
+  } catch (error) {
+    console.error('Image replacement failed:', error);
+    alert(
+      'Image replacement encountered a problem:\n\n' +
+      (error?.message || error)
+    );
+    btn.disabled = false;
+    btn.textContent = 'Crop & Upload';
+  }
+});
 
   document.getElementById('publishBtn').addEventListener('click', async () => {
   if (!confirm(
