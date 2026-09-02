@@ -603,13 +603,63 @@
   });
 
   document.getElementById('publishBtn').addEventListener('click', async () => {
-    if (!confirm('Publish this PYQ? It will immediately become visible to students in the mock test list. This cannot be easily undone.')) return;
-    const { error } = await supabaseClient.rpc('publish_pyq_paper', { p_paper_id: paperId });
-    if (error) { alert('Could not publish: ' + error.message); return; }
+  if (!confirm(
+    'Publish this PYQ? It will immediately become visible to students in the mock test list. ' +
+    'After successful publication, the original source PDF will be permanently deleted from Storage. ' +
+    'The questions, options, images, and review data will be retained.'
+  )) return;
+
+  const btn = document.getElementById('publishBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+
+  try {
+    const { data, error } = await supabaseClient.functions.invoke(
+      'publish-pyq-paper-v2',
+      {
+        body: { paper_id: paperId }
+      }
+    );
+
+    if (error) {
+      throw new Error(error.message || 'Could not publish the PYQ.');
+    }
+
+    if (!data || data.success !== true || data.published !== true) {
+      throw new Error(data?.error || 'Publication could not be verified.');
+    }
+
+    // The Edge Function has already verified publication and PDF cleanup.
     paper.status = 'published';
+    paper.is_published = true;
+    paper.source_pdf_path = null;
+
     updateProgress();
-    alert('Published! Students will now see this PYQ in the mock test list.');
-  });
+
+    if (data.warning) {
+      alert(
+        'PYQ published successfully.\n\n' +
+        'Source PDF was deleted, but there was a metadata warning:\n\n' +
+        data.warning
+      );
+    } else {
+      alert(
+        'Published successfully.\n\n' +
+        'The PYQ is now available to students and the original source PDF has been permanently removed from Storage.'
+      );
+    }
+
+  } catch (e) {
+    console.error('Publish error:', e);
+
+    // Do NOT mark the UI as published if the request failed.
+    btn.disabled = false;
+    btn.textContent = 'Publish PYQ';
+
+    alert('Could not publish the PYQ:\n\n' + (e?.message || e));
+  }
+});
 
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function escapeAttr(s) { return escapeHtml(s); }
