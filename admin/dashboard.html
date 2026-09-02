@@ -213,6 +213,7 @@
 
     await loadPapers();
 
+    
   } catch (error) {
     console.error('Paper removal failed:', error);
 
@@ -224,6 +225,14 @@
     if (button) {
       button.disabled = false;
       button.textContent = 'Remove';
+      
     }
   }
 }
+// Start dashboard
+guard().then(session => {
+  if (session) loadPapers();
+});
+</script>
+</body>
+</html>
