@@ -170,31 +170,60 @@
   }
 
   async function removePaper(paperId, isPublished) {
-    const warning = isPublished
-      ? 'This PYQ is PUBLISHED — removing it will immediately take it away from students. Remove anyway?'
-      : 'Remove this PYQ paper and all its extracted questions? This cannot be undone.';
-    if (!confirm(warning)) return;
+  const warning = isPublished
+    ? 'This PYQ is PUBLISHED — removing it will immediately take it away from students and permanently delete all associated data and files. Remove anyway?'
+    : 'Remove this PYQ paper? This will permanently delete the PDF, questions, options, images, review logs, and all associated data. This cannot be undone.';
 
-    const { data: paperRow } = await supabaseClient.from('pyq_papers').select('source_pdf_path').eq('id', paperId).single();
+  if (!confirm(warning)) return;
 
-    const { error } = await supabaseClient.from('pyq_papers').delete().eq('id', paperId);
-    if (error) { alert('Could not remove: ' + error.message); return; }
+  const button = document.querySelector(
+    `[data-remove="${paperId}"]`
+  );
 
-    // Best-effort cleanup of the source PDF (question images are left in
-    // place — a minor storage cost, but not worth risking data loss over).
-    if (paperRow?.source_pdf_path) {
-      await supabaseClient.storage.from('pyq-source-pdfs').remove([paperRow.source_pdf_path]).catch(() => {});
-    }
-
-    loadPapers();
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Removing…';
   }
 
-  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  try {
+    const { data, error } = await supabaseClient.functions.invoke(
+      'remove-pyq-paper',
+      {
+        body: {
+          paper_id: paperId
+        }
+      }
+    );
 
-  (async () => {
-    const session = await guard();
-    if (session) loadPapers();
-  })();
-</script>
-</body>
-</html>
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.success) {
+      throw new Error(
+        data?.error || 'Could not completely remove the paper.'
+      );
+    }
+
+    alert(
+      `Successfully removed everything associated with this PYQ.\n\n` +
+      `Source PDF: ${data.deleted_pdf ? 'Deleted' : 'None'}\n` +
+      `Images deleted: ${data.deleted_images}`
+    );
+
+    await loadPapers();
+
+  } catch (error) {
+    console.error('Paper removal failed:', error);
+
+    alert(
+      'Could not remove the PYQ completely: ' +
+      (error.message || 'Unknown error')
+    );
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Remove';
+    }
+  }
+}
