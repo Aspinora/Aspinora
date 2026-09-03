@@ -99,13 +99,40 @@
     }
     .dp-card__mark { position: relative; z-index: 1; font-size: clamp(1.5rem, 3.2vw, 1.9rem); line-height: 1; color: var(--dp-accent); opacity: .7; margin-bottom: .3rem; }
     .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1rem, 1.9vw, 1.3rem); line-height: 1.34; font-weight: 500; letter-spacing: -.01em; max-width: 34ch; margin: 0 0 1.1rem; }
-    .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .82rem; letter-spacing: .02em; color: rgba(255,255,255,.68); }
+    .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .82rem; letter-spacing: .02em; color: rgba(255,255,255,.68); transition: opacity .55s ease, transform .55s ease; }
     .dp-card__author::before { content: ""; display: inline-block; width: 22px; height: 1px; background: var(--dp-line); }
     .dp-card__author--original { color: var(--dp-accent); opacity: .9; }
+    .dp-author-hidden { opacity: 0 !important; transform: translateY(6px); }
     @media (prefers-reduced-motion: no-preference) { .dp-card::before { animation: dpBreathe 11s ease-in-out infinite; } }
     @keyframes dpBreathe { 0%, 100% { opacity: .5; } 50% { opacity: .38; } }
     .dp-card--loading .dp-card__quote, .dp-card--loading .dp-card__author { opacity: 0; }
     @media (max-width: 760px) { .dp-card { border-radius: 18px; min-height: 168px; padding: 1.35rem 1.25rem; } }
+
+    /* ------------------------------------------------------------
+       Intelligent quote-reveal animations. One of these is chosen
+       per-quote (see dpPickAnimation) based on its tone/mood, theme
+       and length — never the same animation every time.
+    ------------------------------------------------------------ */
+    .dp-anim-rise  { animation: dpFadeRise 1.1s cubic-bezier(.22,.8,.36,1) both; }
+    @keyframes dpFadeRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    .dp-anim-blur  { animation: dpBlurFocus 1.4s cubic-bezier(.22,.8,.36,1) both; }
+    @keyframes dpBlurFocus { from { opacity: 0; filter: blur(9px); } to { opacity: 1; filter: blur(0); } }
+
+    .dp-anim-scale { animation: dpScaleReveal .9s cubic-bezier(.2,.85,.32,1) both; }
+    @keyframes dpScaleReveal { from { opacity: 0; transform: scale(.93); } to { opacity: 1; transform: scale(1); } }
+
+    .dp-word { display: inline-block; opacity: 0; transform: translateY(9px); animation: dpWordIn .55s cubic-bezier(.2,.8,.3,1) forwards; }
+    @keyframes dpWordIn { to { opacity: 1; transform: translateY(0); } }
+
+    .dp-caret { display: inline-block; width: 2px; margin-left: 2px; color: var(--dp-accent); animation: dpCaretBlink 1s steps(1) infinite; }
+    @keyframes dpCaretBlink { 50% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dp-anim-rise, .dp-anim-blur, .dp-anim-scale, .dp-word { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+      .dp-caret { display: none !important; }
+      .dp-author-hidden { opacity: 1 !important; transform: none !important; }
+    }
 
 
     /* Sections */
@@ -229,7 +256,7 @@
         <div class="dp-card dp-card--loading">
           <span class="dp-card__mark" aria-hidden="true">&ldquo;</span>
           <p class="dp-card__quote"></p>
-          <div class="dp-card__author"></div>
+          <div class="dp-card__author dp-author-hidden"></div>
         </div>
       </div>
     </section>
@@ -500,13 +527,131 @@
       cardEl.style.setProperty('--dp-tilt', v.tilt);
       cardEl.dataset.dpVariant = v.name;
     }
-    function dpRenderQuote(cardEl, quote) {
-      dpApplyAtmosphere(cardEl, quote);
-      cardEl.classList.remove('dp-card--loading');
-      cardEl.querySelector('.dp-card__quote').textContent = quote.quote_text;
+    /* ------------------------------------------------------------
+       Animation intelligence: pick one of five reveal styles based
+       on the quote's mood, theme family, and word count. Deterministic
+       (not random) so a given quote always animates the same way.
+    ------------------------------------------------------------ */
+    function dpNormalizeMood(mood) {
+      const m = (mood || '').toLowerCase();
+      if (/sharp|fierce|intense|defian|bold|urgent/.test(m)) return 'sharp';
+      if (/still|silen|quiet/.test(m)) return 'still';
+      if (/somber|melanchol|grief|mourn|solemn/.test(m)) return 'somber';
+      if (/calm|peace|serene|gentle/.test(m)) return 'calm';
+      if (/elevat|uplift|hope|rising|forward/.test(m)) return 'elevating';
+      if (/dark|bleak|grim|cold/.test(m)) return 'dark';
+      if (/heavy|weight/.test(m)) return 'heavy';
+      return 'heavy';
+    }
+    function dpThemeFamilyKey(theme) {
+      const key = DP_THEME_FAMILY[(theme || '').toLowerCase()];
+      return DP_FAMILIES[key] ? key : 'default';
+    }
+    function dpPickAnimation(quote) {
+      const text = quote.quote_text || '';
+      const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+      const mood = dpNormalizeMood(quote.mood);
+      const family = dpThemeFamilyKey(quote.theme);
+
+      // Short & punchy overrides everything else — a one-liner should hit at once.
+      if (wordCount <= 7) return 'dramatic-scale';
+
+      // Intense / powerful
+      if (mood === 'sharp' || family === 'fear-courage') return 'word-reveal';
+
+      // Emotional / poetic — reflective stillness in shorter form
+      if ((mood === 'still' || mood === 'calm') && wordCount <= 14 &&
+          (family === 'mortality' || family === 'solitude')) return 'blur-focus';
+
+      // Deep / intellectual — weighty or longer-form statements
+      if (mood === 'heavy' || mood === 'still' || mood === 'somber' ||
+          family === 'discipline' || family === 'dignity' || family === 'mortality') return 'typewriter';
+
+      // Motivational / forward-moving
+      return 'fade-rise';
+    }
+
+    function dpRevealAuthor(authorEl) {
+      requestAnimationFrame(() => authorEl.classList.remove('dp-author-hidden'));
+    }
+
+    function dpAnimSimple(quoteEl, text, className, durationMs, onDone) {
+      quoteEl.textContent = text;
+      quoteEl.className = 'dp-card__quote ' + className;
+      const done = () => { quoteEl.removeEventListener('animationend', done); onDone(); };
+      quoteEl.addEventListener('animationend', done);
+      // Safety fallback in case animationend doesn't fire (e.g. display changes mid-flight)
+      setTimeout(done, durationMs + 150);
+    }
+
+    function dpAnimWordReveal(quoteEl, text, onDone) {
+      quoteEl.textContent = '';
+      quoteEl.className = 'dp-card__quote';
+      const words = text.split(/\s+/).filter(Boolean);
+      const stagger = Math.min(70, Math.max(30, 900 / Math.max(words.length, 1)));
+      words.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.className = 'dp-word';
+        span.textContent = w;
+        span.style.animationDelay = (i * stagger) + 'ms';
+        quoteEl.appendChild(span);
+        if (i < words.length - 1) quoteEl.appendChild(document.createTextNode(' '));
+      });
+      const total = Math.min(words.length * stagger + 550, 2400);
+      setTimeout(onDone, total);
+    }
+
+    function dpAnimTypewriter(quoteEl, text, onDone) {
+      quoteEl.textContent = '';
+      quoteEl.className = 'dp-card__quote';
+      const caret = document.createElement('span');
+      caret.className = 'dp-caret';
+      quoteEl.appendChild(caret);
+      const totalMs = Math.max(1200, Math.min(2400, text.length * 18));
+      const stepMs = totalMs / text.length;
+      let i = 0;
+      const timer = setInterval(() => {
+        i++;
+        quoteEl.textContent = text.slice(0, i);
+        quoteEl.appendChild(caret);
+        if (i >= text.length) {
+          clearInterval(timer);
+          caret.remove();
+          onDone();
+        }
+      }, stepMs);
+    }
+
+    function dpPlayQuoteAnimation(cardEl, quote) {
+      const quoteEl = cardEl.querySelector('.dp-card__quote');
       const authorEl = cardEl.querySelector('.dp-card__author');
       authorEl.textContent = quote.author;
       authorEl.classList.toggle('dp-card__author--original', quote.author_type === 'original');
+      authorEl.classList.add('dp-author-hidden');
+
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        quoteEl.className = 'dp-card__quote';
+        quoteEl.textContent = quote.quote_text;
+        authorEl.classList.remove('dp-author-hidden');
+        return;
+      }
+
+      const animType = dpPickAnimation(quote);
+      const onDone = () => dpRevealAuthor(authorEl);
+
+      switch (animType) {
+        case 'word-reveal': dpAnimWordReveal(quoteEl, quote.quote_text, onDone); break;
+        case 'typewriter': dpAnimTypewriter(quoteEl, quote.quote_text, onDone); break;
+        case 'blur-focus': dpAnimSimple(quoteEl, quote.quote_text, 'dp-anim-blur', 1400, onDone); break;
+        case 'dramatic-scale': dpAnimSimple(quoteEl, quote.quote_text, 'dp-anim-scale', 900, onDone); break;
+        case 'fade-rise': default: dpAnimSimple(quoteEl, quote.quote_text, 'dp-anim-rise', 1100, onDone); break;
+      }
+    }
+
+    function dpRenderQuote(cardEl, quote) {
+      dpApplyAtmosphere(cardEl, quote);
+      cardEl.classList.remove('dp-card--loading');
+      dpPlayQuoteAnimation(cardEl, quote);
     }
     function dpPingTopUp() {
       supabaseClient.functions.invoke('generate-daily-quotes', { body: {} })
