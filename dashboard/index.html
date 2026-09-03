@@ -64,6 +64,7 @@
        never a flat near-black box.
     ============================================================ */
     .dp-section { margin-top: 20px; }
+    .dp-section + .section { margin-top: 12px; }
     .dp-card {
       --dp-base1: #241a35; --dp-base2: #120e1c;
       --dp-accent: #8f6fd8; --dp-accent2: #4a3a6b;
@@ -71,8 +72,8 @@
       --dp-glow2-x: 85%; --dp-glow2-y: 90%; --dp-glow2-size: 45%;
       --dp-tilt: 0deg; --dp-line: rgba(255, 255, 255, .1);
       position: relative; isolation: isolate; overflow: hidden; border-radius: 22px;
-      padding: clamp(1.4rem, 3.4vw, 2.15rem) clamp(1.3rem, 3.6vw, 2.25rem);
-      min-height: clamp(148px, 18vw, 196px);
+      padding: clamp(1.15rem, 2.7vw, 1.7rem) clamp(1.3rem, 3.6vw, 2.25rem);
+      min-height: clamp(118px, 14.4vw, 157px);
       display: flex; flex-direction: column; justify-content: center;
       background: linear-gradient(155deg, var(--dp-base1) 0%, var(--dp-base2) 100%);
       color: rgba(255,255,255,.96);
@@ -98,7 +99,7 @@
       mix-blend-mode: overlay; opacity: .35;
     }
     .dp-card__mark { position: relative; z-index: 1; font-size: clamp(1.5rem, 3.2vw, 1.9rem); line-height: 1; color: var(--dp-accent); opacity: .7; margin-bottom: .3rem; }
-    .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1rem, 1.9vw, 1.3rem); line-height: 1.34; font-weight: 500; letter-spacing: -.01em; max-width: 34ch; margin: 0 0 1.1rem; }
+    .dp-card__quote { position: relative; z-index: 1; font-size: clamp(1rem, 1.9vw, 1.3rem); line-height: 1.34; font-weight: 500; letter-spacing: -.01em; text-align: left; width: 70%; max-width: 70%; margin: 0 0 .8rem; }
     .dp-card__author { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: .82rem; letter-spacing: .02em; color: rgba(255,255,255,.68); transition: opacity .55s ease, transform .55s ease; }
     .dp-card__author::before { content: ""; display: inline-block; width: 22px; height: 1px; background: var(--dp-line); }
     .dp-card__author--original { color: var(--dp-accent); opacity: .9; }
@@ -106,7 +107,7 @@
     @media (prefers-reduced-motion: no-preference) { .dp-card::before { animation: dpBreathe 11s ease-in-out infinite; } }
     @keyframes dpBreathe { 0%, 100% { opacity: .5; } 50% { opacity: .38; } }
     .dp-card--loading .dp-card__quote, .dp-card--loading .dp-card__author { opacity: 0; }
-    @media (max-width: 760px) { .dp-card { border-radius: 18px; min-height: 168px; padding: 1.35rem 1.25rem; } }
+    @media (max-width: 760px) { .dp-card { border-radius: 18px; min-height: 135px; padding: 1.1rem 1.15rem; } .dp-card__quote { width: 82%; max-width: 82%; } }
 
     /* ------------------------------------------------------------
        Intelligent quote-reveal animations. One of these is chosen
