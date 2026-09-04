@@ -16,7 +16,7 @@
   .page{width:min(1100px, calc(100% - 36px));margin:0 auto;padding-bottom:60px}
   .topbar{height:86px;display:flex;align-items:center;justify-content:space-between}
   .brand{display:flex;align-items:center;gap:10px}
-  .brand-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(145deg,#ff9a32,#f26400);display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px}
+  .brand-mark{width:36px;height:36px;display:block}
   .brand-name{font-size:20px;font-weight:800;letter-spacing:-.5px}
   .brand-name span{color:var(--orange)}
   .top-actions{display:flex;gap:10px;align-items:center}
@@ -26,6 +26,8 @@
   .btn-primary:hover{background:var(--orange-dark)}
   .btn-ghost{background:#fff;border:1px solid var(--line);color:#394255}
   .btn-ghost:hover{border-color:#ffd0a8;color:var(--orange-dark)}
+  .btn-red{background:#ffe9e9;color:var(--red)}
+  .btn-red:hover{background:#ffdada}
 
   .hero{padding:28px 6%;border:1px solid #f8e6d6;border-radius:24px;background:linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .hero h1{margin:0 0 6px;font-size:24px;letter-spacing:-.6px}
@@ -54,7 +56,7 @@
 <body>
 <div class="page">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Aspi<span>nora</span> Admin</div></div>
+    <div class="brand"><img src="../aspinora-logo.png" alt="Aspinora" class="brand-mark"><div class="brand-name">Aspi<span>nora</span> Admin</div></div>
     <div class="top-actions">
       <span class="who" id="whoLabel"></span>
       <button class="btn btn-ghost" id="logoutBtn">Log out</button>
@@ -90,16 +92,16 @@
 
   async function guard() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) { window.location.href = 'login.html'; return null; }
+    if (!session) { window.location.href = '/auth'; return null; }
     const { data: isAdmin } = await supabaseClient.rpc('is_admin');
-    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return null; }
+    if (!isAdmin) { await supabaseClient.auth.signOut(); window.location.href = '/auth'; return null; }
     document.getElementById('whoLabel').textContent = session.user.email;
     return session;
   }
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await supabaseClient.auth.signOut();
-    window.location.href = 'login.html';
+    window.location.href = '/auth';
   });
 
   async function loadPapers() {
@@ -138,7 +140,10 @@
             ? `<button class="btn btn-ghost" data-review="${p.id}">Review</button>` : ''}
           ${p.status === 'extraction_failed'
             ? `<button class="btn btn-primary" data-retry="${p.id}">Retry extraction</button>` : ''}
+          <button class="btn btn-red" data-remove="${p.id}" data-published="${p.status === 'published'}">Remove</button>
         </div>
+        ${p.status === 'extraction_failed' && p.last_error
+          ? `<div style="width:100%;font-size:12px;color:#a5232a;background:#fff0f0;border-radius:8px;padding:8px 12px;margin-top:4px">${escapeHtml(p.last_error)}</div>` : ''}
       `;
       listEl.appendChild(card);
     });
@@ -153,7 +158,38 @@
         window.location.href = `upload.html?retry_paper_id=${btn.dataset.retry}`;
       });
     });
+    listEl.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => removePaper(btn.dataset.remove, btn.dataset.published === 'true'));
+    });
+
+    // Auto-refresh while anything is mid-extraction (extraction runs in the
+    // background and can take a few minutes), so status updates without
+    // needing a manual reload.
+    const stillWorking = papers.some(p => p.status === 'extracting');
+    if (stillWorking) setTimeout(loadPapers, 5000);
   }
+
+  async function removePaper(paperId, isPublished) {
+    const warning = isPublished
+      ? 'This PYQ is PUBLISHED — removing it will immediately take it away from students. Remove anyway?'
+      : 'Remove this PYQ paper and all its extracted questions? This cannot be undone.';
+    if (!confirm(warning)) return;
+
+    const { data: paperRow } = await supabaseClient.from('pyq_papers').select('source_pdf_path').eq('id', paperId).single();
+
+    const { error } = await supabaseClient.from('pyq_papers').delete().eq('id', paperId);
+    if (error) { alert('Could not remove: ' + error.message); return; }
+
+    // Best-effort cleanup of the source PDF (question images are left in
+    // place — a minor storage cost, but not worth risking data loss over).
+    if (paperRow?.source_pdf_path) {
+      await supabaseClient.storage.from('pyq-source-pdfs').remove([paperRow.source_pdf_path]).catch(() => {});
+    }
+
+    loadPapers();
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
   (async () => {
     const session = await guard();
