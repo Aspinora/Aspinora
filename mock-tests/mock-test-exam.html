@@ -62,7 +62,8 @@ button{font:inherit;cursor:pointer;border:0;background:none}
 .main{min-height:0;flex:1;display:flex;flex-direction:column}
 .content{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px}
 .question-area{min-width:0;display:flex;flex-direction:column;padding:20px 26px;min-height:0}
-.question-scroll{min-height:0;flex:1;overflow:auto;padding-right:8px}
+.question-panel{min-height:0;flex:1 1 55%;overflow:auto;padding-right:8px}
+.options-panel{min-height:0;flex:1 1 45%;overflow:auto;padding-right:8px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
 .question-number{font-size:19px;font-weight:800;margin-bottom:16px}
 .qtext{font-size:18px;line-height:1.6;margin-bottom:20px;white-space:pre-line}
 .qtext img{cursor:zoom-in}
@@ -237,9 +238,11 @@ button{font:inherit;cursor:pointer;border:0;background:none}
   <main class="main">
     <div class="content">
       <section class="question-area">
-        <div class="question-scroll">
+        <div class="question-panel" id="questionPanel">
           <div class="question-number" id="questionNumber"></div>
           <div class="qtext" id="qtext"></div>
+        </div>
+        <div class="options-panel" id="optionsPanel">
           <div id="options"></div>
         </div>
       </section>
@@ -610,6 +613,11 @@ function loadQuestion(){
   prevBtn.disabled = currentQ === 0;
   renderNumbers();
   renderAnalysis();
+
+  const questionPanelEl = document.getElementById('questionPanel');
+  const optionsPanelEl = document.getElementById('optionsPanel');
+  if (questionPanelEl) questionPanelEl.scrollTop = 0;
+  if (optionsPanelEl) optionsPanelEl.scrollTop = 0;
 }
 
 function openImageLightbox(src) {
