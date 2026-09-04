@@ -176,6 +176,237 @@
   let pdfSignedUrl = null;
   let pdfDoc = null;
 
+  /*
+   * ============================================================
+   * CANONICAL QUESTION ORDERING
+   * ============================================================
+   *
+   * The Review page must NEVER derive question numbering or
+   * ordering from array index / DOM position. The only correct
+   * order is:
+   *
+   *   1. pyq_sections.order_index (the actual loaded section order)
+   *   2. pyq_questions.question_number (numeric)
+   *   3. pyq_questions.id (deterministic fallback tie-breaker)
+   *
+   * This function mutates the global `questions` array in place.
+   */
+  function sortQuestions() {
+    const sectionOrder = new Map(
+      sections.map((s, i) => [
+        s.id,
+        (s.order_index !== null && s.order_index !== undefined)
+          ? s.order_index
+          : i
+      ])
+    );
+
+    questions.sort((a, b) => {
+      const oa =
+        sectionOrder.has(a.section_id)
+          ? sectionOrder.get(a.section_id)
+          : Number.MAX_SAFE_INTEGER;
+
+      const ob =
+        sectionOrder.has(b.section_id)
+          ? sectionOrder.get(b.section_id)
+          : Number.MAX_SAFE_INTEGER;
+
+      if (oa !== ob) {
+        return oa - ob;
+      }
+
+      const na = Number(a.question_number);
+      const nb = Number(b.question_number);
+
+      const naValid = !isNaN(na);
+      const nbValid = !isNaN(nb);
+
+      if (naValid && nbValid && na !== nb) {
+        return na - nb;
+      }
+
+      if (naValid && !nbValid) {
+        return -1;
+      }
+
+      if (!naValid && nbValid) {
+        return 1;
+      }
+
+      // Deterministic fallback tie-breaker: never array index.
+      return String(a.id).localeCompare(String(b.id));
+    });
+  }
+
+  /*
+   * ============================================================
+   * OPTION INDEX NORMALIZATION
+   * ============================================================
+   *
+   * Legacy extracted rows may store option_index using either:
+   *   - canonical convention: 0,1,2,3  (A,B,C,D)
+   *   - legacy convention:    1,2,3,4  (A,B,C,D)
+   *
+   * The UI's internal representation must ALWAYS be 0-3. This
+   * shift is derived per-question from the actual set of indexes
+   * present for that question, never assumed globally.
+   */
+  function normalizeOptionIndex(rawIndex, shift) {
+    return rawIndex + shift;
+  }
+
+  function normalizeQuestionOptions(q, rawOptions) {
+    const indices =
+      rawOptions
+        .map(o => o.option_index)
+        .filter(v => v !== null && v !== undefined && !isNaN(v));
+
+    let shift = 0;
+
+    if (indices.length) {
+      const min = Math.min(...indices);
+      const max = Math.max(...indices);
+
+      // Clear evidence of legacy 1-4 convention: shift down by 1.
+      // If there is already a 0 present, or values fall outside
+      // 1-4, treat as canonical / leave untouched rather than
+      // guessing.
+      if (min === 1 && max <= 4) {
+        shift = -1;
+      }
+    }
+
+    const options =
+      rawOptions
+        .map(o => ({
+          ...o,
+          option_index:
+            normalizeOptionIndex(o.option_index, shift)
+        }))
+        .filter(o => o.option_index >= 0 && o.option_index <= 3)
+        .sort((a, b) => a.option_index - b.option_index);
+
+    let correctIndex = q.correct_option_index;
+
+    if (correctIndex !== null && correctIndex !== undefined) {
+      correctIndex = normalizeOptionIndex(correctIndex, shift);
+    }
+
+    return { options, correctIndex };
+  }
+
+  /*
+   * ============================================================
+   * SECTION / NUMBERING VALIDATION
+   * ============================================================
+   *
+   * Detects malformed extraction structure (wrong counts,
+   * duplicate numbers, missing numbers, non-numeric or
+   * out-of-range numbers) WITHOUT ever attempting to silently
+   * repair it by renumbering. The Review UI only surfaces a
+   * warning so the underlying extraction/database can be fixed.
+   */
+  function validateSections() {
+    const EXPECTED_PER_SECTION = 25;
+    const warnings = [];
+
+    sections.forEach(sec => {
+      const secQuestions =
+        questions.filter(q => q.section_id === sec.id);
+
+      const count = secQuestions.length;
+
+      const numbers =
+        secQuestions.map(q => q.question_number);
+
+      const nonNumeric =
+        secQuestions.filter(q => {
+          const n = Number(q.question_number);
+          return q.question_number === null ||
+            q.question_number === undefined ||
+            isNaN(n);
+        });
+
+      const outOfRange =
+        secQuestions.filter(q => {
+          const n = Number(q.question_number);
+          return !isNaN(n) && (n < 1 || n > EXPECTED_PER_SECTION);
+        });
+
+      const seenCounts = new Map();
+
+      numbers.forEach(n => {
+        const key = String(n);
+        seenCounts.set(key, (seenCounts.get(key) || 0) + 1);
+      });
+
+      const duplicates = [];
+
+      seenCounts.forEach((c, key) => {
+        if (c > 1) {
+          duplicates.push(key);
+        }
+      });
+
+      const missing = [];
+
+      if (count !== EXPECTED_PER_SECTION) {
+        for (let i = 1; i <= EXPECTED_PER_SECTION; i++) {
+          if (!numbers.some(n => Number(n) === i)) {
+            missing.push(i);
+          }
+        }
+      }
+
+      const isMalformed =
+        count !== EXPECTED_PER_SECTION ||
+        duplicates.length > 0 ||
+        nonNumeric.length > 0 ||
+        outOfRange.length > 0;
+
+      if (isMalformed) {
+        const parts = [];
+
+        parts.push(
+          `expected ${EXPECTED_PER_SECTION}, found ${count}`
+        );
+
+        if (duplicates.length) {
+          parts.push(
+            `duplicate number(s): ${duplicates.join(', ')}`
+          );
+        }
+
+        if (missing.length) {
+          parts.push(
+            `missing number(s): ${missing.join(', ')}`
+          );
+        }
+
+        if (nonNumeric.length) {
+          parts.push(
+            `${nonNumeric.length} non-numeric question_number value(s)`
+          );
+        }
+
+        if (outOfRange.length) {
+          parts.push(
+            `${outOfRange.length} question_number value(s) outside 1-${EXPECTED_PER_SECTION}`
+          );
+        }
+
+        warnings.push({
+          sectionId: sec.id,
+          sectionName: sec.name,
+          text: `${sec.name}: ${parts.join('; ')}`
+        });
+      }
+    });
+
+    return warnings;
+  }
+
   async function guard() {
     const {
       data: { session }
@@ -234,8 +465,7 @@
     } = await supabaseClient
       .from('pyq_questions')
       .select('*')
-      .eq('paper_id', paperId)
-      .order('question_number');
+      .eq('paper_id', paperId);
 
     const questionIds =
       (questionRows || []).map(q => q.id);
@@ -267,28 +497,30 @@
 
     questions =
       (questionRows || [])
-        .map(q => ({
-          ...q,
-          options:
+        .map(q => {
+          const rawOpts =
             (optionRows || [])
-              .filter(o => o.question_id === q.id)
-              .sort((a, b) => a.option_index - b.option_index),
+              .filter(o => o.question_id === q.id);
 
-          images:
-            (imageRows || [])
-              .filter(im => im.question_id === q.id)
-        }))
-        .sort((a, b) => {
-          const sa =
-            sections.findIndex(s => s.id === a.section_id);
+          const {
+            options,
+            correctIndex
+          } = normalizeQuestionOptions(
+            q,
+            rawOpts
+          );
 
-          const sb =
-            sections.findIndex(s => s.id === b.section_id);
-
-          return sa !== sb
-            ? sa - sb
-            : a.question_number - b.question_number;
+          return {
+            ...q,
+            correct_option_index: correctIndex,
+            options,
+            images:
+              (imageRows || [])
+                .filter(im => im.question_id === q.id)
+          };
         });
+
+    sortQuestions();
 
     renderNav();
     updateProgress();
@@ -333,6 +565,26 @@
       document.getElementById('navPanel');
 
     navEl.innerHTML = '';
+
+    const structureWarnings =
+      validateSections();
+
+    if (structureWarnings.length) {
+      const banner =
+        document.createElement('div');
+
+      banner.className = 'warn-banner';
+      banner.style.marginBottom = '14px';
+
+      banner.innerHTML =
+        '⚠️ <div>Section/numbering issue detected — this needs correction upstream, it has not been auto-fixed:<br>' +
+        structureWarnings
+          .map(w => escapeHtml(w.text))
+          .join('<br>') +
+        '</div>';
+
+      navEl.appendChild(banner);
+    }
 
     const indexById =
       new Map(
@@ -787,6 +1039,26 @@
     }
   }
 
+  function optionTextsChanged(
+    currentOptions,
+    incomingTexts
+  ) {
+    for (let i = 0; i < 4; i++) {
+      const cur =
+        (
+          currentOptions.find(
+            o => o.option_index === i
+          ) || {}
+        ).option_text || '';
+
+      if (cur !== (incomingTexts[i] || '')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   async function saveCurrent(
     reviewStatusOverride
   ) {
@@ -828,17 +1100,47 @@
           ).value
       );
 
+    /*
+     * Determine whether this is a *material* edit. Section change
+     * MUST always count as material (per spec). If the question
+     * was previously approved and this is a material edit that is
+     * not itself an explicit approval action, the approval must be
+     * invalidated (review_status -> pending) rather than silently
+     * left as approved.
+     */
+    const wasApproved =
+      q.review_status === 'approved';
+
+    const sectionChanged =
+      sectionId !== q.section_id;
+
+    const materialChange =
+      sectionChanged ||
+      externalId !== (q.external_question_id || null) ||
+      questionText !== (q.question_text || '') ||
+      correctIdx !== q.correct_option_index ||
+      optionTextsChanged(q.options, optionTexts);
+
+    let newStatus = q.review_status;
+
+    if (reviewStatusOverride) {
+      newStatus = reviewStatusOverride;
+    } else if (wasApproved && materialChange) {
+      newStatus = 'pending';
+    }
+
+    const autoUnapproved =
+      !reviewStatusOverride &&
+      wasApproved &&
+      newStatus === 'pending';
+
     const questionUpdate = {
       section_id: sectionId,
       external_question_id: externalId,
       question_text: questionText,
-      correct_option_index: correctIdx
+      correct_option_index: correctIdx,
+      review_status: newStatus
     };
-
-    if (reviewStatusOverride) {
-      questionUpdate.review_status =
-        reviewStatusOverride;
-    }
 
     let qResult;
     let optResult;
@@ -904,11 +1206,7 @@
     q.external_question_id = externalId;
     q.question_text = questionText;
     q.correct_option_index = correctIdx;
-
-    if (reviewStatusOverride) {
-      q.review_status =
-        reviewStatusOverride;
-    }
+    q.review_status = newStatus;
 
     optionTexts.forEach((t, i) => {
       const o =
@@ -926,20 +1224,64 @@
       }
     });
 
+    const logEntry = {
+      question_id: q.id,
+      admin_id: currentUserId,
+      action:
+        reviewStatusOverride === 'approved'
+          ? 'approved'
+          : 'edited'
+    };
+
+    if (autoUnapproved) {
+      logEntry.notes =
+        'Approval invalidated automatically: question was materially edited after approval';
+    }
+
     supabaseClient
       .from('pyq_review_log')
-      .insert({
-        question_id: q.id,
-        admin_id: currentUserId,
-        action:
-          reviewStatusOverride === 'approved'
-            ? 'approved'
-            : 'edited'
-      });
+      .insert(logEntry);
+
+    /*
+     * Question identity (q.id) is preserved through re-sorting.
+     * The global array index is NEVER treated as identity.
+     */
+    if (sectionChanged) {
+      sortQuestions();
+
+      const newIdx =
+        questions.findIndex(
+          x => x.id === q.id
+        );
+
+      if (newIdx !== -1) {
+        currentIndex = newIdx;
+      }
+    }
+
+    updateProgress();
 
     if (!reviewStatusOverride) {
-      noteEl.textContent = 'Saved.';
-      noteEl.style.color = '#1c8f57';
+      renderNav();
+
+      if (sectionChanged) {
+        renderEditor();
+      }
+
+      const freshNote =
+        document.getElementById('saveNote');
+
+      if (freshNote) {
+        freshNote.textContent =
+          autoUnapproved
+            ? 'Saved. Approval was removed because this question was edited — approve again if it is correct.'
+            : 'Saved.';
+
+        freshNote.style.color =
+          autoUnapproved
+            ? '#a5720a'
+            : '#1c8f57';
+      }
     }
 
     return true;
