@@ -28,6 +28,7 @@
   .btn-ghost:hover{border-color:#ffd0a8;color:var(--orange-dark)}
   .btn-red{background:#ffe9e9;color:var(--red)}
   .btn-red:hover{background:#ffdada}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
 
   .hero{padding:28px 6%;border:1px solid #f8e6d6;border-radius:24px;background:linear-gradient(120deg,#fff 0%, #fffaf6 100%);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .hero h1{margin:0 0 6px;font-size:24px;letter-spacing:-.6px}
@@ -159,7 +160,7 @@
       });
     });
     listEl.querySelectorAll('[data-remove]').forEach(btn => {
-      btn.addEventListener('click', () => removePaper(btn.dataset.remove, btn.dataset.published === 'true'));
+      btn.addEventListener('click', () => removePaper(btn.dataset.remove, btn.dataset.published === 'true', btn));
     });
 
     // Auto-refresh while anything is mid-extraction (extraction runs in the
@@ -169,24 +170,65 @@
     if (stillWorking) setTimeout(loadPapers, 5000);
   }
 
-  async function removePaper(paperId, isPublished) {
+  // Lists ALL objects under a Storage folder prefix, paginating past the
+  // default 100-item page size — a 100-question paper can have up to 200
+  // question+option images, so a single unpaginated list() call would
+  // silently miss some and leave them orphaned.
+  async function listAllStorageObjects(bucket, prefix) {
+    const all = [];
+    let offset = 0;
+    const limit = 100;
+    while (true) {
+      const { data, error } = await supabaseClient.storage.from(bucket).list(prefix, { limit, offset });
+      if (error) throw new Error(`Could not list ${bucket}/${prefix}: ${error.message}`);
+      if (!data || !data.length) break;
+      all.push(...data);
+      if (data.length < limit) break;
+      offset += limit;
+    }
+    return all;
+  }
+
+  async function removePaper(paperId, isPublished, btn) {
     const warning = isPublished
       ? 'This PYQ is PUBLISHED — removing it will immediately take it away from students. Remove anyway?'
       : 'Remove this PYQ paper and all its extracted questions? This cannot be undone.';
     if (!confirm(warning)) return;
 
-    const { data: paperRow } = await supabaseClient.from('pyq_papers').select('source_pdf_path').eq('id', paperId).single();
+    if (btn) { btn.disabled = true; btn.textContent = 'Removing…'; }
 
-    const { error } = await supabaseClient.from('pyq_papers').delete().eq('id', paperId);
-    if (error) { alert('Could not remove: ' + error.message); return; }
+    try {
+      const { data: paperRow } = await supabaseClient.from('pyq_papers').select('source_pdf_path').eq('id', paperId).single();
 
-    // Best-effort cleanup of the source PDF (question images are left in
-    // place — a minor storage cost, but not worth risking data loss over).
-    if (paperRow?.source_pdf_path) {
-      await supabaseClient.storage.from('pyq-source-pdfs').remove([paperRow.source_pdf_path]).catch(() => {});
+      // Storage is a separate system from the database — deleting the
+      // pyq_papers row cascades every DB row (sections, questions,
+      // options, images, review log — all confirmed ON DELETE CASCADE)
+      // automatically, but does NOT touch Storage objects. Every image
+      // uploaded during review lives under pyq-images/{paperId}/..., so
+      // clean that whole prefix up front, before removing the DB row, so
+      // nothing is left orphaned even if a later step fails.
+      const imageFiles = await listAllStorageObjects('pyq-images', paperId);
+      if (imageFiles.length) {
+        const paths = imageFiles.map(f => `${paperId}/${f.name}`);
+        const { error: imgErr } = await supabaseClient.storage.from('pyq-images').remove(paths);
+        if (imgErr) throw new Error('Could not remove question/option images from storage: ' + imgErr.message);
+      }
+
+      const { error } = await supabaseClient.from('pyq_papers').delete().eq('id', paperId);
+      if (error) throw new Error('Could not remove paper: ' + error.message);
+
+      // Best-effort cleanup of the source PDF. Already deleted at publish
+      // time for published papers (source_pdf_path is null there), so
+      // this is a no-op in that case.
+      if (paperRow?.source_pdf_path) {
+        await supabaseClient.storage.from('pyq-source-pdfs').remove([paperRow.source_pdf_path]).catch(() => {});
+      }
+
+      loadPapers();
+    } catch (e) {
+      alert((e?.message || e) + '\n\nNothing was removed — please retry.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Remove'; }
     }
-
-    loadPapers();
   }
 
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
