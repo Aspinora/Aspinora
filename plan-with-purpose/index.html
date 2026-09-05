@@ -163,7 +163,7 @@
           </button>
           <div class="menu-label">Explore Aspinora</div>
           <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
-          <button class="menu-item" data-message="Study planner selected"><span class="menu-icon blue">▣</span>Study planner</button>
+          <a class="menu-item" href="/study-planner/"><span class="menu-icon blue">▣</span>Study planner</a>
           <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
           <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
           <a class="menu-item" href="/mock-tests/"><span class="menu-icon orange">◈</span>Mock tests</a>
@@ -256,8 +256,8 @@
 
     <section class="cta-banner reveal">
       <h2>Ready to build your plan?</h2>
-      <p>Head to your preparation roadmap and start turning this framework into your own schedule.</p>
-      <button class="primary" id="ctaButton">View your roadmap&nbsp; →</button>
+      <p>Head to your study planner and start turning this framework into your own schedule.</p>
+      <button class="primary" id="ctaButton">Build your own plan&nbsp; →</button>
     </section>
 
     <footer class="footer">
@@ -376,7 +376,7 @@
     checkSessionAndUpdateMenu();
 
     document.getElementById('ctaButton').addEventListener('click', () => {
-      window.location.href = '/roadmap/';
+      window.location.href = '/study-planner/';
     });
 
     document.querySelectorAll('.tab-btn').forEach((btn) => {
