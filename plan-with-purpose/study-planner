@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/aspinora-logo.png">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T21NS52RF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2T21NS52RF');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspinora — Build Your Own Plan</title>
+  <style>
+    :root {
+      --orange: #ff7800; --orange-dark: #e85d00; --ink: #172033; --muted: #6d7585;
+      --line: #edf0f5; --surface: #ffffff; --soft: #fff7ef; --shadow: 0 18px 55px rgba(34, 45, 72, .12);
+      --red: #e5484d; --green: #239363; --blue: #367dd7; --purple: #7957db;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
+    button { font: inherit; }
+    input, select, textarea { font: inherit; }
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
+
+    /* ---------- topbar / brand / menu (shared) ---------- */
+    .topbar { height: 86px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 7px 10px 7px 3px; border-radius: 14px; transition: background .2s ease, transform .2s ease; }
+    .brand:hover { background: #fff0e3; transform: translateY(-1px); }
+    .brand img { width: 43px; height: 43px; object-fit: contain; border-radius: 50%; box-shadow: 0 5px 14px rgba(255, 120, 0, .2); }
+    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -.7px; }
+    .brand-name span { color: var(--orange); }
+    .menu-wrap { position: relative; }
+    .menu-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 14px; color: #505b70; background: transparent; cursor: pointer; transition: all .2s ease; }
+    .menu-button:hover, .menu-button[aria-expanded="true"] { color: var(--orange-dark); background: #fff0e3; border-color: #ffe2ca; }
+    .dots { display: flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+    .menu-panel { position: absolute; top: 53px; right: 0; z-index: 20; width: 245px; padding: 10px; background: white; border: 1px solid #f0e9e2; border-radius: 18px; box-shadow: var(--shadow); opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .menu-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .menu-label { padding: 8px 10px 7px; color: #a0a6b2; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+    .menu-item { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border: 0; border-radius: 12px; background: transparent; color: #394255; text-align: left; cursor: pointer; text-decoration: none; transition: background .16s ease, color .16s ease; }
+    .menu-item:hover { background: #fff6ee; color: var(--orange-dark); }
+    .menu-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; font-size: 14px; flex-shrink: 0; }
+    .orange { background: #fff0e1; color: #f16d00; }
+    .blue { background: #eaf4ff; color: #367dd7; }
+    .purple { background: #f2edff; color: #7957db; }
+    .green { background: #eaf9f1; color: #239363; }
+    .red { background: #ffe9e9; color: #e5484d; }
+    .menu-profile { margin-bottom: 6px; cursor: default; }
+    .menu-item.menu-profile:hover { background: transparent; color: #394255; }
+    .menu-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ff9a32, #f26400); color: white; font-size: 13px; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(238, 108, 8, .22); overflow: hidden; }
+    .menu-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .menu-profile-info { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+    .menu-profile-name { font-size: 13.5px; font-weight: 750; color: #273146; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-profile-sub { font-size: 11px; color: #a0a6b2; font-weight: 650; }
+    .menu-divider { height: 1px; background: #f0e9e2; margin: 6px 6px; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 99px; color: #e56b14; background: #fff0e2; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .eyebrow::before { content: "✦"; font-size: 13px; }
+
+    .page-hero { padding: 46px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 90% 5%, #fff3e5 0 12%, transparent 34%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .page-hero h1 { max-width: 680px; margin: 18px 0 14px; font-size: clamp(32px, 4.2vw, 52px); line-height: 1.05; letter-spacing: -2.2px; }
+    .page-hero h1 em { color: var(--orange); font-style: normal; }
+    .intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    .section { scroll-margin-top: 20px; margin-top: 20px; padding: 30px 6%; border: 1px solid #f8e6d6; border-radius: 30px; background: linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .section h2 { margin: 0 0 4px; font-size: 24px; letter-spacing: -.6px; }
+    .section .lead { max-width: 720px; margin: 0 0 8px; color: var(--muted); font-size: 14.5px; line-height: 1.7; }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    .primary { border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; font-weight: 750; transition: all .2s ease; color: white; background: linear-gradient(135deg, #ff8c1a, #f06400); box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(242, 105, 0, .28); }
+    .primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .ghost-btn { border: 1px solid var(--line); border-radius: 12px; padding: 11px 18px; cursor: pointer; font-weight: 750; background: white; color: #4e586b; transition: all .2s ease; }
+    .ghost-btn:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+
+    .footer { margin-top: 20px; padding: 42px 7%; text-align: center; border: 1px solid #f8e6d6; border-radius: 30px; background: radial-gradient(circle at 86% 14%, #fff3e5 0 12%, transparent 33%), linear-gradient(120deg, #fff 0%, #fffaf6 100%); box-shadow: 0 16px 50px rgba(193, 117, 43, .07); }
+    .footer-contact { font-size: 14px; color: var(--muted); }
+    .footer-contact a { color: var(--orange-dark); font-weight: 750; text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin: 22px 0; padding-top: 22px; border-top: 1px solid var(--line); }
+    .footer-links a { color: #4e586b; font-size: 13px; font-weight: 750; text-decoration: none; transition: color .16s ease; }
+    .footer-links a:hover { color: var(--orange-dark); }
+    .footer-copy { margin: 0; color: #a0a6b2; font-size: 12px; }
+
+    /* ---------- auth gate ---------- */
+    .gate-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 100px 20px; text-align: center; }
+    .gate-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ffe2ca; border-top-color: var(--orange); animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .gate-screen p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+    /* ---------- dashboard stat row ---------- */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+    .stat-card { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(44, 54, 78, .04); }
+    .stat-card .label { font-size: 11.5px; font-weight: 800; color: #a0a6b2; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .stat-card .value { font-size: 26px; font-weight: 800; letter-spacing: -.8px; }
+    .stat-card .value.orange { color: var(--orange-dark); }
+    .stat-card .value.green { color: var(--green); }
+    .stat-card .value.red { color: var(--red); }
+
+    .progress-track { width: 100%; height: 8px; border-radius: 99px; background: #f1e9e0; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ff8c1a, #f06400); transition: width .4s ease; }
+    .progress-fill.thin { }
+    .progress-track.thin { height: 5px; }
+
+    /* ---------- goal tabs ---------- */
+    .goal-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 6px; }
+    .goal-tab { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 12px; border: 1px solid var(--line); background: white; color: #4e586b; cursor: pointer; font-weight: 750; transition: all .2s ease; }
+    .goal-tab:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .goal-tab.active { background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent; box-shadow: 0 10px 20px rgba(242, 105, 0, .2); }
+    .goal-tab .mini-pct { font-size: 11.5px; opacity: .85; }
+    .add-goal-tab { display: inline-flex; align-items: center; gap: 6px; padding: 11px 16px; border-radius: 12px; border: 1.5px dashed #ffcc9e; background: #fffaf5; color: var(--orange-dark); cursor: pointer; font-weight: 750; }
+    .add-goal-tab:hover { background: #fff0e1; }
+
+    /* ---------- empty state ---------- */
+    .empty-state { text-align: center; padding: 50px 20px; }
+    .empty-state .glyph { font-size: 40px; margin-bottom: 14px; }
+    .empty-state h3 { margin: 0 0 8px; font-size: 20px; }
+    .empty-state p { margin: 0 0 20px; color: var(--muted); font-size: 14.5px; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+    /* ---------- goal meta / countdown card ---------- */
+    .goal-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0 4px; }
+    .meta-card { padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.94); }
+    .meta-card .label { font-size: 11px; font-weight: 800; color: #a0a6b2; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .meta-card .value { font-size: 18px; font-weight: 800; }
+    .pace-warning { margin-top: 14px; padding: 13px 16px; border-radius: 14px; background: #fff4e9; border: 1px solid #ffdcae; color: #a15b00; font-size: 13.5px; font-weight: 650; display: flex; align-items: center; gap: 10px; }
+    .pace-ok { margin-top: 14px; padding: 13px 16px; border-radius: 14px; background: #eaf9f1; border: 1px solid #c9ecd9; color: #1a6b49; font-size: 13.5px; font-weight: 650; display: flex; align-items: center; gap: 10px; }
+
+    /* ---------- workspace layout ---------- */
+    .workspace { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; margin-top: 22px; align-items: start; }
+    .tree-panel { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); padding: 8px; }
+    .tree-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 10px; }
+    .tree-toolbar h3 { margin: 0; font-size: 15px; }
+    .tree-list { padding: 4px 8px 12px; }
+
+    .node-row { border: 1px solid var(--line); border-radius: 13px; background: white; margin-bottom: 8px; overflow: hidden; }
+    .node-row.selected { border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .08); }
+    .node-main { display: flex; align-items: center; gap: 8px; padding: 10px 10px; }
+    .node-children { padding-left: 22px; border-left: 2px solid #fdeee0; margin: 0 10px 10px 22px; }
+    .node-toggle { width: 22px; height: 22px; flex-shrink: 0; display: grid; place-items: center; border: 0; background: transparent; color: #a0a6b2; cursor: pointer; font-size: 11px; border-radius: 6px; }
+    .node-toggle:hover { background: #fff0e1; color: var(--orange-dark); }
+    .node-toggle.leaf { visibility: hidden; }
+    .node-badge { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; padding: 3px 7px; border-radius: 7px; flex-shrink: 0; }
+    .badge-0 { background: #fff0e1; color: #e56b14; }
+    .badge-1 { background: #eaf4ff; color: #367dd7; }
+    .badge-2 { background: #f2edff; color: #7957db; }
+    .badge-3 { background: #eaf9f1; color: #239363; }
+    .badge-4 { background: #ffe9e9; color: #c94146; }
+    .node-title-btn { flex: 1; min-width: 0; text-align: left; border: 0; background: transparent; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--ink); padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .node-title-btn:hover { color: var(--orange-dark); }
+    .status-chip { font-size: 10.5px; font-weight: 750; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; white-space: nowrap; }
+    .status-not_started { background: #f1f2f5; color: #7a8194; }
+    .status-in_progress { background: #eaf4ff; color: #367dd7; }
+    .status-completed { background: #eaf9f1; color: #239363; }
+    .status-needs_revision { background: #fff0e2; color: #e56b14; }
+    .node-pct { font-size: 11.5px; font-weight: 750; color: #a0a6b2; width: 34px; text-align: right; flex-shrink: 0; }
+    .node-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+    .icon-btn { width: 26px; height: 26px; display: grid; place-items: center; border: 0; background: transparent; color: #b3b9c4; cursor: pointer; border-radius: 7px; font-size: 13px; }
+    .icon-btn:hover { background: #fff0e1; color: var(--orange-dark); }
+    .icon-btn.danger:hover { background: #ffe9e9; color: var(--red); }
+    .mini-progress { height: 4px; border-radius: 99px; background: #f1e9e0; margin: 0 10px 10px 10px; overflow: hidden; }
+    .mini-progress i { display: block; height: 100%; background: linear-gradient(90deg, #ff8c1a, #f06400); border-radius: 99px; }
+    .add-child-row { padding: 8px 10px 4px; }
+    .add-child-btn { width: 100%; padding: 9px; border-radius: 10px; border: 1.5px dashed #ecdccb; background: #fffaf5; color: #a1755a; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+    .add-child-btn:hover { border-color: #ffcc9e; color: var(--orange-dark); }
+
+    /* ---------- detail panel ---------- */
+    .detail-panel { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); padding: 20px; position: sticky; top: 16px; }
+    .detail-panel h3 { margin: 0 0 3px; font-size: 17px; }
+    .detail-sub { margin: 0 0 18px; font-size: 12.5px; color: #a0a6b2; }
+    .field-group { margin-bottom: 14px; }
+    .field-group label { display: block; font-size: 12.5px; font-weight: 750; color: #394255; margin-bottom: 6px; }
+    .field-group input, .field-group select, .field-group textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; font-size: 13.5px; color: var(--ink); background: white;
+    }
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .1); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-group textarea { resize: vertical; min-height: 70px; }
+    .detail-empty { text-align: center; padding: 40px 10px; color: var(--muted); font-size: 13.5px; }
+    .revision-line { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 11px; background: #fff7ef; font-size: 12.5px; font-weight: 650; color: #a15b00; margin-bottom: 14px; }
+    .revision-line button { border: 0; background: var(--orange-dark); color: white; padding: 6px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 750; cursor: pointer; }
+    .detail-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .detail-actions .primary { flex: 1; }
+
+    /* ---------- revision watchlist ---------- */
+    .revision-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
+    .revision-card { padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.94); }
+    .revision-card h4 { margin: 0 0 10px; font-size: 13.5px; }
+    .rev-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; font-size: 13px; border-top: 1px solid var(--line); }
+    .rev-item:first-of-type { border-top: 0; }
+    .rev-item .due { font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 99px; }
+    .due-overdue { background: #ffe9e9; color: var(--red); }
+    .due-soon { background: #fff0e2; color: #e56b14; }
+    .rev-empty { color: #a0a6b2; font-size: 12.5px; padding: 6px 0; }
+
+    /* ---------- modal ---------- */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(23, 32, 51, .45); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-card { width: 100%; max-width: 440px; background: white; border-radius: 22px; padding: 28px 26px; box-shadow: var(--shadow); opacity: 0; transform: translateY(14px) scale(.97); animation: modalIn .25s cubic-bezier(.22,.9,.3,1) forwards; }
+    @keyframes modalIn { to { opacity: 1; transform: none; } }
+    .modal-card h3 { margin: 0 0 4px; font-size: 19px; }
+    .modal-card .modal-sub { margin: 0 0 18px; font-size: 12.5px; color: var(--muted); }
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 4px; }
+    .day-chip { padding: 8px 0; text-align: center; border-radius: 9px; border: 1px solid var(--line); background: white; font-size: 11.5px; font-weight: 750; color: #7a8194; cursor: pointer; }
+    .day-chip.on { background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions .ghost-btn, .modal-actions .primary { flex: 1; }
+    .modal-danger-text { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0 0 4px; }
+
+    .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #172033; color: #fff; padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 650; z-index: 200; box-shadow: 0 12px 26px rgba(0,0,0,.18); opacity: 0; transition: opacity .2s ease; pointer-events: none; }
+
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+      .detail-panel { position: static; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .goal-meta { grid-template-columns: repeat(2, 1fr); }
+      .revision-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 22px, 590px); }
+      .topbar { height: 72px; }
+      .page-hero { padding: 32px 24px; }
+      .section { padding: 22px 18px; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to Aspinora homepage">
+        <img src="/aspinora-logo.png" alt="Aspinora logo" />
+        <span class="brand-name">Aspi<span>nora</span></span>
+      </button>
+      <div class="menu-wrap">
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+          <span class="dots"><i></i><i></i><i></i></span>
+        </button>
+        <nav class="menu-panel" id="menuPanel" aria-label="Quick navigation">
+          <button class="menu-item menu-profile" id="menuProfileItem" style="display:none;">
+            <span class="menu-avatar" id="menuAvatar">A</span>
+            <span class="menu-profile-info">
+              <span class="menu-profile-name" id="menuProfileName">Aspirant</span>
+              <span class="menu-profile-sub" id="menuProfileSub">Joined recently</span>
+            </span>
+          </button>
+          <div class="menu-label">Explore Aspinora</div>
+          <a class="menu-item" href="/dashboard/"><span class="menu-icon orange">⌂</span>Dashboard</a>
+          <a class="menu-item" href="/study-planner/"><span class="menu-icon blue">▣</span>Study planner</a>
+          <button class="menu-item" data-message="Current affairs selected"><span class="menu-icon purple">✦</span>Current affairs</button>
+          <button class="menu-item" data-message="Saved notes selected"><span class="menu-icon green">♡</span>Saved notes</button>
+          <a class="menu-item" href="/mock-tests/"><span class="menu-icon orange">◈</span>Mock tests</a>
+          <a class="menu-item" href="/score-calculator/"><span class="menu-icon blue">▤</span>Calculators</a>
+          <button class="menu-item" data-message="Rank/Score tools coming soon."><span class="menu-icon purple">◔</span>Rank/Score tools</button>
+          <button class="menu-item" data-message="Important links coming soon."><span class="menu-icon green">⚑</span>Important links</button>
+          <button class="menu-item" data-message="More utilities coming soon."><span class="menu-icon orange">≡</span>Other useful utilities</button>
+          <div class="menu-divider" id="menuAccountDivider" style="display:none;"></div>
+          <button class="menu-item" id="menuUpdateProfileButton" style="display:none;"><span class="menu-icon blue">✎</span>Update Profile</button>
+          <button class="menu-item menu-logout" id="menuLogoutButton" style="display:none;"><span class="menu-icon red">⏻</span>Log Out</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- AUTH GATE: shown until we know whether the user is logged in -->
+    <section class="page-hero gate-screen" id="gateScreen">
+      <div class="gate-spinner"></div>
+      <p>Checking your session…</p>
+    </section>
+
+    <!-- Everything below is hidden until auth passes -->
+    <div id="plannerApp" style="display:none;">
+      <section class="page-hero">
+        <div class="eyebrow">Build your own plan</div>
+        <h1>A study planner shaped <em>entirely around you.</em></h1>
+        <p class="intro">Create your own goal, structure it however makes sense to you, and track every topic down to the last sub-classification. Nothing here is tied to one fixed syllabus.</p>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section class="section reveal" id="dashboardSection">
+        <h2>Your overview</h2>
+        <p class="lead">A snapshot across every goal you're tracking.</p>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="label">Goals</div><div class="value" id="statGoals">0</div></div>
+          <div class="stat-card"><div class="label">Total items</div><div class="value" id="statTotal">0</div></div>
+          <div class="stat-card"><div class="label">Completed</div><div class="value green" id="statCompleted">0</div></div>
+          <div class="stat-card"><div class="label">Overdue revisions</div><div class="value red" id="statOverdue">0</div></div>
+        </div>
+        <div class="progress-track" style="margin-top:18px;"><div class="progress-fill" id="overallProgressFill" style="width:0%;"></div></div>
+        <div class="revision-grid">
+          <div class="revision-card">
+            <h4>Overdue revisions</h4>
+            <div id="overdueList"><p class="rev-empty">Nothing overdue right now.</p></div>
+          </div>
+          <div class="revision-card">
+            <h4>Upcoming revisions (next 7 days)</h4>
+            <div id="upcomingList"><p class="rev-empty">Nothing scheduled yet.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOAL TABS + META -->
+      <section class="section" id="goalsSection">
+        <h2>Your goals</h2>
+        <p class="lead">Each goal gets its own hierarchy — subjects, categories, topics, and optional sub-classifications.</p>
+        <div class="goal-tabs" id="goalTabs"></div>
+        <div id="goalMetaWrap"></div>
+      </section>
+
+      <!-- EMPTY STATE (no goals at all) -->
+      <section class="section" id="emptyStateSection" style="display:none;">
+        <div class="empty-state">
+          <div class="glyph">✦</div>
+          <h3>Create your first goal</h3>
+          <p>Whether it's SSC CGL, UPSC, a college subject, or something entirely your own — start by naming what you're working toward.</p>
+          <button class="primary" id="emptyStateAddGoal">＋ Create your first goal</button>
+        </div>
+      </section>
+
+      <!-- WORKSPACE: tree + detail -->
+      <section class="section" id="workspaceSection" style="display:none;">
+        <h2>Plan structure</h2>
+        <p class="lead">Add subjects, categories, topics, and optional sub-classifications. Anything with no children underneath becomes a trackable item.</p>
+        <div class="workspace">
+          <div class="tree-panel">
+            <div class="tree-toolbar">
+              <h3 id="treeTitle">Structure</h3>
+              <button class="ghost-btn" id="addSubjectBtn" style="padding:8px 14px;font-size:12.5px;">＋ Add subject</button>
+            </div>
+            <div class="tree-list" id="treeList"></div>
+          </div>
+          <div class="detail-panel" id="detailPanel">
+            <div class="detail-empty">Select any item on the left to see and update its progress here.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p class="footer-contact">Contact us: <a href="mailto:support@aspinora.in">support@aspinora.in</a></p>
+      <nav class="footer-links" aria-label="Legal and support links">
+        <a href="/legal/#privacy-policy">Privacy Policy</a>
+        <a href="/legal/#terms-of-use">Terms of Use</a>
+        <a href="/legal/#disclaimer">Disclaimer</a>
+        <a href="/legal/#contact-us">Contact Us</a>
+      </nav>
+      <p class="footer-copy">© 2026 Aspinora. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <!-- MODAL: create/edit node -->
+  <div class="modal-overlay" id="nodeModal">
+    <div class="modal-card">
+      <h3 id="nodeModalTitle">Add subject</h3>
+      <p class="modal-sub" id="nodeModalSub">Give it a clear name — you can rename it any time.</p>
+      <div class="field-group">
+        <label for="nodeTitleInput">Title</label>
+        <input type="text" id="nodeTitleInput" placeholder="e.g. Mathematics" />
+      </div>
+      <div id="goalOnlyFields" style="display:none;">
+        <div class="field-row">
+          <div class="field-group">
+            <label for="nodeTargetDate">Target date (optional)</label>
+            <input type="date" id="nodeTargetDate" />
+          </div>
+          <div class="field-group">
+            <label for="nodeHoursPerDay">Study hours / day</label>
+            <input type="number" id="nodeHoursPerDay" min="0" step="0.5" placeholder="e.g. 4" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Available study days</label>
+          <div class="days-grid" id="daysGrid">
+            <button type="button" class="day-chip on" data-day="0">Mon</button>
+            <button type="button" class="day-chip on" data-day="1">Tue</button>
+            <button type="button" class="day-chip on" data-day="2">Wed</button>
+            <button type="button" class="day-chip on" data-day="3">Thu</button>
+            <button type="button" class="day-chip on" data-day="4">Fri</button>
+            <button type="button" class="day-chip on" data-day="5">Sat</button>
+            <button type="button" class="day-chip" data-day="6">Sun</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="nodeModalCancel">Cancel</button>
+        <button class="primary" id="nodeModalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: delete confirm -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card">
+      <h3>Delete this item?</h3>
+      <p class="modal-danger-text" id="deleteModalText">This will also remove everything nested underneath it. This can't be undone.</p>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="deleteModalCancel">Cancel</button>
+        <button class="primary" id="deleteModalConfirm" style="background:linear-gradient(135deg,#ef5a5f,#d3282f);box-shadow:0 10px 20px rgba(211,40,47,.22);">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ============================================================
+       SUPABASE CONNECTION
+    ============================================================ */
+    const SUPABASE_URL = 'https://tcufgyrhkpzkeyiffnaw.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rhTVneW41uHvEX6PRkl8qw_mZ8BgQ9n';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const DEPTH_LABELS = ['Goal', 'Subject', 'Category', 'Topic', 'Sub-topic'];
+    const DEFAULT_INTERVALS = [1, 3, 7, 14, 30];
+
+    let currentUser = null;
+    let nodes = [];              // flat list from Supabase
+    let byId = new Map();        // id -> node
+    let childrenOf = new Map();  // parentId(or 'root') -> [nodes]
+    let expanded = new Set();    // node ids expanded in the tree
+    let activeGoalId = null;
+    let selectedNodeId = null;
+    let pendingModal = { mode: 'create', parentId: null, depth: 0, nodeId: null };
+    let pendingDeleteId = null;
+
+    /* ---------------- toast ---------------- */
+    let toastTimeout = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => { el.style.opacity = '0'; }, 2600);
+    }
+
+    /* ---------------- auth gate ---------------- */
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        window.location.href = '/auth/';
+        return;
+      }
+      currentUser = session.user;
+      document.getElementById('gateScreen').style.display = 'none';
+      document.getElementById('plannerApp').style.display = 'block';
+      await checkSessionAndUpdateMenu();
+      await loadNodes();
+    })();
+
+    supabaseClient.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') window.location.href = '/auth/';
+    });
+
+    async function checkSessionAndUpdateMenu() {
+      const user = currentUser;
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('username, created_at, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      const username = profile?.username || user.email.split('@')[0];
+      const joinedDate = profile?.created_at ? new Date(profile.created_at) : new Date(user.created_at);
+      const options = { month: 'long', year: 'numeric' };
+
+      const menuAvatar = document.getElementById('menuAvatar');
+      if (profile?.avatar_url) {
+        menuAvatar.innerHTML = '';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = profile.avatar_url;
+        avatarImg.alt = username + '\u2019s profile photo';
+        menuAvatar.appendChild(avatarImg);
+      } else {
+        menuAvatar.textContent = username.charAt(0).toUpperCase();
+      }
+      document.getElementById('menuProfileName').textContent = username;
+      document.getElementById('menuProfileSub').textContent = 'Joined ' + joinedDate.toLocaleDateString('en-US', options);
+      document.getElementById('menuProfileItem').style.display = 'flex';
+      document.getElementById('menuAccountDivider').style.display = 'block';
+      document.getElementById('menuUpdateProfileButton').style.display = 'flex';
+      document.getElementById('menuLogoutButton').style.display = 'flex';
+    }
+
+    /* ---------------- data load ---------------- */
+    async function loadNodes() {
+      const { data, error } = await supabaseClient
+        .from('planner_nodes')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('order_index', { ascending: true });
+
+      if (error) {
+        showToast('Could not load your planner. Please refresh.');
+        console.error(error);
+        return;
+      }
+
+      nodes = data || [];
+      byId = new Map(nodes.map(n => [n.id, n]));
+      childrenOf = new Map();
+      for (const n of nodes) {
+        const key = n.parent_id || 'root';
+        if (!childrenOf.has(key)) childrenOf.set(key, []);
+        childrenOf.get(key).push(n);
+      }
+      for (const list of childrenOf.values()) list.sort((a, b) => a.order_index - b.order_index);
+
+      const goals = childrenOf.get('root') || [];
+      if (!activeGoalId || !byId.has(activeGoalId)) {
+        activeGoalId = goals.length ? goals[0].id : null;
+      }
+      if (selectedNodeId && !byId.has(selectedNodeId)) selectedNodeId = null;
+
+      renderAll();
+    }
+
+    function kids(nodeId) { return childrenOf.get(nodeId) || []; }
+    function isLeaf(node) { return kids(node.id).length === 0; }
+
+    /* ---------------- progress rollup ---------------- */
+    function progressOf(nodeId) {
+      const node = byId.get(nodeId);
+      const children = kids(nodeId);
+      if (children.length === 0) {
+        return { total: 1, completed: node.status === 'completed' ? 1 : 0 };
+      }
+      let total = 0, completed = 0;
+      for (const c of children) {
+        const p = progressOf(c.id);
+        total += p.total;
+        completed += p.completed;
+      }
+      return { total, completed };
+    }
+
+    /* ---------------- revision helpers ---------------- */
+    function revisionIntervalsFor(goalId) {
+      const goal = byId.get(goalId);
+      if (goal && Array.isArray(goal.revision_intervals) && goal.revision_intervals.length) return goal.revision_intervals;
+      return DEFAULT_INTERVALS;
+    }
+    function nextRevisionDue(node) {
+      if (node.status !== 'completed') return null;
+      const goalId = goalIdOf(node.id);
+      const intervals = revisionIntervalsFor(goalId);
+      if (node.revision_count >= intervals.length) return null;
+      const anchor = node.last_revised_at || node.last_studied_at;
+      if (!anchor) return null;
+      const due = new Date(anchor);
+      due.setDate(due.getDate() + intervals[node.revision_count]);
+      return due;
+    }
+    function goalIdOf(nodeId) {
+      let n = byId.get(nodeId);
+      while (n && n.parent_id) n = byId.get(n.parent_id);
+      return n ? n.id : null;
+    }
+    function daysBetween(a, b) { return Math.round((b - a) / (1000 * 60 * 60 * 24)); }
+
+    /* ---------------- rendering: dashboard ---------------- */
+    function renderDashboard() {
+      const goals = childrenOf.get('root') || [];
+      let total = 0, completed = 0, overdue = 0;
+      const now = new Date();
+      const overdueItems = [], upcomingItems = [];
+
+      for (const n of nodes) {
+        if (isLeaf(n)) {
+          total += 1;
+          if (n.status === 'completed') completed += 1;
+          const due = nextRevisionDue(n);
+          if (due) {
+            const days = daysBetween(now, due);
+            if (days < 0) { overdue += 1; overdueItems.push({ node: n, due, days }); }
+            else if (days <= 7) upcomingItems.push({ node: n, due, days });
+          }
+        }
+      }
+
+      document.getElementById('statGoals').textContent = goals.length;
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statCompleted').textContent = completed;
+      document.getElementById('statOverdue').textContent = overdue;
+      document.getElementById('overallProgressFill').style.width = (total ? (completed / total * 100) : 0).toFixed(0) + '%';
+
+      overdueItems.sort((a, b) => a.days - b.days);
+      upcomingItems.sort((a, b) => a.days - b.days);
+
+      const overdueList = document.getElementById('overdueList');
+      overdueList.innerHTML = overdueItems.length ? overdueItems.slice(0, 6).map(it => `
+        <div class="rev-item"><span>${escapeHtml(it.node.title)}</span><span class="due due-overdue">${Math.abs(it.days)}d overdue</span></div>
+      `).join('') : '<p class="rev-empty">Nothing overdue right now.</p>';
+
+      const upcomingList = document.getElementById('upcomingList');
+      upcomingList.innerHTML = upcomingItems.length ? upcomingItems.slice(0, 6).map(it => `
+        <div class="rev-item"><span>${escapeHtml(it.node.title)}</span><span class="due due-soon">${it.days === 0 ? 'Today' : it.days + 'd'}</span></div>
+      `).join('') : '<p class="rev-empty">Nothing scheduled yet.</p>';
+    }
+
+    /* ---------------- rendering: goal tabs + meta ---------------- */
+    function renderGoalTabs() {
+      const goals = childrenOf.get('root') || [];
+      const wrap = document.getElementById('goalTabs');
+
+      document.getElementById('emptyStateSection').style.display = goals.length ? 'none' : 'block';
+      document.getElementById('goalsSection').style.display = goals.length ? 'block' : 'none';
+      document.getElementById('workspaceSection').style.display = goals.length ? 'block' : 'none';
+
+      if (!goals.length) { document.getElementById('goalMetaWrap').innerHTML = ''; return; }
+
+      wrap.innerHTML = goals.map(g => {
+        const p = progressOf(g.id);
+        const pct = p.total ? Math.round(p.completed / p.total * 100) : 0;
+        return `<button class="goal-tab ${g.id === activeGoalId ? 'active' : ''}" data-goal="${g.id}">${escapeHtml(g.title)} <span class="mini-pct">${pct}%</span></button>`;
+      }).join('') + '<button class="add-goal-tab" id="addGoalBtn">＋ New goal</button>';
+
+      wrap.querySelectorAll('.goal-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeGoalId = btn.dataset.goal;
+          selectedNodeId = null;
+          renderAll();
+        });
+      });
+      document.getElementById('addGoalBtn').addEventListener('click', () => openNodeModal({ mode: 'create', parentId: null, depth: 0 }));
+
+      renderGoalMeta();
+    }
+
+    function renderGoalMeta() {
+      const wrap = document.getElementById('goalMetaWrap');
+      const goal = byId.get(activeGoalId);
+      if (!goal) { wrap.innerHTML = ''; return; }
+
+      const p = progressOf(goal.id);
+      const pct = p.total ? p.completed / p.total * 100 : 0;
+      const remaining = p.total - p.completed;
+
+      let daysRemainingText = '—', paceText = '—', etaText = '—', warningHtml = '';
+      if (goal.target_date) {
+        const target = new Date(goal.target_date + 'T00:00:00');
+        const now = new Date();
+        const daysRemaining = daysBetween(now, target);
+        daysRemainingText = daysRemaining >= 0 ? daysRemaining + ' days' : 'Past due';
+
+        if (daysRemaining > 0 && remaining > 0) {
+          paceText = (remaining / daysRemaining).toFixed(1) + ' items/day';
+        } else if (remaining === 0) {
+          paceText = 'All done';
+        }
+
+        const createdAt = new Date(goal.created_at);
+        const elapsedDays = Math.max(1, daysBetween(createdAt, now));
+        const totalDays = Math.max(1, daysBetween(createdAt, target));
+        const rate = p.completed / elapsedDays;
+
+        if (p.completed > 0 && remaining > 0) {
+          const daysToFinish = Math.ceil(remaining / rate);
+          const eta = new Date(now); eta.setDate(eta.getDate() + daysToFinish);
+          etaText = eta.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } else if (remaining === 0) {
+          etaText = 'Completed';
+        } else {
+          etaText = 'Not enough data yet';
+        }
+
+        const expectedFraction = Math.min(1, elapsedDays / totalDays);
+        const actualFraction = p.total ? p.completed / p.total : 0;
+        if (daysRemaining >= 0 && actualFraction < expectedFraction - 0.08 && p.total > 0) {
+          warningHtml = `<div class="pace-warning">⚠ You're a bit behind pace for this goal — consider picking up your daily pace, or adjusting the target date.</div>`;
+        } else if (p.total > 0 && daysRemaining >= 0) {
+          warningHtml = `<div class="pace-ok">✓ You're on pace for this goal.</div>`;
+        }
+      }
+
+      wrap.innerHTML = `
+        <div class="goal-meta">
+          <div class="meta-card"><div class="label">Progress</div><div class="value">${pct.toFixed(0)}%</div></div>
+          <div class="meta-card"><div class="label">Remaining items</div><div class="value">${remaining}</div></div>
+          <div class="meta-card"><div class="label">Days remaining</div><div class="value">${daysRemainingText}</div></div>
+          <div class="meta-card"><div class="label">Required pace</div><div class="value">${paceText}</div></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+        ${goal.target_date ? `<p style="margin:10px 0 0;font-size:12.5px;color:var(--muted);">Estimated completion at current pace: <strong style="color:var(--ink);">${etaText}</strong></p>` : ''}
+        ${warningHtml}
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="ghost-btn" style="padding:9px 14px;font-size:12.5px;" id="editGoalBtn">✎ Edit goal</button>
+          <button class="ghost-btn" style="padding:9px 14px;font-size:12.5px;color:var(--red);" id="deleteGoalBtn">✕ Delete goal</button>
+        </div>
+      `;
+
+      document.getElementById('editGoalBtn').addEventListener('click', () => openNodeModal({ mode: 'edit', nodeId: goal.id, depth: 0 }));
+      document.getElementById('deleteGoalBtn').addEventListener('click', () => openDeleteModal(goal.id));
+
+      document.getElementById('treeTitle').textContent = goal.title + ' — structure';
+      document.getElementById('addSubjectBtn').onclick = () => openNodeModal({ mode: 'create', parentId: goal.id, depth: 1 });
+    }
+
+    /* ---------------- rendering: tree ---------------- */
+    function renderTree() {
+      const list = document.getElementById('treeList');
+      if (!activeGoalId) { list.innerHTML = ''; return; }
+      const subjects = kids(activeGoalId);
+      if (!subjects.length) {
+        list.innerHTML = `<div class="empty-state" style="padding:30px 10px;"><p style="margin:0;color:var(--muted);font-size:13.5px;">No subjects yet — add your first one above.</p></div>`;
+        return;
+      }
+      list.innerHTML = subjects.map(n => renderNode(n)).join('');
+      attachTreeHandlers();
+    }
+
+    function renderNode(node) {
+      const children = kids(node.id);
+      const leaf = children.length === 0;
+      const p = progressOf(node.id);
+      const pct = p.total ? Math.round(p.completed / p.total * 100) : 0;
+      const isOpen = expanded.has(node.id);
+      const canAddChild = node.depth < 4;
+
+      return `
+        <div class="node-row ${node.id === selectedNodeId ? 'selected' : ''}" data-node="${node.id}">
+          <div class="node-main">
+            <button class="node-toggle ${leaf ? 'leaf' : ''}" data-toggle="${node.id}">${isOpen ? '▾' : '▸'}</button>
+            <span class="node-badge badge-${node.depth}">${DEPTH_LABELS[node.depth]}</span>
+            <button class="node-title-btn" data-select="${node.id}">${escapeHtml(node.title)}</button>
+            ${leaf ? `<span class="status-chip status-${node.status}">${statusLabel(node.status)}</span>` : `<span class="node-pct">${pct}%</span>`}
+            <div class="node-actions">
+              <button class="icon-btn" data-move="${node.id}:up" title="Move up">↑</button>
+              <button class="icon-btn" data-move="${node.id}:down" title="Move down">↓</button>
+              <button class="icon-btn" data-edit="${node.id}" title="Rename">✎</button>
+              <button class="icon-btn danger" data-delete="${node.id}" title="Delete">✕</button>
+            </div>
+          </div>
+          ${!leaf ? `<div class="mini-progress"><i style="width:${pct}%;"></i></div>` : ''}
+          ${isOpen ? `
+            <div class="node-children">
+              ${children.map(c => renderNode(c)).join('')}
+              ${canAddChild ? `<div class="add-child-row"><button class="add-child-btn" data-addchild="${node.id}:${node.depth + 1}">＋ Add ${DEPTH_LABELS[node.depth + 1].toLowerCase()}</button></div>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function statusLabel(s) {
+      return { not_started: 'Not started', in_progress: 'In progress', completed: 'Completed', needs_revision: 'Needs revision' }[s] || s;
+    }
+
+    function attachTreeHandlers() {
+      document.querySelectorAll('[data-toggle]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.toggle;
+          if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+          renderTree();
+        });
+      });
+      document.querySelectorAll('[data-select]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedNodeId = btn.dataset.select;
+          renderTree();
+          renderDetailPanel();
+        });
+      });
+      document.querySelectorAll('[data-addchild]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const [parentId, depth] = btn.dataset.addchild.split(':');
+          openNodeModal({ mode: 'create', parentId, depth: Number(depth) });
+        });
+      });
+      document.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const node = byId.get(btn.dataset.edit);
+          openNodeModal({ mode: 'edit', nodeId: node.id, depth: node.depth });
+        });
+      });
+      document.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openDeleteModal(btn.dataset.delete);
+        });
+      });
+      document.querySelectorAll('[data-move]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const [id, dir] = btn.dataset.move.split(':');
+          moveSibling(id, dir);
+        });
+      });
+    }
+
+    async function moveSibling(nodeId, dir) {
+      const node = byId.get(nodeId);
+      const list = node.parent_id ? kids(node.parent_id) : (childrenOf.get('root') || []);
+      const idx = list.findIndex(n => n.id === nodeId);
+      const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= list.length) return;
+      const other = list[swapIdx];
+
+      const a = node.order_index, b = other.order_index;
+      const { error: e1 } = await supabaseClient.from('planner_nodes').update({ order_index: b }).eq('id', node.id);
+      const { error: e2 } = await supabaseClient.from('planner_nodes').update({ order_index: a }).eq('id', other.id);
+      if (e1 || e2) { showToast('Could not reorder. Try again.'); return; }
+      await loadNodes();
+    }
+
+    /* ---------------- rendering: detail panel ---------------- */
+    function renderDetailPanel() {
+      const panel = document.getElementById('detailPanel');
+      const node = selectedNodeId ? byId.get(selectedNodeId) : null;
+
+      if (!node || !isLeaf(node)) {
+        panel.innerHTML = `<div class="detail-empty">${node ? 'This item has sub-items — open it and select a leaf item to track progress.' : 'Select any item on the left to see and update its progress here.'}</div>`;
+        return;
+      }
+
+      const due = nextRevisionDue(node);
+      const now = new Date();
+      let revisionHtml = '';
+      if (due) {
+        const days = daysBetween(now, due);
+        const label = days < 0 ? `Revision overdue by ${Math.abs(days)}d` : (days === 0 ? 'Revision due today' : `Next revision in ${days}d`);
+        revisionHtml = `<div class="revision-line"><span>${label}</span><button id="markRevisedBtn">Mark revised</button></div>`;
+      }
+
+      panel.innerHTML = `
+        <h3>${escapeHtml(node.title)}</h3>
+        <p class="detail-sub">${DEPTH_LABELS[node.depth]} · revised ${node.revision_count} time${node.revision_count === 1 ? '' : 's'}</p>
+        ${revisionHtml}
+        <div class="field-row">
+          <div class="field-group">
+            <label>Status</label>
+            <select id="fStatus">
+              <option value="not_started">Not started</option>
+              <option value="in_progress">In progress</option>
+              <option value="completed">Completed</option>
+              <option value="needs_revision">Needs revision</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Priority</label>
+            <select id="fPriority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Estimated time (min)</label>
+            <input type="number" id="fEstimated" min="0" />
+          </div>
+          <div class="field-group">
+            <label>Actual time (min)</label>
+            <input type="number" id="fActual" min="0" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Last studied</label>
+            <input type="date" id="fLastStudied" />
+          </div>
+          <div class="field-group">
+            <label>Last revised</label>
+            <input type="date" id="fLastRevised" disabled />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="Anything worth remembering about this item…"></textarea>
+        </div>
+        <div class="detail-actions">
+          <button class="primary" id="saveDetailBtn">Save changes</button>
+        </div>
+      `;
+
+      document.getElementById('fStatus').value = node.status;
+      document.getElementById('fPriority').value = node.priority;
+      document.getElementById('fEstimated').value = node.estimated_minutes ?? '';
+      document.getElementById('fActual').value = node.actual_minutes ?? 0;
+      document.getElementById('fLastStudied').value = node.last_studied_at ? node.last_studied_at.substring(0, 10) : '';
+      document.getElementById('fLastRevised').value = node.last_revised_at ? node.last_revised_at.substring(0, 10) : '';
+      document.getElementById('fNotes').value = node.notes || '';
+
+      document.getElementById('saveDetailBtn').addEventListener('click', () => saveDetailPanel(node.id));
+      const markBtn = document.getElementById('markRevisedBtn');
+      if (markBtn) markBtn.addEventListener('click', () => markRevised(node.id));
+    }
+
+    async function saveDetailPanel(nodeId) {
+      const status = document.getElementById('fStatus').value;
+      const priority = document.getElementById('fPriority').value;
+      const estimated = document.getElementById('fEstimated').value;
+      const actual = document.getElementById('fActual').value;
+      const lastStudied = document.getElementById('fLastStudied').value;
+      const notes = document.getElementById('fNotes').value;
+
+      const node = byId.get(nodeId);
+      const payload = {
+        status,
+        priority,
+        estimated_minutes: estimated === '' ? null : Number(estimated),
+        actual_minutes: actual === '' ? 0 : Number(actual),
+        last_studied_at: lastStudied ? lastStudied : (status === 'completed' && !node.last_studied_at ? new Date().toISOString().substring(0, 10) : node.last_studied_at),
+        notes: notes || null,
+      };
+
+      const { error } = await supabaseClient.from('planner_nodes').update(payload).eq('id', nodeId);
+      if (error) { showToast('Could not save. Try again.'); console.error(error); return; }
+      showToast('Progress saved');
+      await loadNodes();
+    }
+
+    async function markRevised(nodeId) {
+      const node = byId.get(nodeId);
+      const payload = {
+        revision_count: node.revision_count + 1,
+        last_revised_at: new Date().toISOString().substring(0, 10),
+      };
+      const { error } = await supabaseClient.from('planner_nodes').update(payload).eq('id', nodeId);
+      if (error) { showToast('Could not update revision.'); return; }
+      showToast('Revision logged');
+      await loadNodes();
+    }
+
+    /* ---------------- modal: create/edit node ---------------- */
+    function openNodeModal({ mode, parentId = null, depth, nodeId = null }) {
+      pendingModal = { mode, parentId, depth, nodeId };
+      const modal = document.getElementById('nodeModal');
+      const isGoal = depth === 0;
+
+      document.getElementById('goalOnlyFields').style.display = isGoal ? 'block' : 'none';
+      document.getElementById('nodeTitleInput').value = '';
+      document.getElementById('nodeTargetDate').value = '';
+      document.getElementById('nodeHoursPerDay').value = '';
+      document.querySelectorAll('.day-chip').forEach((chip, i) => chip.classList.toggle('on', i < 6));
+
+      if (mode === 'edit') {
+        const node = byId.get(nodeId);
+        document.getElementById('nodeModalTitle').textContent = 'Edit ' + DEPTH_LABELS[depth].toLowerCase();
+        document.getElementById('nodeModalSub').textContent = 'Update the details below.';
+        document.getElementById('nodeTitleInput').value = node.title;
+        if (isGoal) {
+          document.getElementById('nodeTargetDate').value = node.target_date || '';
+          document.getElementById('nodeHoursPerDay').value = node.hours_per_day ?? '';
+          const days = Array.isArray(node.study_days) ? node.study_days : [0,1,2,3,4,5];
+          document.querySelectorAll('.day-chip').forEach((chip) => chip.classList.toggle('on', days.includes(Number(chip.dataset.day))));
+        }
+      } else {
+        document.getElementById('nodeModalTitle').textContent = 'Add ' + DEPTH_LABELS[depth].toLowerCase();
+        document.getElementById('nodeModalSub').textContent = isGoal ? 'Name your goal and (optionally) set a target date and pace.' : 'Give it a clear name — you can rename it any time.';
+      }
+
+      modal.classList.add('open');
+      document.getElementById('nodeTitleInput').focus();
+    }
+
+    document.querySelectorAll('.day-chip').forEach(chip => {
+      chip.addEventListener('click', () => chip.classList.toggle('on'));
+    });
+
+    document.getElementById('nodeModalCancel').addEventListener('click', () => document.getElementById('nodeModal').classList.remove('open'));
+
+    document.getElementById('nodeModalSave').addEventListener('click', async () => {
+      const title = document.getElementById('nodeTitleInput').value.trim();
+      if (!title) { showToast('Please enter a title.'); return; }
+
+      const { mode, parentId, depth, nodeId } = pendingModal;
+      const isGoal = depth === 0;
+      const payload = { title };
+
+      if (isGoal) {
+        payload.target_date = document.getElementById('nodeTargetDate').value || null;
+        const hrs = document.getElementById('nodeHoursPerDay').value;
+        payload.hours_per_day = hrs === '' ? null : Number(hrs);
+        payload.study_days = Array.from(document.querySelectorAll('.day-chip.on')).map(c => Number(c.dataset.day));
+      }
+
+      if (mode === 'edit') {
+        const { error } = await supabaseClient.from('planner_nodes').update(payload).eq('id', nodeId);
+        if (error) { showToast('Could not save changes.'); console.error(error); return; }
+        showToast('Updated');
+      } else {
+        const siblings = parentId ? kids(parentId) : (childrenOf.get('root') || []);
+        const maxOrder = siblings.reduce((m, n) => Math.max(m, n.order_index), -1);
+        payload.user_id = currentUser.id;
+        payload.parent_id = parentId;
+        payload.depth = depth;
+        payload.order_index = maxOrder + 1;
+        const { data, error } = await supabaseClient.from('planner_nodes').insert(payload).select().single();
+        if (error) { showToast('Could not create item.'); console.error(error); return; }
+        showToast('Added');
+        if (isGoal) activeGoalId = data.id;
+        if (parentId) expanded.add(parentId);
+      }
+
+      document.getElementById('nodeModal').classList.remove('open');
+      await loadNodes();
+    });
+
+    /* ---------------- modal: delete confirm ---------------- */
+    function openDeleteModal(nodeId) {
+      pendingDeleteId = nodeId;
+      const node = byId.get(nodeId);
+      const hasChildren = kids(nodeId).length > 0;
+      document.getElementById('deleteModalText').textContent = hasChildren
+        ? `This will also remove everything nested underneath "${node.title}". This can't be undone.`
+        : `This will permanently delete "${node.title}". This can't be undone.`;
+      document.getElementById('deleteModal').classList.add('open');
+    }
+    document.getElementById('deleteModalCancel').addEventListener('click', () => document.getElementById('deleteModal').classList.remove('open'));
+    document.getElementById('deleteModalConfirm').addEventListener('click', async () => {
+      const id = pendingDeleteId;
+      const { error } = await supabaseClient.from('planner_nodes').delete().eq('id', id);
+      document.getElementById('deleteModal').classList.remove('open');
+      if (error) { showToast('Could not delete. Try again.'); console.error(error); return; }
+      if (id === activeGoalId) activeGoalId = null;
+      if (id === selectedNodeId) selectedNodeId = null;
+      showToast('Deleted');
+      await loadNodes();
+    });
+
+    document.getElementById('emptyStateAddGoal').addEventListener('click', () => openNodeModal({ mode: 'create', parentId: null, depth: 0 }));
+
+    /* ---------------- helpers ---------------- */
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderGoalTabs();
+      renderTree();
+      renderDetailPanel();
+    }
+
+    /* ---------------- shared chrome: menu / home / reveal ---------------- */
+    const menuButton = document.getElementById('menuButton');
+    const menuPanel = document.getElementById('menuPanel');
+
+    menuButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menuPanel.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.menu-wrap')) {
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.querySelectorAll('[data-message]').forEach((button) => {
+      button.addEventListener('click', () => {
+        showToast(button.dataset.message);
+        menuPanel.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+    document.getElementById('homeButton').addEventListener('click', () => { window.location.href = '/'; });
+    document.getElementById('menuUpdateProfileButton').addEventListener('click', () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      window.location.href = '/edit-profile/';
+    });
+    document.getElementById('menuLogoutButton').addEventListener('click', async () => {
+      menuPanel.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      showToast('Logging out…');
+      await supabaseClient.auth.signOut();
+      setTimeout(() => { window.location.href = '/'; }, 600);
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+  </script>
+</body>
+</html>
