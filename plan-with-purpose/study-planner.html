@@ -197,6 +197,85 @@
     .due-soon { background: #fff0e2; color: #e56b14; }
     .rev-empty { color: #a0a6b2; font-size: 12.5px; padding: 6px 0; }
 
+    /* ---------- insights (recommendation / consistency / activity) ---------- */
+    .insights-grid { display: grid; grid-template-columns: 1.1fr .9fr 1fr; gap: 14px; margin-top: 18px; }
+    .insight-card { padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.94); }
+    .insight-card h4 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .4px; color: #a0a6b2; font-weight: 800; }
+    .reco-item { padding: 11px 0; border-top: 1px solid var(--line); }
+    .reco-item:first-of-type { border-top: 0; padding-top: 2px; }
+    .reco-item .reco-title { font-weight: 750; font-size: 13.5px; margin-bottom: 3px; }
+    .reco-item .reco-path { font-size: 11px; color: #a0a6b2; margin-bottom: 8px; }
+    .reco-item button { border: 0; background: var(--orange-dark); color: white; padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 750; cursor: pointer; }
+    .consistency-strip { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .consistency-sq { width: 16px; height: 16px; border-radius: 5px; background: #f1e9e0; }
+    .consistency-sq.lvl1 { background: #ffd9ad; }
+    .consistency-sq.lvl2 { background: #ffab5c; }
+    .consistency-sq.lvl3 { background: linear-gradient(135deg, #ff8c1a, #f06400); }
+    .consistency-caption { margin: 8px 0 0; font-size: 11.5px; color: #a0a6b2; }
+    .pvc-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .pvc-row .pvc-label { font-size: 12.5px; color: var(--muted); font-weight: 650; }
+    .pvc-row .pvc-value { font-size: 14px; font-weight: 800; }
+    .activity-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+    .activity-item:first-of-type { border-top: 0; }
+    .activity-item .when { color: #a0a6b2; font-size: 11px; flex-shrink: 0; margin-left: 10px; }
+
+    /* ---------- missed-task recovery banner ---------- */
+    .recovery-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border-radius: 16px; background: #fff4e9; border: 1px solid #ffdcae; margin-bottom: 18px; flex-wrap: wrap; }
+    .recovery-banner .msg { font-size: 13.5px; font-weight: 650; color: #a15b00; }
+    .recovery-banner button { flex-shrink: 0; }
+
+    /* ---------- plan my day ---------- */
+    .plan-day-card { display: flex; align-items: flex-end; gap: 14px; padding: 18px 20px; border-radius: 16px; background: linear-gradient(120deg, #fff7ef, #fffaf6); border: 1px solid #ffe2ca; margin-bottom: 20px; flex-wrap: wrap; }
+    .plan-day-card .field-group { margin-bottom: 0; width: 160px; }
+    .plan-day-card p.hint { margin: 0; font-size: 12.5px; color: var(--muted); flex: 1; min-width: 200px; }
+    .plan-preview { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: white; border: 1px solid var(--line); }
+    .plan-preview .pp-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-top: 1px solid var(--line); }
+    .plan-preview .pp-item:first-of-type { border-top: 0; }
+
+    /* ---------- calendar view tabs ---------- */
+    .view-tabs { display: flex; gap: 8px; margin-bottom: 4px; }
+    .view-tab { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: white; color: #4e586b; cursor: pointer; font-weight: 750; font-size: 13px; transition: all .2s ease; }
+    .view-tab:hover { border-color: #ffcc9e; color: var(--orange-dark); }
+    .view-tab.active { background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent; }
+    .cal-nav { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
+    .cal-nav button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: white; cursor: pointer; color: #4e586b; font-weight: 750; }
+    .cal-nav button:hover { border-color: #ffcc9e; color: var(--orange-dark); }
+    .cal-nav .cal-label { font-weight: 800; font-size: 15px; }
+    .cal-nav .today-btn { width: auto; padding: 0 14px; font-size: 12px; margin-left: 6px; }
+
+    /* daily view */
+    .daily-list { display: flex; flex-direction: column; gap: 8px; }
+    .task-row { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: white; }
+    .task-row.completed { opacity: .55; }
+    .task-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ecdccb; display: grid; place-items: center; background: white; cursor: pointer; flex-shrink: 0; color: transparent; font-size: 12px; }
+    .task-check.done { background: var(--green); border-color: var(--green); color: white; }
+    .task-info { flex: 1; min-width: 0; }
+    .task-info .t-title { font-weight: 700; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-info .t-path { font-size: 11px; color: #a0a6b2; }
+    .task-time { font-size: 11.5px; font-weight: 750; color: #7a8194; flex-shrink: 0; white-space: nowrap; }
+    .task-empty { text-align: center; padding: 30px 10px; color: var(--muted); font-size: 13.5px; }
+
+    /* weekly view */
+    .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .week-col { border: 1px solid var(--line); border-radius: 13px; background: white; min-height: 160px; padding: 8px; transition: background .15s ease, border-color .15s ease; }
+    .week-col.drag-over { background: #fff0e1; border-color: #ffcc9e; }
+    .week-col .wc-head { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #a0a6b2; margin-bottom: 6px; text-align: center; }
+    .week-col .wc-head.is-today { color: var(--orange-dark); }
+    .task-chip { padding: 7px 9px; border-radius: 9px; background: #fff7ef; border-left: 3px solid var(--orange); margin-bottom: 6px; font-size: 11.5px; font-weight: 650; cursor: grab; }
+    .task-chip.completed { opacity: .5; border-left-color: var(--green); text-decoration: line-through; }
+    .task-chip.p-high { border-left-color: var(--red); }
+    .task-chip.p-low { border-left-color: #a0a6b2; }
+
+    /* monthly view */
+    .monthly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .month-day-head { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #a0a6b2; text-align: center; padding-bottom: 4px; }
+    .month-cell { min-height: 62px; border: 1px solid var(--line); border-radius: 10px; background: white; padding: 6px; cursor: pointer; text-align: left; }
+    .month-cell:hover { border-color: #ffcc9e; }
+    .month-cell.other-month { opacity: .35; }
+    .month-cell.is-today { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(255,120,0,.12); }
+    .month-cell .md-num { font-size: 12px; font-weight: 750; }
+    .month-cell .md-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); margin-top: 4px; margin-right: 3px; }
+
     /* ---------- modal ---------- */
     .modal-overlay { position: fixed; inset: 0; background: rgba(23, 32, 51, .45); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
     .modal-overlay.open { display: flex; }
@@ -219,6 +298,8 @@
       .stat-grid { grid-template-columns: repeat(2, 1fr); }
       .goal-meta { grid-template-columns: repeat(2, 1fr); }
       .revision-grid { grid-template-columns: 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .weekly-grid { grid-template-columns: repeat(7, minmax(90px, 1fr)); overflow-x: auto; }
     }
     @media (max-width: 760px) {
       .page { width: min(100% - 22px, 590px); }
@@ -226,6 +307,12 @@
       .page-hero { padding: 32px 24px; }
       .section { padding: 22px 18px; }
       .field-row { grid-template-columns: 1fr; }
+      .weekly-grid { display: flex; overflow-x: auto; gap: 8px; }
+      .week-col { min-width: 130px; }
+      .monthly-grid { grid-template-columns: repeat(7, minmax(38px, 1fr)); font-size: 11px; }
+      .month-cell { min-height: 44px; padding: 4px; }
+      .plan-day-card { flex-direction: column; align-items: stretch; }
+      .plan-day-card .field-group { width: 100%; }
     }
   </style>
 </head>
@@ -300,6 +387,25 @@
             <div id="upcomingList"><p class="rev-empty">Nothing scheduled yet.</p></div>
           </div>
         </div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <h4>Recommended next</h4>
+            <div id="recommendationList"></div>
+          </div>
+          <div class="insight-card">
+            <h4>Study consistency (14 days)</h4>
+            <div class="consistency-strip" id="consistencyStrip"></div>
+            <p class="consistency-caption">Darker = more sessions completed that day.</p>
+            <div style="margin-top:14px;">
+              <div class="pvc-row"><span class="pvc-label">Planned this week</span><span class="pvc-value" id="pvcPlanned">0 min</span></div>
+              <div class="pvc-row"><span class="pvc-label">Completed this week</span><span class="pvc-value" id="pvcCompleted">0 min</span></div>
+            </div>
+          </div>
+          <div class="insight-card">
+            <h4>Recent activity</h4>
+            <div id="recentActivityList"></div>
+          </div>
+        </div>
       </section>
 
       <!-- GOAL TABS + META -->
@@ -318,6 +424,40 @@
           <p>Whether it's SSC CGL, UPSC, a college subject, or something entirely your own — start by naming what you're working toward.</p>
           <button class="primary" id="emptyStateAddGoal">＋ Create your first goal</button>
         </div>
+      </section>
+
+      <!-- CALENDAR & PLANNER -->
+      <section class="section" id="calendarSection" style="display:none;">
+        <h2>Calendar &amp; planner</h2>
+        <p class="lead">Schedule any item to a day, let Aspinora plan your day for you, and recover anything you missed.</p>
+
+        <div id="recoveryBannerWrap"></div>
+
+        <div class="plan-day-card">
+          <div class="field-group">
+            <label for="planHoursInput">I have this many hours today</label>
+            <input type="number" id="planHoursInput" min="0.5" step="0.5" placeholder="e.g. 3" />
+          </div>
+          <button class="primary" id="generatePlanBtn" style="padding:11px 20px;">Plan my day</button>
+          <p class="hint">We'll pull from overdue revisions, high-priority topics, and what's falling behind — fitted to the time you actually have.</p>
+        </div>
+        <div id="planPreviewWrap"></div>
+
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab active" data-view="daily">Daily</button>
+          <button class="view-tab" data-view="weekly">Weekly</button>
+          <button class="view-tab" data-view="monthly">Monthly</button>
+          <button class="ghost-btn" id="addTaskBtn" style="margin-left:auto;padding:9px 16px;font-size:12.5px;">＋ Add task</button>
+        </div>
+
+        <div class="cal-nav">
+          <button id="calPrevBtn">‹</button>
+          <span class="cal-label" id="calLabel"></span>
+          <button id="calNextBtn">›</button>
+          <button class="today-btn" id="calTodayBtn">Today</button>
+        </div>
+
+        <div id="calendarBody"></div>
       </section>
 
       <!-- WORKSPACE: tree + detail -->
@@ -403,6 +543,36 @@
     </div>
   </div>
 
+  <!-- MODAL: schedule / edit task -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal-card">
+      <h3 id="taskModalTitle">Schedule a session</h3>
+      <p class="modal-sub">Pick what you're studying, and when.</p>
+      <div class="field-group">
+        <label for="taskNodeSelect">Item</label>
+        <select id="taskNodeSelect"></select>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="taskDateInput">Date</label>
+          <input type="date" id="taskDateInput" />
+        </div>
+        <div class="field-group">
+          <label for="taskTimeInput">Time (optional)</label>
+          <input type="time" id="taskTimeInput" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="taskDurationInput">Duration (minutes)</label>
+        <input type="number" id="taskDurationInput" min="5" step="5" value="30" />
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" id="taskModalCancel">Cancel</button>
+        <button class="primary" id="taskModalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -426,6 +596,35 @@
     let selectedNodeId = null;
     let pendingModal = { mode: 'create', parentId: null, depth: 0, nodeId: null };
     let pendingDeleteId = null;
+
+    // ---- calendar / task state ----
+    let tasks = [];
+    let byTaskId = new Map();
+    let tasksByDate = new Map(); // 'YYYY-MM-DD' -> [task,...]
+    let calendarView = 'daily';
+    let calendarAnchor = new Date();
+    let pendingTaskModal = { taskId: null };
+
+    function todayStr() { return toDateStr(new Date()); }
+    function toDateStr(d) {
+      const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+    function parseDateStr(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+    function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+    function startOfWeek(date) { const day = (date.getDay() + 6) % 7; return addDays(date, -day); }
+    function formatTime(t) {
+      const [h, m] = t.split(':').map(Number);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const h12 = ((h + 11) % 12) + 1;
+      return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+    }
+    function leafPath(nodeId) {
+      const parts = [];
+      let n = byId.get(nodeId);
+      while (n) { parts.unshift(n.title); n = n.parent_id ? byId.get(n.parent_id) : null; }
+      return parts.join(' / ');
+    }
 
     /* ---------------- toast ---------------- */
     let toastTimeout = null;
@@ -515,6 +714,34 @@
       }
       if (selectedNodeId && !byId.has(selectedNodeId)) selectedNodeId = null;
 
+      await loadTasksData();
+      renderAll();
+    }
+
+    async function loadTasksData() {
+      const { data, error } = await supabaseClient
+        .from('study_tasks')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('scheduled_date', { ascending: true });
+
+      if (error) {
+        showToast('Could not load your calendar. Please refresh.');
+        console.error(error);
+        return;
+      }
+
+      tasks = data || [];
+      byTaskId = new Map(tasks.map(t => [t.id, t]));
+      tasksByDate = new Map();
+      for (const t of tasks) {
+        if (!tasksByDate.has(t.scheduled_date)) tasksByDate.set(t.scheduled_date, []);
+        tasksByDate.get(t.scheduled_date).push(t);
+      }
+    }
+
+    async function refreshTasks() {
+      await loadTasksData();
       renderAll();
     }
 
@@ -609,6 +836,7 @@
       document.getElementById('emptyStateSection').style.display = goals.length ? 'none' : 'block';
       document.getElementById('goalsSection').style.display = goals.length ? 'block' : 'none';
       document.getElementById('workspaceSection').style.display = goals.length ? 'block' : 'none';
+      document.getElementById('calendarSection').style.display = goals.length ? 'block' : 'none';
 
       if (!goals.length) { document.getElementById('goalMetaWrap').innerHTML = ''; return; }
 
@@ -676,6 +904,12 @@
         }
       }
 
+      const subjectRows = kids(goal.id).map(s => {
+        const sp = progressOf(s.id);
+        const spct = sp.total ? Math.round(sp.completed / sp.total * 100) : 0;
+        return `<div class="pvc-row"><span class="pvc-label">${escapeHtml(s.title)}</span><span class="pvc-value">${spct}%</span></div>`;
+      }).join('');
+
       wrap.innerHTML = `
         <div class="goal-meta">
           <div class="meta-card"><div class="label">Progress</div><div class="value">${pct.toFixed(0)}%</div></div>
@@ -686,6 +920,7 @@
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
         ${goal.target_date ? `<p style="margin:10px 0 0;font-size:12.5px;color:var(--muted);">Estimated completion at current pace: <strong style="color:var(--ink);">${etaText}</strong></p>` : ''}
         ${warningHtml}
+        ${subjectRows ? `<div style="margin-top:16px;"><p style="margin:0 0 6px;font-size:11px;font-weight:800;color:#a0a6b2;text-transform:uppercase;letter-spacing:.5px;">Subject-wise progress</p>${subjectRows}</div>` : ''}
         <div style="display:flex;gap:10px;margin-top:14px;">
           <button class="ghost-btn" style="padding:9px 14px;font-size:12.5px;" id="editGoalBtn">✎ Edit goal</button>
           <button class="ghost-btn" style="padding:9px 14px;font-size:12.5px;color:var(--red);" id="deleteGoalBtn">✕ Delete goal</button>
@@ -876,6 +1111,7 @@
           <textarea id="fNotes" placeholder="Anything worth remembering about this item…"></textarea>
         </div>
         <div class="detail-actions">
+          <button class="ghost-btn" id="scheduleDetailBtn">📅 Schedule</button>
           <button class="primary" id="saveDetailBtn">Save changes</button>
         </div>
       `;
@@ -889,6 +1125,7 @@
       document.getElementById('fNotes').value = node.notes || '';
 
       document.getElementById('saveDetailBtn').addEventListener('click', () => saveDetailPanel(node.id));
+      document.getElementById('scheduleDetailBtn').addEventListener('click', () => openTaskModal({ nodeId: node.id, dateStr: todayStr() }));
       const markBtn = document.getElementById('markRevisedBtn');
       if (markBtn) markBtn.addEventListener('click', () => markRevised(node.id));
     }
@@ -1040,6 +1277,457 @@
       renderGoalTabs();
       renderTree();
       renderDetailPanel();
+      renderInsights();
+      renderRecoveryBanner();
+      renderCalendar();
+    }
+
+    /* ================================================================
+       INSIGHTS: recommendations / consistency / planned vs completed / activity
+    ================================================================ */
+    function renderInsights() {
+      renderRecommendations();
+      renderConsistency();
+      renderPlannedVsCompleted();
+      renderRecentActivity();
+    }
+
+    function renderRecommendations() {
+      const now = new Date();
+      const candidates = nodes.filter(n => isLeaf(n) && n.status !== 'completed');
+      const scored = candidates.map(n => {
+        let score = n.priority === 'high' ? 30 : n.priority === 'medium' ? 20 : 10;
+        const due = nextRevisionDue(n);
+        if (due && daysBetween(now, due) <= 0) score += 50;
+        if (n.status === 'needs_revision') score += 25;
+        if (n.status === 'in_progress') score += 8;
+        return { node: n, score };
+      }).sort((a, b) => b.score - a.score).slice(0, 3);
+
+      const wrap = document.getElementById('recommendationList');
+      if (!scored.length) { wrap.innerHTML = '<p class="rev-empty">You\'re all caught up — nothing urgent right now.</p>'; return; }
+      wrap.innerHTML = scored.map(({ node }) => `
+        <div class="reco-item">
+          <div class="reco-title">${escapeHtml(node.title)}</div>
+          <div class="reco-path">${escapeHtml(leafPath(node.id))}</div>
+          <button data-reco="${node.id}">Schedule today</button>
+        </div>
+      `).join('');
+      wrap.querySelectorAll('[data-reco]').forEach(btn => {
+        btn.addEventListener('click', () => openTaskModal({ nodeId: btn.dataset.reco, dateStr: todayStr() }));
+      });
+    }
+
+    function renderConsistency() {
+      const strip = document.getElementById('consistencyStrip');
+      const now = new Date();
+      let html = '';
+      for (let i = 13; i >= 0; i--) {
+        const d = addDays(now, -i);
+        const dStr = toDateStr(d);
+        const count = (tasksByDate.get(dStr) || []).filter(t => t.status === 'completed').length;
+        const lvl = count === 0 ? '' : count === 1 ? 'lvl1' : count === 2 ? 'lvl2' : 'lvl3';
+        html += `<div class="consistency-sq ${lvl}" title="${dStr}: ${count} completed"></div>`;
+      }
+      strip.innerHTML = html;
+    }
+
+    function renderPlannedVsCompleted() {
+      const now = stripTime(new Date());
+      const weekAgo = addDays(now, -6);
+      let planned = 0, completed = 0;
+      for (const t of tasks) {
+        const d = parseDateStr(t.scheduled_date);
+        if (d >= weekAgo && d <= now) {
+          planned += t.duration_minutes;
+          if (t.status === 'completed') completed += t.duration_minutes;
+        }
+      }
+      document.getElementById('pvcPlanned').textContent = planned + ' min';
+      document.getElementById('pvcCompleted').textContent = completed + ' min';
+    }
+    function stripTime(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+
+    function renderRecentActivity() {
+      const completedTasks = tasks.filter(t => t.status === 'completed')
+        .slice().sort((a, b) => b.scheduled_date.localeCompare(a.scheduled_date)).slice(0, 6);
+      const wrap = document.getElementById('recentActivityList');
+      if (!completedTasks.length) { wrap.innerHTML = '<p class="rev-empty">Nothing completed yet.</p>'; return; }
+      wrap.innerHTML = completedTasks.map(t => {
+        const node = byId.get(t.node_id);
+        return `<div class="activity-item"><span>${escapeHtml(node ? node.title : '(deleted item)')}</span><span class="when">${t.scheduled_date}</span></div>`;
+      }).join('');
+    }
+
+    /* ================================================================
+       MISSED TASK RECOVERY
+    ================================================================ */
+    function computeMissedTasks() {
+      const now = todayStr();
+      return tasks.filter(t => t.status === 'pending' && t.scheduled_date < now);
+    }
+
+    function renderRecoveryBanner() {
+      const wrap = document.getElementById('recoveryBannerWrap');
+      const missed = computeMissedTasks();
+      if (!missed.length) { wrap.innerHTML = ''; return; }
+      wrap.innerHTML = `
+        <div class="recovery-banner">
+          <span class="msg">⚠ You have ${missed.length} missed session${missed.length === 1 ? '' : 's'} sitting in the past.</span>
+          <button class="primary" id="recoverBtn" style="padding:10px 16px;font-size:12.5px;">Redistribute missed tasks</button>
+        </div>`;
+      document.getElementById('recoverBtn').addEventListener('click', recoverMissedTasks);
+    }
+
+    async function recoverMissedTasks() {
+      const missed = computeMissedTasks();
+      if (!missed.length) return;
+
+      const scored = missed.map(t => {
+        const node = byId.get(t.node_id);
+        const pr = node ? (node.priority === 'high' ? 3 : node.priority === 'medium' ? 2 : 1) : 1;
+        return { task: t, pr };
+      }).sort((a, b) => b.pr - a.pr || a.task.scheduled_date.localeCompare(b.task.scheduled_date));
+
+      const now = stripTime(new Date());
+      const loadByGoalDate = new Map();
+      for (const t of tasks) {
+        if (t.status === 'pending' || t.status === 'completed') {
+          const key = `${t.goal_id}|${t.scheduled_date}`;
+          loadByGoalDate.set(key, (loadByGoalDate.get(key) || 0) + t.duration_minutes);
+        }
+      }
+
+      const updates = [];
+      for (const { task } of scored) {
+        const goal = byId.get(task.goal_id);
+        const capacityMin = (goal && goal.hours_per_day ? goal.hours_per_day : 3) * 60;
+        const studyDays = (goal && Array.isArray(goal.study_days) && goal.study_days.length) ? goal.study_days : [0, 1, 2, 3, 4, 5, 6];
+        let placed = false;
+        for (let i = 1; i <= 21 && !placed; i++) {
+          const d = addDays(now, i);
+          const jsDay = (d.getDay() + 6) % 7;
+          if (!studyDays.includes(jsDay)) continue;
+          const dStr = toDateStr(d);
+          const key = `${task.goal_id}|${dStr}`;
+          const used = loadByGoalDate.get(key) || 0;
+          if (used + task.duration_minutes <= capacityMin) {
+            loadByGoalDate.set(key, used + task.duration_minutes);
+            updates.push({ taskId: task.id, newDate: dStr });
+            placed = true;
+          }
+        }
+        if (!placed) updates.push({ taskId: task.id, newDate: toDateStr(addDays(now, 22)) });
+      }
+
+      for (const u of updates) {
+        const original = byTaskId.get(u.taskId);
+        await supabaseClient.from('study_tasks').update({ status: 'missed' }).eq('id', u.taskId);
+        await supabaseClient.from('study_tasks').insert({
+          user_id: currentUser.id, node_id: original.node_id, goal_id: original.goal_id,
+          scheduled_date: u.newDate, scheduled_time: original.scheduled_time,
+          duration_minutes: original.duration_minutes, status: 'pending', source: 'recovery',
+        });
+      }
+
+      showToast(`Redistributed ${updates.length} missed session${updates.length === 1 ? '' : 's'}.`);
+      await refreshTasks();
+    }
+
+    /* ================================================================
+       PLAN MY DAY
+    ================================================================ */
+    document.getElementById('generatePlanBtn').addEventListener('click', () => generatePlanMyDay());
+
+    async function generatePlanMyDay() {
+      const hours = Number(document.getElementById('planHoursInput').value);
+      if (!hours || hours <= 0) { showToast('Enter how many hours you have today.'); return; }
+      let availableMin = hours * 60;
+
+      const now = new Date();
+      const todayScheduledNodeIds = new Set((tasksByDate.get(todayStr()) || []).map(t => t.node_id));
+      const candidates = nodes.filter(n => isLeaf(n) && n.status !== 'completed' && !todayScheduledNodeIds.has(n.id));
+
+      const scored = candidates.map(n => {
+        let score = n.priority === 'high' ? 30 : n.priority === 'medium' ? 20 : 10;
+        const due = nextRevisionDue(n);
+        if (due) {
+          const days = daysBetween(now, due);
+          if (days < 0) score += 50 + Math.min(20, Math.abs(days));
+          else if (days === 0) score += 35;
+        }
+        if (n.status === 'needs_revision') score += 25;
+        if (n.status === 'in_progress') score += 8;
+        const goal = byId.get(goalIdOf(n.id));
+        if (goal && goal.target_date) {
+          const daysRemaining = daysBetween(now, new Date(goal.target_date + 'T00:00:00'));
+          if (daysRemaining > 0) score += Math.min(15, 300 / daysRemaining);
+        }
+        return { node: n, score };
+      }).sort((a, b) => b.score - a.score);
+
+      const plan = [];
+      for (const { node } of scored) {
+        if (availableMin <= 0) break;
+        const est = node.estimated_minutes && node.estimated_minutes > 0 ? node.estimated_minutes : 30;
+        const dur = Math.min(est, availableMin);
+        if (dur < 10) continue;
+        plan.push({ node, duration: dur });
+        availableMin -= dur;
+      }
+
+      if (!plan.length) { showToast('Nothing left to plan — you might be all caught up!'); return; }
+
+      for (const item of plan) {
+        await supabaseClient.from('study_tasks').insert({
+          user_id: currentUser.id, node_id: item.node.id, goal_id: goalIdOf(item.node.id),
+          scheduled_date: todayStr(), duration_minutes: Math.round(item.duration),
+          status: 'pending', source: 'plan_my_day',
+        });
+      }
+
+      renderPlanPreview(plan);
+      showToast(`Planned ${plan.length} session${plan.length === 1 ? '' : 's'} for today.`);
+      calendarView = 'daily';
+      calendarAnchor = new Date();
+      document.querySelectorAll('.view-tab').forEach(b => b.classList.toggle('active', b.dataset.view === 'daily'));
+      await refreshTasks();
+    }
+
+    function renderPlanPreview(plan) {
+      const wrap = document.getElementById('planPreviewWrap');
+      wrap.innerHTML = `<div class="plan-preview">${plan.map(p => `<div class="pp-item"><span>${escapeHtml(p.node.title)}</span><span>${Math.round(p.duration)} min</span></div>`).join('')}</div>`;
+    }
+
+    /* ================================================================
+       CALENDAR: daily / weekly / monthly
+    ================================================================ */
+    document.querySelectorAll('.view-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        calendarView = btn.dataset.view;
+        document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCalendar();
+      });
+    });
+    document.getElementById('calPrevBtn').addEventListener('click', () => { shiftCalendar(-1); });
+    document.getElementById('calNextBtn').addEventListener('click', () => { shiftCalendar(1); });
+    document.getElementById('calTodayBtn').addEventListener('click', () => { calendarAnchor = new Date(); renderCalendar(); });
+    document.getElementById('addTaskBtn').addEventListener('click', () => openTaskModal({ dateStr: toDateStr(calendarAnchor) }));
+
+    function shiftCalendar(dir) {
+      if (calendarView === 'daily') calendarAnchor = addDays(calendarAnchor, dir);
+      else if (calendarView === 'weekly') calendarAnchor = addDays(calendarAnchor, dir * 7);
+      else calendarAnchor = new Date(calendarAnchor.getFullYear(), calendarAnchor.getMonth() + dir, 1);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const label = document.getElementById('calLabel');
+      const body = document.getElementById('calendarBody');
+      if (!label || !body) return;
+
+      if (calendarView === 'daily') {
+        label.textContent = calendarAnchor.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        body.innerHTML = renderDailyHtml(calendarAnchor);
+        attachDailyHandlers();
+      } else if (calendarView === 'weekly') {
+        const start = startOfWeek(calendarAnchor);
+        const end = addDays(start, 6);
+        label.textContent = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        body.innerHTML = renderWeeklyHtml(start);
+        attachWeeklyHandlers();
+      } else {
+        label.textContent = calendarAnchor.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        body.innerHTML = renderMonthlyHtml(calendarAnchor);
+        attachMonthlyHandlers();
+      }
+    }
+
+    function taskRowHtml(t) {
+      const node = byId.get(t.node_id);
+      const title = node ? node.title : '(deleted item)';
+      const path = node ? leafPath(node.id) : '';
+      const timeLabel = t.scheduled_time ? formatTime(t.scheduled_time) : '';
+      return `
+        <div class="task-row ${t.status === 'completed' ? 'completed' : ''}">
+          <button class="task-check ${t.status === 'completed' ? 'done' : ''}" data-check="${t.id}">${t.status === 'completed' ? '✓' : ''}</button>
+          <div class="task-info">
+            <div class="t-title">${escapeHtml(title)}</div>
+            <div class="t-path">${escapeHtml(path)} · ${t.duration_minutes} min</div>
+          </div>
+          <div class="task-time">${timeLabel}</div>
+          <div class="node-actions">
+            <button class="icon-btn" data-edittask="${t.id}" title="Edit">✎</button>
+            <button class="icon-btn danger" data-deltask="${t.id}" title="Remove">✕</button>
+          </div>
+        </div>`;
+    }
+
+    function renderDailyHtml(date) {
+      const dStr = toDateStr(date);
+      const dayTasks = (tasksByDate.get(dStr) || []).slice().sort((a, b) => (a.scheduled_time || '99:99').localeCompare(b.scheduled_time || '99:99'));
+      if (!dayTasks.length) return `<div class="task-empty">Nothing scheduled for this day yet.</div>`;
+      return `<div class="daily-list">${dayTasks.map(t => taskRowHtml(t)).join('')}</div>`;
+    }
+
+    function attachDailyHandlers() {
+      document.querySelectorAll('[data-check]').forEach(btn => btn.addEventListener('click', () => toggleTaskComplete(btn.dataset.check)));
+      document.querySelectorAll('[data-edittask]').forEach(btn => btn.addEventListener('click', () => openTaskModal({ taskId: btn.dataset.edittask })));
+      document.querySelectorAll('[data-deltask]').forEach(btn => btn.addEventListener('click', () => deleteTask(btn.dataset.deltask)));
+    }
+
+    function taskChipHtml(t) {
+      const node = byId.get(t.node_id);
+      const title = node ? node.title : '(deleted)';
+      const priorityClass = node ? `p-${node.priority}` : '';
+      return `<div class="task-chip ${t.status === 'completed' ? 'completed' : ''} ${priorityClass}" draggable="true" data-chip="${t.id}" title="${escapeHtml(title)}">${escapeHtml(title)}</div>`;
+    }
+
+    function renderWeeklyHtml(startDate) {
+      let html = '<div class="weekly-grid">';
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(startDate, i);
+        const dStr = toDateStr(d);
+        const isToday = dStr === todayStr();
+        const dayTasks = tasksByDate.get(dStr) || [];
+        html += `<div class="week-col" data-date="${dStr}">
+          <div class="wc-head ${isToday ? 'is-today' : ''}">${d.toLocaleDateString('en-US', { weekday: 'short' })} ${d.getDate()}</div>
+          ${dayTasks.map(t => taskChipHtml(t)).join('')}
+        </div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function attachWeeklyHandlers() {
+      document.querySelectorAll('.task-chip').forEach(chip => {
+        chip.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', chip.dataset.chip); });
+        chip.addEventListener('click', () => openTaskModal({ taskId: chip.dataset.chip }));
+      });
+      document.querySelectorAll('.week-col').forEach(col => {
+        col.addEventListener('dragover', (e) => { e.preventDefault(); col.classList.add('drag-over'); });
+        col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+        col.addEventListener('drop', (e) => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          const taskId = e.dataTransfer.getData('text/plain');
+          if (taskId) rescheduleTask(taskId, col.dataset.date);
+        });
+      });
+    }
+
+    function renderMonthlyHtml(anchorDate) {
+      const year = anchorDate.getFullYear(), month = anchorDate.getMonth();
+      const first = new Date(year, month, 1);
+      const startGrid = startOfWeek(first);
+      const dayHeads = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      let html = '<div class="monthly-grid">' + dayHeads.map(d => `<div class="month-day-head">${d}</div>`).join('');
+      for (let i = 0; i < 42; i++) {
+        const d = addDays(startGrid, i);
+        const dStr = toDateStr(d);
+        const inMonth = d.getMonth() === month;
+        const isToday = dStr === todayStr();
+        const count = (tasksByDate.get(dStr) || []).length;
+        html += `<button type="button" class="month-cell ${inMonth ? '' : 'other-month'} ${isToday ? 'is-today' : ''}" data-monthday="${dStr}">
+          <div class="md-num">${d.getDate()}</div>
+          ${count ? Array.from({ length: Math.min(count, 3) }).map(() => '<span class="md-dot"></span>').join('') : ''}
+        </button>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function attachMonthlyHandlers() {
+      document.querySelectorAll('[data-monthday]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          calendarAnchor = parseDateStr(btn.dataset.monthday);
+          calendarView = 'daily';
+          document.querySelectorAll('.view-tab').forEach(b => b.classList.toggle('active', b.dataset.view === 'daily'));
+          renderCalendar();
+        });
+      });
+    }
+
+    /* ---------------- task CRUD ---------------- */
+    function populateTaskNodeSelect(selectedId) {
+      const select = document.getElementById('taskNodeSelect');
+      const leaves = nodes.filter(n => isLeaf(n)).slice().sort((a, b) => leafPath(a.id).localeCompare(leafPath(b.id)));
+      select.innerHTML = leaves.map(n => `<option value="${n.id}">${escapeHtml(leafPath(n.id))}</option>`).join('');
+      if (selectedId) select.value = selectedId;
+    }
+
+    function openTaskModal({ nodeId = null, dateStr = null, taskId = null } = {}) {
+      pendingTaskModal = { taskId };
+      const task = taskId ? byTaskId.get(taskId) : null;
+      populateTaskNodeSelect(nodeId || (task ? task.node_id : null));
+      document.getElementById('taskModalTitle').textContent = taskId ? 'Edit session' : 'Schedule a session';
+      document.getElementById('taskDateInput').value = task ? task.scheduled_date : (dateStr || todayStr());
+      document.getElementById('taskTimeInput').value = task && task.scheduled_time ? task.scheduled_time.substring(0, 5) : '';
+      document.getElementById('taskDurationInput').value = task ? task.duration_minutes : 30;
+      document.getElementById('taskModal').classList.add('open');
+    }
+
+    document.getElementById('taskModalCancel').addEventListener('click', () => document.getElementById('taskModal').classList.remove('open'));
+    document.getElementById('taskModalSave').addEventListener('click', async () => {
+      const nodeId = document.getElementById('taskNodeSelect').value;
+      const dateStr = document.getElementById('taskDateInput').value;
+      const timeStr = document.getElementById('taskTimeInput').value;
+      const duration = Number(document.getElementById('taskDurationInput').value) || 30;
+      if (!nodeId || !dateStr) { showToast('Please choose an item and a date.'); return; }
+
+      const payload = {
+        node_id: nodeId, goal_id: goalIdOf(nodeId), scheduled_date: dateStr,
+        scheduled_time: timeStr || null, duration_minutes: duration,
+      };
+
+      if (pendingTaskModal.taskId) {
+        const { error } = await supabaseClient.from('study_tasks').update(payload).eq('id', pendingTaskModal.taskId);
+        if (error) { showToast('Could not save changes.'); console.error(error); return; }
+        showToast('Updated');
+      } else {
+        payload.user_id = currentUser.id;
+        payload.status = 'pending';
+        payload.source = 'manual';
+        const { error } = await supabaseClient.from('study_tasks').insert(payload);
+        if (error) { showToast('Could not schedule.'); console.error(error); return; }
+        showToast('Scheduled');
+      }
+
+      document.getElementById('taskModal').classList.remove('open');
+      await refreshTasks();
+    });
+
+    async function toggleTaskComplete(taskId) {
+      const task = byTaskId.get(taskId);
+      const newStatus = task.status === 'completed' ? 'pending' : 'completed';
+      const { error } = await supabaseClient.from('study_tasks').update({ status: newStatus }).eq('id', taskId);
+      if (error) { showToast('Could not update.'); return; }
+
+      if (newStatus === 'completed') {
+        const node = byId.get(task.node_id);
+        if (node) {
+          await supabaseClient.from('planner_nodes').update({
+            actual_minutes: (node.actual_minutes || 0) + task.duration_minutes,
+            last_studied_at: task.scheduled_date,
+          }).eq('id', node.id);
+        }
+      }
+      await loadNodes();
+    }
+
+    async function deleteTask(taskId) {
+      const { error } = await supabaseClient.from('study_tasks').delete().eq('id', taskId);
+      if (error) { showToast('Could not remove.'); return; }
+      showToast('Removed from calendar');
+      await refreshTasks();
+    }
+
+    async function rescheduleTask(taskId, newDateStr) {
+      const { error } = await supabaseClient.from('study_tasks').update({ scheduled_date: newDateStr }).eq('id', taskId);
+      if (error) { showToast('Could not reschedule.'); return; }
+      showToast('Rescheduled');
+      await refreshTasks();
     }
 
     /* ---------------- shared chrome: menu / home / reveal ---------------- */
