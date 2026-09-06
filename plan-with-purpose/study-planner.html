@@ -20,7 +20,8 @@
       --red: #e5484d; --green: #239363; --blue: #367dd7; --purple: #7957db;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); }
+    body { margin: 0; min-height: 100vh; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(145deg, #fffaf5 0%, #ffffff 45%, #fff8ef 100%); overflow-x: hidden; }
+    html { overflow-x: hidden; }
     button { font: inherit; }
     input, select, textarea { font: inherit; }
     .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 40px; }
@@ -139,9 +140,9 @@
 
     .node-row { border: 1px solid var(--line); border-radius: 13px; background: white; margin-bottom: 8px; overflow: hidden; }
     .node-row.selected { border-color: #ffb46b; box-shadow: 0 0 0 3px rgba(255, 120, 0, .08); }
-    .node-main { display: flex; align-items: center; gap: 8px; padding: 10px 10px; }
+    .node-main { display: flex; align-items: center; gap: 8px; padding: 10px 10px; flex-wrap: wrap; }
     .node-children { padding-left: 22px; border-left: 2px solid #fdeee0; margin: 0 10px 10px 22px; }
-    .node-toggle { width: 22px; height: 22px; flex-shrink: 0; display: grid; place-items: center; border: 0; background: transparent; color: #a0a6b2; cursor: pointer; font-size: 11px; border-radius: 6px; }
+    .node-toggle { width: 26px; height: 26px; flex-shrink: 0; display: grid; place-items: center; border: 0; background: transparent; color: #a0a6b2; cursor: pointer; font-size: 11px; border-radius: 6px; }
     .node-toggle:hover { background: #fff0e1; color: var(--orange-dark); }
     .node-toggle.leaf { visibility: hidden; }
     .node-badge { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; padding: 3px 7px; border-radius: 7px; flex-shrink: 0; }
@@ -150,7 +151,8 @@
     .badge-2 { background: #f2edff; color: #7957db; }
     .badge-3 { background: #eaf9f1; color: #239363; }
     .badge-4 { background: #ffe9e9; color: #c94146; }
-    .node-title-btn { flex: 1; min-width: 0; text-align: left; border: 0; background: transparent; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--ink); padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge-x { background: #f1f2f5; color: #5c6579; }
+    .node-title-btn { flex: 1; min-width: 90px; text-align: left; border: 0; background: transparent; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--ink); padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .node-title-btn:hover { color: var(--orange-dark); }
     .status-chip { font-size: 10.5px; font-weight: 750; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; white-space: nowrap; }
     .status-not_started { background: #f1f2f5; color: #7a8194; }
@@ -159,9 +161,11 @@
     .status-needs_revision { background: #fff0e2; color: #e56b14; }
     .node-pct { font-size: 11.5px; font-weight: 750; color: #a0a6b2; width: 34px; text-align: right; flex-shrink: 0; }
     .node-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-    .icon-btn { width: 26px; height: 26px; display: grid; place-items: center; border: 0; background: transparent; color: #b3b9c4; cursor: pointer; border-radius: 7px; font-size: 13px; }
+    .icon-btn { width: 30px; height: 30px; display: grid; place-items: center; border: 0; background: transparent; color: #b3b9c4; cursor: pointer; border-radius: 8px; font-size: 13px; flex-shrink: 0; }
     .icon-btn:hover { background: #fff0e1; color: var(--orange-dark); }
     .icon-btn.danger:hover { background: #ffe9e9; color: var(--red); }
+    .icon-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .icon-btn:disabled:hover { background: transparent; color: #b3b9c4; }
     .mini-progress { height: 4px; border-radius: 99px; background: #f1e9e0; margin: 0 10px 10px 10px; overflow: hidden; }
     .mini-progress i { display: block; height: 100%; background: linear-gradient(90deg, #ff8c1a, #f06400); border-radius: 99px; }
     .add-child-row { padding: 8px 10px 4px; }
@@ -170,7 +174,7 @@
 
     /* ---------- detail panel ---------- */
     .detail-panel { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); padding: 20px; position: sticky; top: 16px; }
-    .detail-panel h3 { margin: 0 0 3px; font-size: 17px; }
+    .detail-panel h3 { margin: 0 0 3px; font-size: 17px; word-break: break-word; }
     .detail-sub { margin: 0 0 18px; font-size: 12.5px; color: #a0a6b2; }
     .field-group { margin-bottom: 14px; }
     .field-group label { display: block; font-size: 12.5px; font-weight: 750; color: #394255; margin-bottom: 6px; }
@@ -181,18 +185,47 @@
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .field-group textarea { resize: vertical; min-height: 70px; }
     .detail-empty { text-align: center; padding: 40px 10px; color: var(--muted); font-size: 13.5px; }
-    .revision-line { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 11px; background: #fff7ef; font-size: 12.5px; font-weight: 650; color: #a15b00; margin-bottom: 14px; }
-    .revision-line button { border: 0; background: var(--orange-dark); color: white; padding: 6px 11px; border-radius: 8px; font-size: 11.5px; font-weight: 750; cursor: pointer; }
-    .detail-actions { display: flex; gap: 10px; margin-top: 6px; }
-    .detail-actions .primary { flex: 1; }
+    .detail-actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+    .detail-actions .primary, .detail-actions .ghost-btn { flex: 1; min-width: 120px; }
+
+    /* ---------- revision state card ---------- */
+    .revision-card-box { border-radius: 14px; background: #fff7ef; border: 1px solid #ffe2ca; padding: 14px 14px 12px; margin-bottom: 16px; }
+    .revision-state-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .revision-chip { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; padding: 4px 9px; border-radius: 99px; flex-shrink: 0; }
+    .rchip-upcoming { background: #eaf4ff; color: #367dd7; }
+    .rchip-due { background: #fff0e2; color: #e56b14; }
+    .rchip-overdue { background: #ffe9e9; color: var(--red); }
+    .rchip-none { background: #f1f2f5; color: #7a8194; }
+    .revision-due-label { font-size: 12.5px; font-weight: 650; color: #7a5320; }
+    .revision-btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .revision-btn-row button { border: 0; border-radius: 8px; padding: 7px 11px; font-size: 11.5px; font-weight: 750; cursor: pointer; flex-shrink: 0; }
+    .rbtn-primary { background: var(--orange-dark); color: white; }
+    .rbtn-ghost { background: white; border: 1px solid var(--line) !important; color: #4e586b; }
+    .rbtn-ghost:hover { border-color: #ffcc9e !important; color: var(--orange-dark); }
+    .snooze-menu, .reschedule-row { display: none; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+    .snooze-menu.open, .reschedule-row.open { display: flex; }
+    .snooze-menu button { border: 1px solid var(--line); background: white; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .snooze-menu button:hover { border-color: #ffcc9e; color: var(--orange-dark); }
+    .reschedule-row input { padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; font-size: 12.5px; }
+    .reschedule-row button { border: 0; background: var(--orange-dark); color: white; border-radius: 8px; padding: 7px 11px; font-size: 11.5px; font-weight: 750; cursor: pointer; }
+    .manual-revision-row { margin-top: 10px; }
+    .manual-revision-row button { border: 1px dashed #ecc190; background: transparent; color: #a1755a; border-radius: 9px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer; width: 100%; }
+    .manual-revision-row button:hover { border-color: #ffcc9e; color: var(--orange-dark); background: #fffaf5; }
+    .revision-history-list { margin-top: 10px; }
+    .rh-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; font-size: 11.5px; color: #7a8194; border-top: 1px solid #f4e6d4; }
+    .rh-item:first-of-type { border-top: 0; }
+    .rh-tag { font-weight: 750; padding: 1px 7px; border-radius: 99px; font-size: 10px; }
+    .rh-completed { background: #eaf9f1; color: #239363; }
+    .rh-skipped { background: #fff0e2; color: #e56b14; }
 
     /* ---------- revision watchlist ---------- */
     .revision-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
     .revision-card { padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.94); }
     .revision-card h4 { margin: 0 0 10px; font-size: 13.5px; }
-    .rev-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; font-size: 13px; border-top: 1px solid var(--line); }
+    .rev-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; font-size: 13px; border-top: 1px solid var(--line); gap: 8px; }
+    .rev-item span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .rev-item:first-of-type { border-top: 0; }
-    .rev-item .due { font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 99px; }
+    .rev-item .due { font-size: 11px; font-weight: 750; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; }
     .due-overdue { background: #ffe9e9; color: var(--red); }
     .due-soon { background: #fff0e2; color: #e56b14; }
     .rev-empty { color: #a0a6b2; font-size: 12.5px; padding: 6px 0; }
@@ -225,7 +258,7 @@
     .recovery-banner button { flex-shrink: 0; }
 
     /* ---------- plan my day ---------- */
-    .plan-day-card { display: flex; align-items: flex-end; gap: 14px; padding: 18px 20px; border-radius: 16px; background: linear-gradient(120deg, #fff7ef, #fffaf6); border: 1px solid #ffe2ca; margin-bottom: 20px; flex-wrap: wrap; }
+    .plan-day-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-radius: 16px; background: linear-gradient(120deg, #fff7ef, #fffaf6); border: 1px solid #ffe2ca; margin-bottom: 20px; flex-wrap: wrap; }
     .plan-day-card .field-group { margin-bottom: 0; width: 160px; }
     .plan-day-card p.hint { margin: 0; font-size: 12.5px; color: var(--muted); flex: 1; min-width: 200px; }
     .plan-preview { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: white; border: 1px solid var(--line); }
@@ -233,12 +266,12 @@
     .plan-preview .pp-item:first-of-type { border-top: 0; }
 
     /* ---------- calendar view tabs ---------- */
-    .view-tabs { display: flex; gap: 8px; margin-bottom: 4px; }
-    .view-tab { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: white; color: #4e586b; cursor: pointer; font-weight: 750; font-size: 13px; transition: all .2s ease; }
+    .view-tabs { display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; align-items: center; }
+    .view-tab { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: white; color: #4e586b; cursor: pointer; font-weight: 750; font-size: 13px; transition: all .2s ease; flex-shrink: 0; }
     .view-tab:hover { border-color: #ffcc9e; color: var(--orange-dark); }
     .view-tab.active { background: linear-gradient(135deg, #ff8c1a, #f06400); color: white; border-color: transparent; }
-    .cal-nav { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
-    .cal-nav button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: white; cursor: pointer; color: #4e586b; font-weight: 750; }
+    .cal-nav { display: flex; align-items: center; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+    .cal-nav button { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: white; cursor: pointer; color: #4e586b; font-weight: 750; flex-shrink: 0; }
     .cal-nav button:hover { border-color: #ffcc9e; color: var(--orange-dark); }
     .cal-nav .cal-label { font-weight: 800; font-size: 15px; }
     .cal-nav .today-btn { width: auto; padding: 0 14px; font-size: 12px; margin-left: 6px; }
@@ -307,12 +340,29 @@
       .page-hero { padding: 32px 24px; }
       .section { padding: 22px 18px; }
       .field-row { grid-template-columns: 1fr; }
-      .weekly-grid { display: flex; overflow-x: auto; gap: 8px; }
-      .week-col { min-width: 130px; }
-      .monthly-grid { grid-template-columns: repeat(7, minmax(38px, 1fr)); font-size: 11px; }
-      .month-cell { min-height: 44px; padding: 4px; }
+      .weekly-grid { display: flex; overflow-x: auto; gap: 8px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+      .week-col { min-width: 130px; scroll-snap-align: start; }
+      .monthly-grid { grid-template-columns: repeat(7, minmax(40px, 1fr)); font-size: 11px; overflow-x: auto; }
+      .month-cell { min-height: 46px; padding: 4px; }
       .plan-day-card { flex-direction: column; align-items: stretch; }
       .plan-day-card .field-group { width: 100%; }
+      #addTaskBtn { width: 100%; margin-left: 0 !important; order: 2; }
+    }
+    @media (max-width: 460px) {
+      .stat-grid, .goal-meta { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card, .meta-card { padding: 13px 14px; }
+      .stat-card .value { font-size: 21px; }
+      .detail-actions { flex-direction: column; }
+      .detail-actions .primary, .detail-actions .ghost-btn { width: 100%; }
+      .node-actions { width: 100%; justify-content: flex-end; }
+      .node-title-btn { flex-basis: 100%; }
+      .revision-btn-row button, .snooze-menu button { flex: 1 1 calc(50% - 3px); text-align: center; }
+      .goal-tab, .add-goal-tab { padding: 10px 14px; font-size: 13px; }
+      .view-tab { flex: 1 1 auto; text-align: center; }
+      .cal-nav { justify-content: center; }
+      .month-cell .md-num { font-size: 11px; }
+      .modal-card { padding: 22px 18px; max-height: 90vh; overflow-y: auto; }
+      .page-hero h1 { letter-spacing: -1.4px; }
     }
   </style>
 </head>
@@ -523,6 +573,16 @@
             <button type="button" class="day-chip" data-day="6">Sun</button>
           </div>
         </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="nodeRevisionIntervals">Revision intervals (days, comma-separated)</label>
+            <input type="text" id="nodeRevisionIntervals" placeholder="1,3,7,14,30" />
+          </div>
+          <div class="field-group">
+            <label for="nodeRevisionWindow">Revision "due" window (days)</label>
+            <input type="number" id="nodeRevisionWindow" min="0" step="1" placeholder="2" />
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
         <button class="ghost-btn" id="nodeModalCancel">Cancel</button>
@@ -586,6 +646,8 @@
 
     const DEPTH_LABELS = ['Goal', 'Subject', 'Category', 'Topic', 'Sub-topic'];
     const DEFAULT_INTERVALS = [1, 3, 7, 14, 30];
+    function depthLabel(depth) { return DEPTH_LABELS[depth] || ('Sub-level ' + (depth + 1)); }
+    function depthBadgeClass(depth) { return depth <= 4 ? `badge-${depth}` : 'badge-x'; }
 
     let currentUser = null;
     let nodes = [];              // flat list from Supabase
@@ -604,6 +666,10 @@
     let calendarView = 'daily';
     let calendarAnchor = new Date();
     let pendingTaskModal = { taskId: null };
+
+    // ---- revision history state ----
+    let revisionHistory = [];         // flat list from Supabase
+    let revisionHistoryByNode = new Map(); // node_id -> [events], newest first
 
     function todayStr() { return toDateStr(new Date()); }
     function toDateStr(d) {
@@ -715,6 +781,7 @@
       if (selectedNodeId && !byId.has(selectedNodeId)) selectedNodeId = null;
 
       await loadTasksData();
+      await loadRevisionHistoryData();
       renderAll();
     }
 
@@ -737,6 +804,27 @@
       for (const t of tasks) {
         if (!tasksByDate.has(t.scheduled_date)) tasksByDate.set(t.scheduled_date, []);
         tasksByDate.get(t.scheduled_date).push(t);
+      }
+    }
+
+    async function loadRevisionHistoryData() {
+      const { data, error } = await supabaseClient
+        .from('revision_history')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('revised_at', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      revisionHistory = data || [];
+      revisionHistoryByNode = new Map();
+      for (const r of revisionHistory) {
+        if (!revisionHistoryByNode.has(r.node_id)) revisionHistoryByNode.set(r.node_id, []);
+        revisionHistoryByNode.get(r.node_id).push(r);
       }
     }
 
@@ -770,16 +858,21 @@
       if (goal && Array.isArray(goal.revision_intervals) && goal.revision_intervals.length) return goal.revision_intervals;
       return DEFAULT_INTERVALS;
     }
-    function nextRevisionDue(node) {
-      if (node.status !== 'completed') return null;
-      const goalId = goalIdOf(node.id);
-      const intervals = revisionIntervalsFor(goalId);
-      if (node.revision_count >= intervals.length) return null;
-      const anchor = node.last_revised_at || node.last_studied_at;
-      if (!anchor) return null;
-      const due = new Date(anchor);
-      due.setDate(due.getDate() + intervals[node.revision_count]);
-      return due;
+    function dueWindowFor(goalId) {
+      const goal = byId.get(goalId);
+      return (goal && Number.isFinite(goal.revision_due_window_days)) ? goal.revision_due_window_days : 2;
+    }
+    // Bucket derives purely from the stored next_revision_date — no client-side interval math,
+    // so it can never drift out of sync with what log_revision_action() computed server-side.
+    function revisionBucket(node) {
+      if (!node.next_revision_date) return null;
+      const due = parseDateStr(node.next_revision_date);
+      const now = stripTime(new Date());
+      const days = daysBetween(now, due);
+      const window = dueWindowFor(goalIdOf(node.id));
+      if (days < 0) return { state: 'overdue', days, due };
+      if (days <= window) return { state: 'due', days, due };
+      return { state: 'upcoming', days, due };
     }
     function goalIdOf(nodeId) {
       let n = byId.get(nodeId);
@@ -792,18 +885,16 @@
     function renderDashboard() {
       const goals = childrenOf.get('root') || [];
       let total = 0, completed = 0, overdue = 0;
-      const now = new Date();
       const overdueItems = [], upcomingItems = [];
 
       for (const n of nodes) {
         if (isLeaf(n)) {
           total += 1;
           if (n.status === 'completed') completed += 1;
-          const due = nextRevisionDue(n);
-          if (due) {
-            const days = daysBetween(now, due);
-            if (days < 0) { overdue += 1; overdueItems.push({ node: n, due, days }); }
-            else if (days <= 7) upcomingItems.push({ node: n, due, days });
+          const bucket = revisionBucket(n);
+          if (bucket) {
+            if (bucket.state === 'overdue') { overdue += 1; overdueItems.push({ node: n, days: bucket.days }); }
+            else if (bucket.days <= 7) upcomingItems.push({ node: n, days: bucket.days });
           }
         }
       }
@@ -953,18 +1044,21 @@
       const p = progressOf(node.id);
       const pct = p.total ? Math.round(p.completed / p.total * 100) : 0;
       const isOpen = expanded.has(node.id);
-      const canAddChild = node.depth < 4;
+      const siblings = kids(node.parent_id);
+      const idxAmongSiblings = siblings.findIndex(s => s.id === node.id);
+      const isFirst = idxAmongSiblings <= 0;
+      const isLast = idxAmongSiblings === siblings.length - 1;
 
       return `
         <div class="node-row ${node.id === selectedNodeId ? 'selected' : ''}" data-node="${node.id}">
           <div class="node-main">
             <button class="node-toggle ${leaf ? 'leaf' : ''}" data-toggle="${node.id}">${isOpen ? '▾' : '▸'}</button>
-            <span class="node-badge badge-${node.depth}">${DEPTH_LABELS[node.depth]}</span>
+            <span class="node-badge ${depthBadgeClass(node.depth)}">${depthLabel(node.depth)}</span>
             <button class="node-title-btn" data-select="${node.id}">${escapeHtml(node.title)}</button>
             ${leaf ? `<span class="status-chip status-${node.status}">${statusLabel(node.status)}</span>` : `<span class="node-pct">${pct}%</span>`}
             <div class="node-actions">
-              <button class="icon-btn" data-move="${node.id}:up" title="Move up">↑</button>
-              <button class="icon-btn" data-move="${node.id}:down" title="Move down">↓</button>
+              <button class="icon-btn" data-move="${node.id}:up" title="Move up" ${isFirst ? 'disabled' : ''}>↑</button>
+              <button class="icon-btn" data-move="${node.id}:down" title="Move down" ${isLast ? 'disabled' : ''}>↓</button>
               <button class="icon-btn" data-edit="${node.id}" title="Rename">✎</button>
               <button class="icon-btn danger" data-delete="${node.id}" title="Delete">✕</button>
             </div>
@@ -973,7 +1067,7 @@
           ${isOpen ? `
             <div class="node-children">
               ${children.map(c => renderNode(c)).join('')}
-              ${canAddChild ? `<div class="add-child-row"><button class="add-child-btn" data-addchild="${node.id}:${node.depth + 1}">＋ Add ${DEPTH_LABELS[node.depth + 1].toLowerCase()}</button></div>` : ''}
+              <div class="add-child-row"><button class="add-child-btn" data-addchild="${node.id}:${node.depth + 1}">＋ Add ${depthLabel(node.depth + 1).toLowerCase()}</button></div>
             </div>
           ` : ''}
         </div>
@@ -1034,13 +1128,15 @@
       const list = node.parent_id ? kids(node.parent_id) : (childrenOf.get('root') || []);
       const idx = list.findIndex(n => n.id === nodeId);
       const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-      if (swapIdx < 0 || swapIdx >= list.length) return;
+      if (swapIdx < 0 || swapIdx >= list.length) return; // already at the edge
       const other = list[swapIdx];
 
-      const a = node.order_index, b = other.order_index;
-      const { error: e1 } = await supabaseClient.from('planner_nodes').update({ order_index: b }).eq('id', node.id);
-      const { error: e2 } = await supabaseClient.from('planner_nodes').update({ order_index: a }).eq('id', other.id);
-      if (e1 || e2) { showToast('Could not reorder. Try again.'); return; }
+      // Single atomic RPC — both order_index updates happen in one transaction,
+      // so a failure partway through can never leave ordering half-swapped.
+      const { error } = await supabaseClient.rpc('swap_node_order', {
+        p_node_id: node.id, p_sibling_id: other.id,
+      });
+      if (error) { showToast('Could not reorder. Try again.'); console.error(error); return; }
       await loadNodes();
     }
 
@@ -1054,19 +1150,10 @@
         return;
       }
 
-      const due = nextRevisionDue(node);
-      const now = new Date();
-      let revisionHtml = '';
-      if (due) {
-        const days = daysBetween(now, due);
-        const label = days < 0 ? `Revision overdue by ${Math.abs(days)}d` : (days === 0 ? 'Revision due today' : `Next revision in ${days}d`);
-        revisionHtml = `<div class="revision-line"><span>${label}</span><button id="markRevisedBtn">Mark revised</button></div>`;
-      }
-
       panel.innerHTML = `
         <h3>${escapeHtml(node.title)}</h3>
-        <p class="detail-sub">${DEPTH_LABELS[node.depth]} · revised ${node.revision_count} time${node.revision_count === 1 ? '' : 's'}</p>
-        ${revisionHtml}
+        <p class="detail-sub">${depthLabel(node.depth)} · revised ${node.revision_count} time${node.revision_count === 1 ? '' : 's'}</p>
+        <div id="revisionBox"></div>
         <div class="field-row">
           <div class="field-group">
             <label>Status</label>
@@ -1124,10 +1211,100 @@
       document.getElementById('fLastRevised').value = node.last_revised_at ? node.last_revised_at.substring(0, 10) : '';
       document.getElementById('fNotes').value = node.notes || '';
 
+      renderRevisionBox(node);
+
       document.getElementById('saveDetailBtn').addEventListener('click', () => saveDetailPanel(node.id));
       document.getElementById('scheduleDetailBtn').addEventListener('click', () => openTaskModal({ nodeId: node.id, dateStr: todayStr() }));
-      const markBtn = document.getElementById('markRevisedBtn');
-      if (markBtn) markBtn.addEventListener('click', () => markRevised(node.id));
+    }
+
+    function renderRevisionBox(node) {
+      const box = document.getElementById('revisionBox');
+      const bucket = revisionBucket(node);
+      const history = (revisionHistoryByNode.get(node.id) || []).slice(0, 4);
+
+      let chipHtml, labelHtml;
+      if (bucket) {
+        const dueStr = node.next_revision_date;
+        if (bucket.state === 'overdue') {
+          chipHtml = `<span class="revision-chip rchip-overdue">Overdue</span>`;
+          labelHtml = `Was due ${dueStr} · ${Math.abs(bucket.days)}d ago`;
+        } else if (bucket.state === 'due') {
+          chipHtml = `<span class="revision-chip rchip-due">Due</span>`;
+          labelHtml = bucket.days === 0 ? `Due today (${dueStr})` : `Due ${dueStr} · in ${bucket.days}d`;
+        } else {
+          chipHtml = `<span class="revision-chip rchip-upcoming">Upcoming</span>`;
+          labelHtml = `Due ${dueStr} · in ${bucket.days}d`;
+        }
+      } else {
+        chipHtml = `<span class="revision-chip rchip-none">Not scheduled</span>`;
+        labelHtml = (node.revision_count > 0)
+          ? `All revision cycles complete — nice work!`
+          : `Mark this Completed to start spaced revision`;
+      }
+
+      const scheduledActionsHtml = bucket ? `
+        <div class="revision-btn-row">
+          <button class="rbtn-primary" id="revNowBtn">Revise now</button>
+          <button class="rbtn-ghost" id="revSkipBtn">Skip</button>
+          <button class="rbtn-ghost" id="revSnoozeToggle">Snooze ▾</button>
+          <button class="rbtn-ghost" id="revRescheduleToggle">Reschedule</button>
+        </div>
+        <div class="snooze-menu" id="snoozeMenu">
+          <button data-snooze="1">+1 day</button>
+          <button data-snooze="3">+3 days</button>
+          <button data-snooze="7">+7 days</button>
+          <button data-snooze="14">+14 days</button>
+        </div>
+        <div class="reschedule-row" id="rescheduleRow">
+          <input type="date" id="rescheduleDateInput" value="${node.next_revision_date || ''}" />
+          <button id="rescheduleConfirmBtn">Set date</button>
+        </div>
+      ` : '';
+
+      const historyHtml = history.length ? `
+        <div class="revision-history-list">
+          ${history.map(r => `
+            <div class="rh-item">
+              <span>${r.revised_at} · ${r.type === 'manual' ? 'Manual' : 'Scheduled'}</span>
+              <span class="rh-tag ${r.action === 'skipped' ? 'rh-skipped' : 'rh-completed'}">${r.action === 'skipped' ? 'Skipped' : 'Completed'}</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+
+      box.innerHTML = `
+        <div class="revision-card-box">
+          <div class="revision-state-row">
+            ${chipHtml}
+            <span class="revision-due-label">${labelHtml}</span>
+          </div>
+          ${scheduledActionsHtml}
+          <div class="manual-revision-row">
+            <button id="logManualRevisionBtn">＋ Log a manual revision (doesn't affect the schedule)</button>
+          </div>
+          ${historyHtml}
+        </div>
+      `;
+
+      if (bucket) {
+        document.getElementById('revNowBtn').addEventListener('click', () => completeRevisionCycle(node.id, 'completed'));
+        document.getElementById('revSkipBtn').addEventListener('click', () => completeRevisionCycle(node.id, 'skipped'));
+        document.getElementById('revSnoozeToggle').addEventListener('click', () => {
+          document.getElementById('snoozeMenu').classList.toggle('open');
+          document.getElementById('rescheduleRow').classList.remove('open');
+        });
+        document.getElementById('revRescheduleToggle').addEventListener('click', () => {
+          document.getElementById('rescheduleRow').classList.toggle('open');
+          document.getElementById('snoozeMenu').classList.remove('open');
+        });
+        document.querySelectorAll('[data-snooze]').forEach(btn => {
+          btn.addEventListener('click', () => snoozeRevision(node.id, Number(btn.dataset.snooze)));
+        });
+        document.getElementById('rescheduleConfirmBtn').addEventListener('click', () => {
+          rescheduleRevision(node.id, document.getElementById('rescheduleDateInput').value);
+        });
+      }
+      document.getElementById('logManualRevisionBtn').addEventListener('click', () => logManualRevision(node.id));
     }
 
     async function saveDetailPanel(nodeId) {
@@ -1148,21 +1325,53 @@
         notes: notes || null,
       };
 
+      // Transitioning into "completed" for the first time starts the spaced-revision cycle.
+      // Moving back out of "completed" clears an unstarted/first-cycle schedule (fresh restart on mastery).
+      if (status === 'completed' && node.status !== 'completed' && !node.next_revision_date && node.revision_count === 0) {
+        const intervals = revisionIntervalsFor(goalIdOf(nodeId));
+        payload.next_revision_date = toDateStr(addDays(new Date(), intervals[0] ?? 1));
+      } else if (status !== 'completed' && node.status === 'completed' && node.next_revision_date && node.revision_count === 0) {
+        payload.next_revision_date = null;
+      }
+
       const { error } = await supabaseClient.from('planner_nodes').update(payload).eq('id', nodeId);
       if (error) { showToast('Could not save. Try again.'); console.error(error); return; }
       showToast('Progress saved');
       await loadNodes();
     }
 
-    async function markRevised(nodeId) {
-      const node = byId.get(nodeId);
-      const payload = {
-        revision_count: node.revision_count + 1,
-        last_revised_at: new Date().toISOString().substring(0, 10),
-      };
-      const { error } = await supabaseClient.from('planner_nodes').update(payload).eq('id', nodeId);
-      if (error) { showToast('Could not update revision.'); return; }
-      showToast('Revision logged');
+    /* ---------------- revision actions ---------------- */
+    async function completeRevisionCycle(nodeId, action) {
+      const { error } = await supabaseClient.rpc('log_revision_action', {
+        p_node_id: nodeId, p_action: action, p_type: 'scheduled',
+      });
+      if (error) { showToast(action === 'completed' ? 'Could not log revision.' : 'Could not skip revision.'); console.error(error); return; }
+      showToast(action === 'completed' ? 'Revision logged — schedule updated' : 'Skipped — schedule moved on');
+      await loadNodes();
+    }
+
+    async function logManualRevision(nodeId) {
+      const { error } = await supabaseClient.rpc('log_revision_action', {
+        p_node_id: nodeId, p_action: 'completed', p_type: 'manual',
+      });
+      if (error) { showToast('Could not log revision.'); console.error(error); return; }
+      showToast('Manual revision logged');
+      await loadNodes();
+    }
+
+    async function snoozeRevision(nodeId, days) {
+      const newDate = toDateStr(addDays(new Date(), days));
+      const { error } = await supabaseClient.from('planner_nodes').update({ next_revision_date: newDate }).eq('id', nodeId);
+      if (error) { showToast('Could not snooze. Try again.'); console.error(error); return; }
+      showToast(`Snoozed to ${newDate}`);
+      await loadNodes();
+    }
+
+    async function rescheduleRevision(nodeId, dateStr) {
+      if (!dateStr) { showToast('Pick a date first.'); return; }
+      const { error } = await supabaseClient.from('planner_nodes').update({ next_revision_date: dateStr }).eq('id', nodeId);
+      if (error) { showToast('Could not reschedule. Try again.'); console.error(error); return; }
+      showToast('Revision rescheduled');
       await loadNodes();
     }
 
@@ -1176,11 +1385,13 @@
       document.getElementById('nodeTitleInput').value = '';
       document.getElementById('nodeTargetDate').value = '';
       document.getElementById('nodeHoursPerDay').value = '';
+      document.getElementById('nodeRevisionIntervals').value = DEFAULT_INTERVALS.join(',');
+      document.getElementById('nodeRevisionWindow').value = 2;
       document.querySelectorAll('.day-chip').forEach((chip, i) => chip.classList.toggle('on', i < 6));
 
       if (mode === 'edit') {
         const node = byId.get(nodeId);
-        document.getElementById('nodeModalTitle').textContent = 'Edit ' + DEPTH_LABELS[depth].toLowerCase();
+        document.getElementById('nodeModalTitle').textContent = 'Edit ' + depthLabel(depth).toLowerCase();
         document.getElementById('nodeModalSub').textContent = 'Update the details below.';
         document.getElementById('nodeTitleInput').value = node.title;
         if (isGoal) {
@@ -1188,9 +1399,12 @@
           document.getElementById('nodeHoursPerDay').value = node.hours_per_day ?? '';
           const days = Array.isArray(node.study_days) ? node.study_days : [0,1,2,3,4,5];
           document.querySelectorAll('.day-chip').forEach((chip) => chip.classList.toggle('on', days.includes(Number(chip.dataset.day))));
+          const intervals = Array.isArray(node.revision_intervals) && node.revision_intervals.length ? node.revision_intervals : DEFAULT_INTERVALS;
+          document.getElementById('nodeRevisionIntervals').value = intervals.join(',');
+          document.getElementById('nodeRevisionWindow').value = Number.isFinite(node.revision_due_window_days) ? node.revision_due_window_days : 2;
         }
       } else {
-        document.getElementById('nodeModalTitle').textContent = 'Add ' + DEPTH_LABELS[depth].toLowerCase();
+        document.getElementById('nodeModalTitle').textContent = 'Add ' + depthLabel(depth).toLowerCase();
         document.getElementById('nodeModalSub').textContent = isGoal ? 'Name your goal and (optionally) set a target date and pace.' : 'Give it a clear name — you can rename it any time.';
       }
 
@@ -1217,6 +1431,13 @@
         const hrs = document.getElementById('nodeHoursPerDay').value;
         payload.hours_per_day = hrs === '' ? null : Number(hrs);
         payload.study_days = Array.from(document.querySelectorAll('.day-chip.on')).map(c => Number(c.dataset.day));
+
+        const intervalsRaw = document.getElementById('nodeRevisionIntervals').value;
+        const parsedIntervals = intervalsRaw.split(',').map(s => Number(s.trim())).filter(n => Number.isFinite(n) && n > 0);
+        payload.revision_intervals = parsedIntervals.length ? parsedIntervals : DEFAULT_INTERVALS;
+
+        const windowRaw = Number(document.getElementById('nodeRevisionWindow').value);
+        payload.revision_due_window_days = Number.isFinite(windowRaw) && windowRaw >= 0 ? windowRaw : 2;
       }
 
       if (mode === 'edit') {
@@ -1293,12 +1514,12 @@
     }
 
     function renderRecommendations() {
-      const now = new Date();
       const candidates = nodes.filter(n => isLeaf(n) && n.status !== 'completed');
       const scored = candidates.map(n => {
         let score = n.priority === 'high' ? 30 : n.priority === 'medium' ? 20 : 10;
-        const due = nextRevisionDue(n);
-        if (due && daysBetween(now, due) <= 0) score += 50;
+        const bucket = revisionBucket(n);
+        if (bucket && bucket.state === 'overdue') score += 50;
+        else if (bucket && bucket.state === 'due') score += 35;
         if (n.status === 'needs_revision') score += 25;
         if (n.status === 'in_progress') score += 8;
         return { node: n, score };
@@ -1379,10 +1600,12 @@
       document.getElementById('recoverBtn').addEventListener('click', recoverMissedTasks);
     }
 
-    async function recoverMissedTasks() {
-      const missed = computeMissedTasks();
-      if (!missed.length) return;
-
+    // Plans where each missed task should land: walks forward from tomorrow, respecting
+    // each goal's available study days and daily hour capacity. If no slot in the normal
+    // 30-day window has room, it still respects capacity as best it can by falling back to
+    // whichever day in an extended 60-day window is least loaded — it never just dumps the
+    // task onto a fixed day while ignoring the limit.
+    function planRecoveryMoves(missed) {
       const scored = missed.map(t => {
         const node = byId.get(t.node_id);
         const pr = node ? (node.priority === 'high' ? 3 : node.priority === 'medium' ? 2 : 1) : 1;
@@ -1398,39 +1621,74 @@
         }
       }
 
-      const updates = [];
+      const moves = [];
       for (const { task } of scored) {
         const goal = byId.get(task.goal_id);
         const capacityMin = (goal && goal.hours_per_day ? goal.hours_per_day : 3) * 60;
         const studyDays = (goal && Array.isArray(goal.study_days) && goal.study_days.length) ? goal.study_days : [0, 1, 2, 3, 4, 5, 6];
+
         let placed = false;
-        for (let i = 1; i <= 21 && !placed; i++) {
+        let bestDate = null, bestLoad = Infinity;
+
+        for (let i = 1; i <= 60 && !placed; i++) {
           const d = addDays(now, i);
           const jsDay = (d.getDay() + 6) % 7;
           if (!studyDays.includes(jsDay)) continue;
           const dStr = toDateStr(d);
           const key = `${task.goal_id}|${dStr}`;
           const used = loadByGoalDate.get(key) || 0;
+
+          if (used < bestLoad) { bestLoad = used; bestDate = dStr; }
+
           if (used + task.duration_minutes <= capacityMin) {
             loadByGoalDate.set(key, used + task.duration_minutes);
-            updates.push({ taskId: task.id, newDate: dStr });
+            moves.push({ taskId: task.id, newDate: dStr });
             placed = true;
           }
         }
-        if (!placed) updates.push({ taskId: task.id, newDate: toDateStr(addDays(now, 22)) });
-      }
 
-      for (const u of updates) {
-        const original = byTaskId.get(u.taskId);
-        await supabaseClient.from('study_tasks').update({ status: 'missed' }).eq('id', u.taskId);
-        await supabaseClient.from('study_tasks').insert({
-          user_id: currentUser.id, node_id: original.node_id, goal_id: original.goal_id,
-          scheduled_date: u.newDate, scheduled_time: original.scheduled_time,
-          duration_minutes: original.duration_minutes, status: 'pending', source: 'recovery',
+        if (!placed) {
+          // Every day in the window is already at capacity for this goal — place it on
+          // whichever day carries the least existing load rather than ignoring limits entirely.
+          const fallbackDate = bestDate || toDateStr(addDays(now, 1));
+          const key = `${task.goal_id}|${fallbackDate}`;
+          loadByGoalDate.set(key, (loadByGoalDate.get(key) || 0) + task.duration_minutes);
+          moves.push({ taskId: task.id, newDate: fallbackDate });
+        }
+      }
+      return moves;
+    }
+
+    async function recoverMissedTasks() {
+      const missed = computeMissedTasks();
+      if (!missed.length) return;
+
+      const btn = document.getElementById('recoverBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Redistributing…'; }
+
+      const moves = planRecoveryMoves(missed);
+
+      // Each move is its own atomic DB call (mark-missed + insert-new happen together
+      // server-side). We track real outcomes instead of assuming success, and never
+      // report a count higher than what actually landed in the database.
+      let succeeded = 0;
+      let failed = 0;
+      for (const move of moves) {
+        const { error } = await supabaseClient.rpc('redistribute_missed_task', {
+          p_task_id: move.taskId, p_new_date: move.newDate,
         });
+        if (error) { failed += 1; console.error(error); }
+        else { succeeded += 1; }
       }
 
-      showToast(`Redistributed ${updates.length} missed session${updates.length === 1 ? '' : 's'}.`);
+      if (failed === 0) {
+        showToast(`Redistributed ${succeeded} missed session${succeeded === 1 ? '' : 's'}.`);
+      } else if (succeeded === 0) {
+        showToast(`Could not redistribute — please try again.`);
+      } else {
+        showToast(`Redistributed ${succeeded} of ${moves.length} — ${failed} could not be moved.`);
+      }
+
       await refreshTasks();
     }
 
@@ -1450,11 +1708,10 @@
 
       const scored = candidates.map(n => {
         let score = n.priority === 'high' ? 30 : n.priority === 'medium' ? 20 : 10;
-        const due = nextRevisionDue(n);
-        if (due) {
-          const days = daysBetween(now, due);
-          if (days < 0) score += 50 + Math.min(20, Math.abs(days));
-          else if (days === 0) score += 35;
+        const bucket = revisionBucket(n);
+        if (bucket) {
+          if (bucket.state === 'overdue') score += 50 + Math.min(20, Math.abs(bucket.days));
+          else if (bucket.state === 'due') score += 35;
         }
         if (n.status === 'needs_revision') score += 25;
         if (n.status === 'in_progress') score += 8;
@@ -1700,19 +1957,15 @@
 
     async function toggleTaskComplete(taskId) {
       const task = byTaskId.get(taskId);
-      const newStatus = task.status === 'completed' ? 'pending' : 'completed';
-      const { error } = await supabaseClient.from('study_tasks').update({ status: newStatus }).eq('id', taskId);
-      if (error) { showToast('Could not update.'); return; }
+      const newComplete = task.status !== 'completed';
 
-      if (newStatus === 'completed') {
-        const node = byId.get(task.node_id);
-        if (node) {
-          await supabaseClient.from('planner_nodes').update({
-            actual_minutes: (node.actual_minutes || 0) + task.duration_minutes,
-            last_studied_at: task.scheduled_date,
-          }).eq('id', node.id);
-        }
-      }
+      // Atomic RPC: flips status and adjusts the linked node's actual_minutes by exactly
+      // the amount previously applied for this task (tracked server-side), so toggling
+      // back and forth — or toggling twice in a row — can never double count or drift.
+      const { error } = await supabaseClient.rpc('toggle_task_completion', {
+        p_task_id: taskId, p_complete: newComplete,
+      });
+      if (error) { showToast('Could not update. Try again.'); console.error(error); return; }
       await loadNodes();
     }
 
