@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Indian Constitution – SSC CGL Master Revision</title>
+<style>
+:root{--bg:#faf8f3;--fg:#1c1c1c;--card:#fff;--bd:#c9c3b3;--ac:#7a1f1f;--mu:#555}
+[data-theme=dark]{--bg:#121316;--fg:#ececec;--card:#1d1f24;--bd:#3a3d45;--ac:#e0a458;--mu:#a5a8b0}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.55 Georgia,'Times New Roman',serif;overflow-x:hidden}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:2px solid var(--ac);padding:.5rem .75rem}
+h1{font-size:1.05rem;margin:0 0 .4rem;letter-spacing:.04em;color:var(--ac)}h1 span{display:block;font-size:.8rem;color:var(--mu)}
+h2{font-size:1.3rem;margin:.5rem 0}h3{font-size:1rem;margin:1.1rem 0 .3rem;border-bottom:1px solid var(--bd);color:var(--ac)}
+.top{display:flex;gap:.4rem;flex-wrap:wrap}
+input,textarea,select{width:100%;font:inherit;padding:.65rem;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--fg);margin:.2rem 0}
+select{width:auto;min-height:44px}
+#q{flex:1 1 220px}
+.btn,.qb,.chip{min-height:44px;display:inline-flex;align-items:center;padding:.4rem .8rem;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--fg);font:inherit;text-decoration:none;cursor:pointer;margin:.15rem}
+.btn.on{background:var(--ac);color:var(--bg)}.btn.blk{display:flex;width:100%;text-align:left}.ok{border-color:#2a8a3a;background:rgba(42,138,58,.2)}.bad{border-color:#b33;background:rgba(179,51,51,.2)}
+.chip{min-height:36px;color:var(--ac)}
+nav{display:none;padding-top:.3rem}nav.open{display:block}
+main{max-width:860px;margin:0 auto;padding:.75rem}
+.card{display:block;border:1px solid var(--bd);background:var(--card);border-radius:4px;padding:.7rem .9rem;margin:.5rem 0;color:var(--fg);text-decoration:none}
+a.card:active,.qb:active{background:var(--bd)}
+.card b{color:var(--ac)}.m{color:var(--mu);font-size:.85rem}.big{font-size:1.15rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.4rem}.qb{justify-content:center;text-align:center;font-weight:bold;margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.4rem;margin:.8rem 0}.stat{border:1px solid var(--bd);padding:.5rem;background:var(--card);font-size:.8rem}.stat b{display:block;font-size:1.4rem;color:var(--ac)}
+.tag{font-size:.75rem;border:1px solid var(--bd);padding:.1rem .4rem;border-radius:3px}.warn{border-color:#b33;color:#b33}
+summary{min-height:44px;cursor:pointer}.bar{margin:.4rem 0}
+@media(min-width:900px){main{display:block}.grid{grid-template-columns:repeat(4,1fr)}nav{display:block}.mb{display:none}}
+</style></head>
+<body>
+<header>
+<h1>INDIAN CONSTITUTION<span>SSC CGL MASTER REVISION</span></h1>
+<div class="top"><input id="q" type="search" placeholder="Search Article, topic, amendment, keyword, case or PYQ…" autocomplete="off">
+<button class="btn mb" data-act="menu">Menu</button></div>
+<nav id="nav"><a class="chip" href="#home">Home</a><a class="chip" href="#list/article">Articles</a><a class="chip" href="#list/part">Parts</a><a class="chip" href="#list/schedule">Schedules</a><a class="chip" href="#list/amendment">Amendments</a><a class="chip" href="#list/topic">Topics</a><a class="chip" href="#list/case">Cases</a><a class="chip" href="#pyqs">PYQs</a><a class="chip" href="#quiz">Self-test</a><a class="chip" href="#flash">Rapid Fire</a><a class="chip" href="#saved">Saved</a><a class="chip" href="#current">Current</a>
+<button class="btn" data-act="theme">Dark/Light</button><button class="btn" data-act="fs" data-d="-1">A−</button><button class="btn" data-act="fs" data-d="1">A+</button></nav>
+</header>
+<main id="app"></main>
+<script>
+/* Content only. Edit/extend freely. PYQS must contain only VERIFIED records:
+{q,o:[4 options],a:index,e:explain,exam:'SSC CGL',year:2023,tier:'Tier 1',topic:'',arts:['14'],part:'III',amend:'',diff:'',status:'verified'|'other'|'unverified',tags:''} */
+window.D={
+parts:[["I","Union and its Territory","1–4","Name, territory, admission/formation of States (Art 3)."],["II","Citizenship","5–11","Citizenship at commencement; Parliament regulates citizenship (Art 11)."],["III","Fundamental Rights","12–35","Justiciable rights; Art 32 remedy."],["IV","Directive Principles of State Policy","36–51","Non-justiciable (Art 37) guidelines for the State."],["IVA","Fundamental Duties","51A","Inserted by 42nd Amendment (1976)."],["V","The Union","52–151","President, VP, Council of Ministers, Parliament, Union Judiciary, CAG."],["VI","The States","152–237","Governor, State Council of Ministers, Legislature, High Courts, Subordinate Courts."],["VII","(Repealed)","238","Omitted by 7th Amendment (1956)."],["VIII","The Union Territories","239–242","Administration of UTs; Art 239AA for Delhi (Art 242 omitted)."],["IX","The Panchayats","243–243O","Inserted by 73rd Amendment."],["IXA","The Municipalities","243P–243ZG","Inserted by 74th Amendment."],["IXB","Co-operative Societies","243ZH–243ZT","Inserted by 97th Amendment (2011)."],["X","Scheduled and Tribal Areas","244–244A","Administration of Scheduled and Tribal Areas."],["XI","Relations between the Union and the States","245–263","Legislative and administrative relations; Inter-State Council (263)."],["XII","Finance, Property, Contracts and Suits","264–300A","Taxes, Consolidated Fund, Finance Commission (280), Art 300A."],["XIII","Trade, Commerce and Intercourse","301–307","Freedom of trade within India territory."],["XIV","Services under the Union and the States","308–323","All-India Services, Public Service Commissions."],["XIVA","Tribunals","323A–323B","Inserted by 42nd Amendment."],["XV","Elections","324–329A","Election Commission; 329A omitted by 44th Amendment."],["XVI","Special Provisions relating to certain Classes","330–342A","Reservation in legislatures; SC/ST/BC commissions."],["XVII","Official Language","343–351","Union language, regional languages, Hindi directive."],["XVIII","Emergency Provisions","352–360","National, State (President's Rule) and Financial Emergency."],["XIX","Miscellaneous","361–367","Immunities, interpretation, definitions (366)."],["XX","Amendment of the Constitution","368","Parliament's amending power and procedure."],["XXI","Temporary, Transitional and Special Provisions","369–392","Includes Art 370 and special provisions for States (371–371J)."],["XXII","Short title, commencement, Hindi text, repeals","393–395","Short title, commencement."]],
+schedules:[["1","States and Union Territories","Names and territories of States and UTs.","1, 4","Altered whenever a State/UT is created or changed."],["2","Emoluments","Salaries of the President, Governors, Speakers, Judges, CAG.","59, 65, 75, 97, 125, 148, 158, 164, 186, 221",""],["3","Forms of Oaths or Affirmations","Oaths for Union and State ministers, legislators, judges, CAG.","75, 99, 124, 148, 164, 188, 219",""],["4","Allocation of Rajya Sabha seats","Seats of Rajya Sabha for States and UTs.","80, 81",""],["5","Scheduled Areas and Scheduled Tribes","Administration and control of Scheduled Areas and STs.","244(1)",""],["6","Tribal Areas","Administration of tribal areas in Assam, Meghalaya, Tripura and Mizoram.","244(2), 275(1)",""],["7","Union, State and Concurrent Lists","Distribution of legislative powers.","246","Counts commonly cited now: Union 98, State 59, Concurrent 52. Verify against official text."],["8","Languages","Languages recognised by the Constitution.","344(1), 351","22 languages; Sindhi (21st), Konkani, Manipuri, Nepali (71st), Bodo, Dogri, Maithili, Santhali (92nd)."],["9","Validation of certain Acts","Land reform laws shielded from FR challenge.","31B","Added by 1st Amendment; IR Coelho (2007): laws placed after 24 Apr 1973 are open to basic-structure review."],["10","Anti-defection","Disqualification on ground of defection.","102(2), 191(2)","Added by 52nd Amendment (1985)."],["11","Panchayats","29 functional subjects.","243G","Added by 73rd Amendment."],["12","Municipalities","18 functional subjects.","243W","Added by 74th Amendment."]],
+// [no,title,part,status,provision,ssc fact,related,tags]
+articles:[
+["12","Definition (of the State)","III","Active","Defines 'the State' for Part III: Government and Parliament of India, Government and Legislature of each State, and local or other authorities.","Defines State only for Part III.","13,32","fundamental rights state definition"],
+["13","Laws inconsistent with or in derogation of the fundamental rights","III","Active","Laws inconsistent with Part III are void to the extent of inconsistency; basis of judicial review.","Source of judicial review and doctrines of eclipse and severability.","12,32,368","judicial review fundamental rights"],
+["14","Equality before law","III","Active","State shall not deny to any person equality before the law or equal protection of the laws.","Applies to all persons; combines 'equality before law' (British) and 'equal protection' (US).","15,16,17,18","equality rule of law"],
+["15","Prohibition of discrimination on grounds of religion, race, caste, sex or place of birth","III","Active","Bars discrimination by the State on these grounds; allows special provisions for women, children, SC/ST, socially and educationally backward classes.","Clause (4) added by 1st Amendment; (5) by 93rd; (6) by 103rd (EWS).","14,16,46","equality discrimination reservation"],
+["16","Equality of opportunity in matters of public employment","III","Active","Equal opportunity in public employment; reservation allowed for backward classes not adequately represented.","Clause (4A) by 77th; clause (6) by 103rd (EWS).","14,15,335","equality employment reservation"],
+["17","Abolition of Untouchability","III","Active","Untouchability is abolished and its practice in any form is forbidden.","Enforced through the Protection of Civil Rights Act, 1955.","14,15","equality untouchability"],
+["18","Abolition of titles","III","Active","State cannot confer titles (except military/academic); citizens cannot accept foreign titles.","Bharat Ratna etc. are not titles.","14","equality titles"],
+["19","Protection of certain rights regarding freedom of speech, etc.","III","Active","Six freedoms to citizens: speech and expression, assembly, association, movement, residence, profession; subject to reasonable restrictions.","Right to property removed from Art 19 by 44th Amendment. Available only to citizens.","20,21,22","freedom speech expression"],
+["20","Protection in respect of conviction for offences","III","Active","No ex post facto criminal law, no double jeopardy, no self-incrimination.","Cannot be suspended even during Emergency (44th).","21,352","freedom offences double jeopardy"],
+["21","Protection of life and personal liberty","III","Active","No person shall be deprived of life or personal liberty except according to procedure established by law.","Expanded by Maneka Gandhi (1978); includes privacy (Puttaswamy 2017). Cannot be suspended during Emergency.","21A,22,32","life liberty privacy"],
+["21A","Right to education","III","Active","State provides free and compulsory education to children aged 6–14.","Inserted by 86th Amendment (2002).","45,51A","education right"],
+["22","Protection against arrest and detention in certain cases","III","Active","Right to be informed of grounds, to consult a lawyer, and to be produced before a magistrate within 24 hours; special rules for preventive detention.","Safeguards not available to enemy aliens and preventive detainees (partly).","21","arrest detention"],
+["23","Prohibition of traffic in human beings and forced labour","III","Active","Prohibits traffic in human beings, begar and forced labour.","Right against Exploitation.","24","exploitation"],
+["24","Prohibition of employment of children in factories, etc.","III","Active","No child below 14 in factories, mines or hazardous work.","Right against Exploitation.","23,21A","exploitation children"],
+["25","Freedom of conscience and free profession, practice and propagation of religion","III","Active","All persons are equally entitled to freedom of conscience and to profess, practise and propagate religion, subject to public order, morality and health.","Right to Freedom of Religion (Arts 25–28).","26,27,28","religion secular"],
+["31","(Compulsory acquisition of property)","III","Omitted","Omitted by 44th Amendment (1978).","Property ceased to be a Fundamental Right; now Art 300A (legal right).","300A","property omitted"],
+["32","Remedies for enforcement of rights conferred by this Part","III","Active","Right to move the Supreme Court for enforcement of Fundamental Rights; SC may issue writs.","Called the 'heart and soul' of the Constitution by Dr B.R. Ambedkar. Itself a Fundamental Right.","226,13","writs constitutional remedies"],
+["44","Uniform civil code for the citizens","IV","Active","State shall endeavour to secure a uniform civil code throughout India.","A DPSP, not enforceable by courts.","37","dpsp ucc"],
+["50","Separation of judiciary from executive","IV","Active","State shall take steps to separate the judiciary from the executive in public services.","DPSP (Liberal-intellectual group).","124","dpsp judiciary"],
+["51A","Fundamental duties","IVA","Active","Lists duties of every citizen (eleven at present).","10 duties by 42nd Amendment (1976); 11th duty (education of children 6–14) by 86th (2002).","21A","fundamental duties"],
+["52","The President of India","V","Active","There shall be a President of India.","","53,54","president union executive"],
+["53","Executive power of the Union","V","Active","Executive power vested in the President, exercised directly or through subordinate officers.","President is also Supreme Commander of defence forces.","52,74","president executive"],
+["54","Election of President","V","Active","Elected by an electoral college of elected members of both Houses of Parliament and elected members of State Legislative Assemblies (incl. Delhi, Puducherry).","Nominated members and Legislative Council members do not vote.","55,56,61","president election"],
+["61","Procedure for impeachment of the President","V","Active","President may be impeached for violation of the Constitution; charge by either House on a notice signed by at least one-fourth of members, 14 days' notice, passed by two-thirds of total membership.","","54,56","president impeachment"],
+["63","The Vice-President of India","V","Active","There shall be a Vice-President.","Ex-officio Chairman of Rajya Sabha (Art 89).","54","vice president"],
+["72","Power of President to grant pardons, etc.","V","Active","President may grant pardon, reprieve, respite, remission, suspension, commutation; includes court-martial and death sentence.","Governor's parallel power: Art 161.","161","president pardon"],
+["74","Council of Ministers to aid and advise President","V","Active","Council of Ministers headed by the PM aids and advises the President, who must act on that advice.","44th Amendment allows President to ask for reconsideration once.","75,163","council of ministers"],
+["75","Other provisions as to Ministers","V","Active","PM appointed by President; ministers appointed on PM's advice; Council collectively responsible to Lok Sabha; size limited to 15% of Lok Sabha strength.","15% limit by 91st Amendment.","74,164","pm ministers"],
+["79","Constitution of Parliament","V","Active","Parliament consists of the President and two Houses: Council of States and House of the People.","","80,81","parliament"],
+["80","Composition of the Council of States","V","Active","Maximum 250 members: 238 representatives of States/UTs and 12 nominated by the President.","","79,81","rajya sabha"],
+["81","Composition of the House of the People","V","Active","Maximum 550 members: up to 530 from States and 20 from UTs.","Present strength 543 elected.","79,80","lok sabha"],
+["108","Joint sitting of both Houses in certain cases","V","Active","President summons a joint sitting when Houses disagree on an ordinary bill; Speaker presides.","Not applicable to Money Bills or Constitution Amendment Bills.","110,368","parliament joint sitting"],
+["110","Definition of 'Money Bills'","V","Active","Defines Money Bill; the Speaker's certificate is final.","Introduced only in Lok Sabha; Rajya Sabha has 14 days to return it.","108,109","money bill"],
+["123","Power of President to promulgate Ordinances during recess of Parliament","V","Active","Ordinance has the force of an Act; must be laid before Parliament and lapses six weeks after reassembly.","Governor: Art 213.","213","ordinance"],
+["124","Establishment and constitution of Supreme Court","V","Active","Supreme Court of India consisting of the CJI and other judges; removal by address of both Houses.","Present sanctioned strength 34 including CJI.","32,226","supreme court judiciary"],
+["148","Comptroller and Auditor-General of India","V","Active","CAG appointed by the President; removed like a Supreme Court judge.","Guardian of public purse.","","cag audit constitutional body"],
+["153","Governors of States","VI","Active","There shall be a Governor for each State.","One person may be Governor of two or more States.","154,163","governor state"],
+["163","Council of Ministers to aid and advise Governor","VI","Active","Council of Ministers with CM aids and advises the Governor, except in functions where Governor acts in discretion.","","74,164","governor"],
+["164","Other provisions as to Ministers (State)","VI","Active","CM appointed by Governor; Council of Ministers collectively responsible to Legislative Assembly; size limited to 15% of Assembly strength (minimum 12).","15% limit by 91st Amendment.","75,163","chief minister"],
+["213","Power of Governor to promulgate Ordinances during recess of Legislature","VI","Active","Governor may issue ordinances when Legislature is not in session.","","123","ordinance governor"],
+["226","Power of High Courts to issue certain writs","VI","Active","High Courts can issue writs for Fundamental Rights and for 'any other purpose'.","Wider than Art 32 in scope.","32","high court writs"],
+["238","(Application of Part VII)","VII","Omitted","Omitted by 7th Amendment (1956).","Part VII (Part B States) abolished.","",""],
+["239AA","Special provisions with respect to Delhi","VIII","Active","Delhi is the National Capital Territory with a Legislative Assembly; Lieutenant Governor is Administrator.","Inserted by 69th Amendment (1991).","","delhi union territory"],
+["246","Subject-matter of laws made by Parliament and by the Legislatures of States","XI","Active","Distributes legislative power through Union, State and Concurrent Lists in Seventh Schedule.","Parliament's power is supreme on Union List.","246A,248,254","legislative centre state lists"],
+["246A","Special provision with respect to goods and services tax","XI","Active","Parliament and State Legislatures both may make laws on GST.","Inserted by 101st Amendment (2016).","269A,279A","gst centre state"],
+["248","Residuary powers of legislation","XI","Active","Parliament has exclusive power over matters not in any List.","Differs from USA/Australia.","246","residuary centre state"],
+["254","Inconsistency between laws made by Parliament and laws made by State Legislatures","XI","Active","On Concurrent List conflict, Union law prevails; State law with President's assent may prevail in that State.","Repugnancy.","246","repugnancy centre state"],
+["263","Provisions with respect to an inter-State Council","XI","Active","President may establish an Inter-State Council to investigate and discuss common interests.","Set up in 1990 on Sarkaria recommendation.","","inter-state council centre state"],
+["268A","(Service tax levied by Union and collected by Union and States)","XII","Omitted","Inserted by 88th Amendment; omitted by 101st Amendment (2016).","Replaced by GST framework.","246A,269A","gst omitted"],
+["269A","Levy and collection of goods and services tax in course of inter-State trade or commerce","XII","Active","Union levies and collects GST on inter-State supply; apportioned between Union and States on GST Council recommendation.","Inserted by 101st Amendment.","246A,279A","gst"],
+["279A","Goods and services tax Council","XII","Active","President constitutes GST Council; Union Finance Minister is Chairperson.","Inserted by 101st Amendment (2016).","246A,269A","gst council constitutional body"],
+["280","Finance Commission","XII","Active","President constitutes Finance Commission every five years to recommend tax distribution between Union and States.","","","finance commission centre state constitutional body"],
+["300A","Persons not to be deprived of property save by authority of law","XII","Active","No person shall be deprived of property except by authority of law.","Inserted by 44th Amendment; a legal, not fundamental, right.","31","property legal right"],
+["312","All-India Services","XIV","Active","Rajya Sabha, by two-thirds resolution, may authorise creation of All-India Services.","IAS, IPS, Indian Forest Service.","","all india services centre state"],
+["324","Superintendence, direction and control of elections to be vested in an Election Commission","XV","Active","Election Commission conducts elections to Parliament, State Legislatures, offices of President and VP.","State Election Commission: Arts 243K and 243ZA.","326","election commission constitutional body"],
+["326","Elections to the House of the People and to the Legislative Assemblies of States to be on the basis of adult suffrage","XV","Active","Every citizen aged 18 or above is entitled to vote.","Age lowered from 21 to 18 by 61st Amendment (1988).","324","adult suffrage voting age"],
+["338B","National Commission for Backward Classes","XVI","Active","Constitutional status to NCBC.","Inserted by 102nd Amendment (2018).","342A","commission constitutional body"],
+["342A","Socially and educationally backward classes","XVI","Active","President specifies SEBCs; Parliament by law to include or exclude.","Inserted by 102nd; modified by 105th (2021) to restore States' power to identify SEBCs.","338B","backward classes"],
+["352","Proclamation of Emergency","XVIII","Active","National Emergency on grounds of war, external aggression or armed rebellion.","'Armed rebellion' replaced 'internal disturbance' by 44th Amendment. Declared 1962, 1971, 1975.","356,360,20,21","emergency national"],
+["356","Provisions in case of failure of constitutional machinery in States","XVIII","Active","President's Rule: President may assume State functions; Parliament must approve within two months; maximum three years.","Judicially reviewable in S.R. Bommai (1994).","352,365","emergency presidents rule centre state"],
+["360","Provisions as to financial emergency","XVIII","Active","President may proclaim Financial Emergency if financial stability or credit of India is threatened; Parliament must approve within two months.","Never declared so far.","352,356","emergency financial"],
+["362","(Rights and privileges of Rulers)","XIX","Omitted","Omitted by 26th Amendment (1971).","Privy purses abolished.","","privy purse omitted"],
+["368","Power of Parliament to amend the Constitution and procedure therefor","XX","Active","Parliament may amend by special majority; some amendments need ratification by half the States.","Part XX. Basic structure limit from Kesavananda Bharati (1973).","13,108","amendment procedure"],
+["370","Temporary provisions with respect to the State of Jammu and Kashmir","XXI","Ceased to operate (2019)","Special status provision. Ceased to operate through a Presidential Order in 2019; upheld by the Supreme Court in 2023.","","","jammu kashmir special status"],
+["329A","(Special provision as to elections to Parliament in the case of Prime Minister and Speaker)","XV","Omitted","Inserted by 39th Amendment; omitted by 44th Amendment (1978).","","","election omitted"]
+],
+// [num,year,name,purpose,articles,schedules,facts,tags]
+amendments:[
+[1,1951,"Constitution (First Amendment) Act","Land reforms, curbing speech abuse, backward classes.","15,19,31","9","Added Art 15(4), 31A, 31B and the Ninth Schedule; added grounds in 19(2).","land reforms ninth schedule"],
+[7,1956,"Constitution (Seventh Amendment) Act","Reorganisation of States.","238","1","Abolished Part A/B/C/D classification; abolished Part VII; created Union Territories.","states reorganisation"],
+[24,1971,"Constitution (Twenty-fourth Amendment) Act","Parliament's power to amend Fundamental Rights.","13,368","","Response to Golak Nath; President must assent to amendment bills.","amend fundamental rights"],
+[25,1971,"Constitution (Twenty-fifth Amendment) Act","Property rights, Art 31C.","31","","Limited property compensation; added Art 31C (DPSP over certain FRs).","property"],
+[26,1971,"Constitution (Twenty-sixth Amendment) Act","Abolition of privy purses.","362","","Omitted Art 291 and 362.","privy purse"],
+[42,1976,"Constitution (Forty-second) Amendment Act","'Mini-Constitution'; Emergency-era reforms.","51A,368","7","Added 'socialist', 'secular', 'integrity' to the Preamble; Fundamental Duties (Part IVA); Part XIVA tribunals. Certain parts struck down in Minerva Mills (1980).","preamble fundamental duties"],
+[44,1978,"Constitution (Forty-fourth Amendment) Act","Undo Emergency excesses.","19,20,21,31,300A,352,329A","","Removed property from FRs; 'armed rebellion' replaced 'internal disturbance'; Arts 20, 21 cannot be suspended in Emergency.","emergency property"],
+[52,1985,"Constitution (Fifty-second Amendment) Act","Anti-defection law.","101,102,190,191","10","Added Tenth Schedule.","defection tenth schedule"],
+[61,1988,"Constitution (Sixty-first Amendment) Act","Voting age.","326","","Lowered voting age from 21 to 18.","voting age"],
+[69,1991,"Constitution (Sixty-ninth Amendment) Act","Delhi status.","239AA","","Delhi NCT with Legislative Assembly.","delhi"],
+[73,1992,"Constitution (Seventy-third Amendment) Act","Panchayati Raj.","243","11","Added Part IX and Eleventh Schedule (29 subjects).","panchayat local government"],
+[74,1992,"Constitution (Seventy-fourth Amendment) Act","Urban local bodies.","243P","12","Added Part IXA and Twelfth Schedule (18 subjects).","municipality local government"],
+[86,2002,"Constitution (Eighty-sixth Amendment) Act","Right to education.","21A,45,51A","","Added Art 21A, new Art 45, and 51A(k).","education"],
+[91,2003,"Constitution (Ninety-first Amendment) Act","Size of ministries; defection.","75,164","10","Council of Ministers limited to 15% of House; removed split provision from Tenth Schedule.","ministers defection"],
+[101,2016,"Constitution (One Hundred and First Amendment) Act","Goods and Services Tax.","246A,268A,269A,279A","7","Inserted 246A, 269A, 279A; omitted 268A; created GST Council.","gst tax"],
+[102,2018,"Constitution (One Hundred and Second Amendment) Act","NCBC constitutional status.","338B,342A","","Added Arts 338B and 342A.","backward classes"],
+[103,2019,"Constitution (One Hundred and Third Amendment) Act","10% EWS reservation.","15,16","","Added Art 15(6) and 16(6); upheld in Janhit Abhiyan (2022).","reservation ews"],
+[104,2019,"Constitution (One Hundred and Fourth Amendment) Act","Reservation in legislatures.","334","","Extended SC/ST seat reservation to 2030; ended Anglo-Indian nominated seats.","reservation lok sabha"],
+[105,2021,"Constitution (One Hundred and Fifth Amendment) Act","SEBC identification power of States.","342A,338B","","Restored States' power to identify SEBCs.","backward classes"],
+[106,2023,"Constitution (One Hundred and Sixth Amendment) Act","Women's reservation (Nari Shakti Vandan Adhiniyam).","330A,332A,239AA","","One-third seats for women in Lok Sabha, State Assemblies and Delhi Assembly; effective after the delimitation following the first census post commencement.","women reservation"]
+],
+cases:[
+["Shankari Prasad v Union of India",1951,"Can Parliament amend FRs?","Yes; Art 368 covers FRs.","368,13","Amendment powers"],
+["Golak Nath v State of Punjab",1967,"Amendment of FRs","Parliament cannot amend FRs (later overruled).","13,368","24th Amendment link"],
+["Kesavananda Bharati v State of Kerala",1973,"Limits on amending power","Basic structure doctrine; Parliament cannot destroy it.","368","Most important case"],
+["Maneka Gandhi v Union of India",1978,"Scope of Art 21","Procedure must be just, fair and reasonable; Arts 14, 19, 21 are linked.","21,14,19","Art 21 expansion"],
+["Minerva Mills v Union of India",1980,"42nd Amendment","Struck down parts of Art 368; harmony of FR and DPSP is basic structure.","368,14,19","FR vs DPSP"],
+["S.R. Bommai v Union of India",1994,"Misuse of Art 356","President's Rule is subject to judicial review; secularism is basic structure.","356","Emergency"],
+["Indra Sawhney v Union of India",1992,"OBC reservation","27% OBC reservation upheld; 50% ceiling; creamy layer excluded.","16,15","Reservation"],
+["Kihoto Hollohan v Zachillhu",1992,"Anti-defection","Tenth Schedule valid; Speaker's decisions are reviewable.","","52nd Amendment"],
+["K.S. Puttaswamy v Union of India",2017,"Privacy","Right to privacy is part of Art 21; overruled ADM Jabalpur.","21","Privacy"],
+["Vishaka v State of Rajasthan",1997,"Sexual harassment at workplace","Guidelines issued under Arts 14, 15, 19, 21.","14,15,19,21","Women rights"],
+["Shreya Singhal v Union of India",2015,"Free speech online","Section 66A of the IT Act struck down.","19","Free speech"],
+["L. Chandra Kumar v Union of India",1997,"Tribunals","Judicial review is basic structure; tribunals are subject to High Court scrutiny.","226,32","Judicial review"],
+["Berubari Union case (In re)",1960,"Cession of territory","Preamble not part of Constitution (later reversed); cession needs Art 368 amendment.","","Preamble"],
+["Navtej Singh Johar v Union of India",2018,"Section 377 IPC","Consensual same-sex conduct decriminalised.","14,15,19,21","Equality"]
+],
+topics:[
+{id:"emergency",title:"Emergency (Part XVIII)",tags:"emergency president rule",arts:"352,356,360",pts:["Art 352: war, external aggression, armed rebellion; Cabinet's written advice needed (44th).","Parliament must approve within one month; renewable every six months.","Arts 20 and 21 cannot be suspended during Emergency.","Art 356: President's Rule on failure of constitutional machinery; approval within two months; maximum three years.","Art 360: Financial Emergency; approval within two months; never declared.","National Emergencies declared: 1962, 1971, 1975."]},
+{id:"centre",title:"Centre-State Relations",tags:"centre state federalism sarkaria punchhi",arts:"246,246A,248,254,263,269A,279A,280,312,356",pts:["Legislative: Arts 245–255; Seventh Schedule lists; residuary power Art 248; repugnancy Art 254.","Administrative: Arts 256–263; Inter-State Council Art 263.","Financial: Arts 268–293; Finance Commission Art 280; GST Art 246A/269A/279A.","Inter-State: water disputes Art 262, Inter-State Council Art 263, trade Part XIII.","Emergency: Union gains legislative control over States.","All-India Services: Art 312.","Sarkaria Commission: appointed 1983, reported 1988. Punchhi Commission: appointed 2007, reported 2010.","Key case: S.R. Bommai (1994)."]},
+{id:"fr",title:"Fundamental Rights (Arts 12–35)",tags:"fundamental rights equality freedom writs",arts:"12,13,14,15,16,17,18,19,20,21,21A,22,23,24,25,32",pts:["Equality 14–18; Freedom 19–22; Exploitation 23–24; Religion 25–28; Cultural & Educational 29–30; Constitutional Remedies 32.","Art 31 omitted; property now Art 300A.","Writs: Habeas Corpus, Mandamus, Prohibition, Certiorari, Quo Warranto (Arts 32, 226).","Art 19 freedoms are for citizens only; subject to reasonable restrictions."]},
+{id:"dpsp",title:"DPSP (Arts 36–51)",tags:"dpsp directive principles",arts:"44,50",pts:["Part IV; non-justiciable (Art 37).","Academic classification: Socialist, Gandhian, Liberal-intellectual (not in text).","42nd Amendment added Arts 39A, 43A, 48A.","86th Amendment replaced Art 45.","Minerva Mills: harmony of FR and DPSP."]},
+{id:"fd",title:"Fundamental Duties (Art 51A)",tags:"fundamental duties",arts:"51A,21A",pts:["Added by 42nd Amendment (1976) on Swaran Singh Committee recommendation.","11th duty added by 86th Amendment (2002).","Duties are non-justiciable."]},
+{id:"exec",title:"Union Executive",tags:"president vice president prime minister attorney general",arts:"52,53,54,61,63,72,74,75",pts:["President elected by electoral college (Art 54); impeached under Art 61.","Vice-President is ex-officio Chairman of Rajya Sabha.","PM and Council of Ministers aid and advise the President (Art 74).","Attorney General: Art 76."]},
+{id:"parliament",title:"Parliament",tags:"parliament lok sabha rajya sabha money bill",arts:"79,80,81,108,110,123",pts:["Parliament: President + Lok Sabha + Rajya Sabha.","Joint sitting: Art 108.","Money Bill: Art 110; Speaker certifies.","Anti-defection: Tenth Schedule.","Max gap between sessions: six months (Art 85)."]},
+{id:"judiciary",title:"Judiciary",tags:"judiciary supreme court high court judicial review",arts:"13,32,124,226",pts:["Supreme Court Art 124; High Court Art 214.","SC jurisdictions: original (131), appellate (132–136), advisory (143).","Writs: Art 32 (SC), Art 226 (HC).","Judicial review: Arts 13, 32, 226."]},
+{id:"state",title:"State Government",tags:"governor chief minister state legislature",arts:"153,163,164,213,226",pts:["Governor Art 153; Council of Ministers Art 163–164.","Advocate General: Art 165.","Governor's ordinances: Art 213."]},
+{id:"bodies",title:"Constitutional vs Statutory Bodies",tags:"constitutional bodies statutory election commission upsc cag finance commission",arts:"148,263,279A,280,324,338B",pts:["CONSTITUTIONAL: Election Commission (324), UPSC/SPSC (315), Finance Commission (280), CAG (148), Attorney General (76), Advocate General (165), NCSC (338), NCST (338A), NCBC (338B), GST Council (279A), State Election Commission (243K).","Inter-State Council: constituted under Art 263 by Presidential order.","STATUTORY: NHRC, CIC, CVC, Lokpal, NCW (set up by Acts).","EXECUTIVE: NITI Aayog (set up by Cabinet resolution in 2015)."]},
+{id:"doctrines",title:"Important Doctrines",tags:"basic structure judicial review eclipse severability",arts:"13,14,254,368",pts:["Basic Structure: Parliament cannot alter it (Kesavananda 1973).","Judicial Review: courts test validity of laws and acts.","Rule of Law: equal subjection to law (Art 14).","Pith and Substance: determine true subject of a law.","Colourable Legislation: cannot do indirectly what cannot be done directly.","Severability: only the offending part of a law is void.","Eclipse: pre-Constitution law inconsistent with FR becomes dormant, not dead (Bhikaji Narain Dhakras 1955).","Repugnancy: Art 254.","Harmonious Construction: reconcile conflicting provisions.","Pleasure Doctrine: Art 310; subject to Art 311."]}
+],
+// [q,[options],answerIndex,explanation,[arts],topic,tags]
+practice:[
+["Which Article provides the Right to Constitutional Remedies?",["Art 21","Art 32","Art 226","Art 356"],1,"Art 32 lets a person move the Supreme Court.",["32"],"fr","remedies writs"],
+["Which Amendment added the Tenth Schedule (anti-defection)?",["42nd","52nd","61st","91st"],1,"52nd Amendment, 1985.",[],"parliament","defection"],
+["Which Article deals with President's Rule in a State?",["352","356","360","365"],1,"Art 356.",["356"],"emergency","emergency"],
+["Fundamental Duties were added by which Amendment?",["24th","42nd","44th","73rd"],1,"42nd Amendment, 1976.",["51A"],"fd","duties"],
+["Which Article provides the Right to Education for ages 6–14?",["21A","24","45","51A"],0,"Added by the 86th Amendment.",["21A"],"fr","education"],
+["The GST Council is provided under which Article?",["246A","269A","279A","280"],2,"Inserted by the 101st Amendment.",["279A"],"centre","gst"],
+["Money Bill is defined in which Article?",["108","110","112","123"],1,"Art 110.",["110"],"parliament","money bill"],
+["Which Amendment lowered voting age to 18?",["42nd","44th","61st","73rd"],2,"61st Amendment (1988).",["326"],"parliament","voting"],
+["The Ninth Schedule was added by which Amendment?",["1st","7th","24th","42nd"],0,"1st Amendment, 1951.",["31"],"fr","ninth schedule"],
+["Panchayati Raj institutions were given constitutional status by which Amendment?",["61st","73rd","74th","86th"],1,"73rd Amendment; Part IX.",["243"],"centre","panchayat"]
+],
+pyqs:[]
+};
+
+</script>
+<script>
+(function(){
+const $=s=>document.querySelector(s),app=$('#app');
+const L=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ord=n=>n+(n%100>=11&&n%100<=13?'th':(['th','st','nd','rd'][n%10]||'th'));
+const R={article:{},part:{},schedule:{},amendment:{},case:{},topic:{},pyq:{}};
+D.articles.forEach(a=>R.article[a[0]]={id:a[0],t:a[1],p:a[2],s:a[3],d:a[4],f:a[5],r:a[6]?a[6].split(','):[],g:a[7]||''});
+D.parts.forEach(p=>R.part[p[0]]={id:p[0],n:p[1],rg:p[2],d:p[3]});
+D.schedules.forEach(s=>R.schedule[s[0]]={id:s[0],n:s[1],c:s[2],a:s[3],f:s[4]});
+D.amendments.forEach(a=>R.amendment[a[0]]={id:String(a[0]),y:a[1],n:a[2],p:a[3],a:a[4]?a[4].split(','):[],s:a[5],f:a[6],g:a[7]});
+D.cases.forEach((c,i)=>R.case[i]={id:String(i),n:c[0],y:c[1],i:c[2],p:c[3],a:c[4]?c[4].split(','):[],w:c[5]});
+D.topics.forEach(t=>R.topic[t.id]=Object.assign({},t,{a:t.arts.split(',')}));
+const PQ=[];D.pyqs.forEach((q,i)=>{q.id='v'+i;q.kind=q.status||'unverified';PQ.push(q)});
+D.practice.forEach((p,i)=>PQ.push({id:'x'+i,q:p[0],o:p[1],a:p[2],e:p[3],arts:p[4].filter(x=>R.article[x]),topic:p[5],tags:p[6],kind:'practice',year:'',exam:'Practice'}));
+PQ.forEach(q=>R.pyq[q.id]=q);
+const ver=PQ.filter(q=>q.kind==='verified'),KL={verified:'Verified SSC CGL PYQ',other:'Other SSC exam PYQ',practice:'Practice question',unverified:'Source verification required'};
+// analytics
+const F={};ver.forEach(q=>(q.arts||[]).forEach(a=>{const f=F[a]||(F[a]={n:0,y:[]});f.n++;if(f.y.indexOf(q.year)<0)f.y.push(q.year)}));Object.values(F).forEach(f=>f.y.sort((a,b)=>b-a));
+// search index
+function fields(t,r){switch(t){
+case'article':return{Title:'article '+r.id+' '+r.t,Part:'part '+r.p,Status:r.s,Detail:r.d+' '+r.f,Tags:r.g};
+case'part':return{Title:'part '+r.id+' '+r.n,Range:'articles '+r.rg,Detail:r.d};
+case'schedule':return{Title:'schedule '+r.id+' '+r.n,Detail:r.c+' '+r.f+' articles '+r.a};
+case'amendment':return{Title:r.id+' '+ord(+r.id)+' amendment '+r.n+' '+r.y,Detail:r.p+' '+r.f,Articles:r.a.join(' '),Tags:r.g};
+case'case':return{Title:r.n+' '+r.y,Detail:r.i+' '+r.p+' '+r.w,Articles:r.a.join(' ')};
+case'topic':return{Title:r.title,Tags:r.tags,Detail:r.pts.join(' ')};
+case'pyq':return{Title:r.q,Detail:(r.o||[]).join(' ')+' '+(r.e||''),Year:String(r.year||''),Tags:(r.tags||'')+' '+(r.topic||''),Articles:(r.arts||[]).join(' ')}}}
+const IDX=[];Object.keys(R).forEach(t=>Object.values(R[t]).forEach(r=>{const f=fields(t,r);Object.keys(f).forEach(k=>f[k]=f[k].toLowerCase());IDX.push({t,r,f})}));
+const label=(t,r)=>({article:()=>'Article '+r.id+' — '+r.t,part:()=>'Part '+r.id+' — '+r.n,schedule:()=>r.id+(r.id==='1'?'st':r.id==='2'?'nd':r.id==='3'?'rd':'th')+' Schedule — '+r.n,amendment:()=>ord(+r.id)+' Amendment ('+r.y+')',case:()=>r.n+' ('+r.y+')',topic:()=>r.title,pyq:()=>r.q.slice(0,90)}[t])();
+function search(q){const toks=q.toLowerCase().replace(/\barticles?\b/g,' ').replace(/\bamendment\b/g,' ').split(/[\s,]+/).filter(Boolean);if(!toks.length)return[];
+const res=[];IDX.forEach(x=>{let sc=0,why={};for(const tk of toks){let hit=false;const re=/^\d+[a-z]?$/.test(tk)?new RegExp('(^|[^0-9a-z])'+tk+'([^0-9a-z]|$)'):null;for(const k in x.f){if(re?re.test(x.f[k]):x.f[k].indexOf(tk)>=0){hit=true;why[k]=1;sc+=k==='Title'?10:1}}if(!hit)return}
+if(x.t==='article'&&toks.indexOf(x.r.id.toLowerCase())>=0)sc+=100;if(x.t==='amendment'&&toks.some(t=>t===x.r.id||t===ord(+x.r.id)))sc+=100;res.push({t:x.t,r:x.r,sc,why:Object.keys(why)})});
+return res.sort((a,b)=>b.sc-a.sc)}
+// state
+let mode=L('mode','full'),quiz=null,flash=null;
+const bm=()=>L('bm',[]),isB=k=>bm().indexOf(k)>=0;
+const bmBtn=(t,id)=>`<button class="btn" data-act="bm" data-k="${t}:${id}">${isB(t+':'+id)?'★ Saved':'☆ Save'}</button>`;
+const lk=(t,id,l)=>`<a class="chip" href="#${t}/${encodeURIComponent(id)}">${E(l)}</a>`;
+const aL=a=>a.map(x=>R.article[x]?lk('article',x,'Art '+x):'').join('');
+const note=(k)=>{const r=L('rec',[]).filter(x=>x!==k);r.unshift(k);S('rec',r.slice(0,12));S('last',Date.now())};
+function card(t,r,extra){return `<a class="card" href="#${t}/${encodeURIComponent(r.id)}"><b>${E(label(t,r))}</b>${extra||''}</a>`}
+function artCard(a){const f=F[a.id];const st=a.s==='Active'?'':` <span class="tag warn">${E(a.s)}</span>`;
+if(mode==='one')return `<a class="card" href="#article/${a.id}"><b>Art ${E(a.id)}</b> → ${E(a.t)} → Part ${a.p}${st}</a>`;
+if(mode==='quick')return `<a class="card" href="#article/${a.id}"><b>Article ${E(a.id)}</b>${st}<div>→ ${E(a.t)}</div><div>→ Part ${a.p}</div>${a.f?`<div>→ ${E(a.f)}</div>`:''}</a>`;
+return `<a class="card" href="#article/${a.id}"><b>Article ${E(a.id)} — ${E(a.t)}</b>${st}<div class="m">Part ${a.p}${f?' · asked '+f.n+'× (verified)':''}</div><div>${E(a.d)}</div></a>`}
+const modeBar=()=>`<div class="bar">${['full','quick','one'].map(m=>`<button class="btn${mode===m?' on':''}" data-act="mode" data-m="${m}">${{full:'Full detail',quick:'Quick revision',one:'One-liner'}[m]}</button>`).join('')}</div>`;
+const sec=(h,b)=>b?`<h3>${h}</h3>${b}`:'';
+const show=h=>{app.innerHTML=h;window.scrollTo(0,0)};
+// views
+function home(){const rec=L('rec',[]).filter(k=>{const[t,i]=k.split(':');return R[t]&&R[t][i]}).slice(0,6),B=bm().filter(k=>{const[t,i]=k.split(':');return R[t]&&R[t][i]}),top=Object.keys(F).sort((a,b)=>F[b].n-F[a].n).slice(0,6);
+const q=[['Articles','list/article'],['Parts','list/part'],['Schedules','list/schedule'],['Amendments','list/amendment'],['Topics','list/topic'],['Centre-State','topic/centre'],['Fundamental Rights','topic/fr'],['Parliament','topic/parliament'],['Judiciary','topic/judiciary'],['Emergency','topic/emergency'],['Constitutional Bodies','topic/bodies'],['PYQs','pyqs'],['Rapid Revision','flash']];
+const last=L('last',0);
+show(`<div class="grid">${q.map(x=>`<a class="qb" href="#${x[1]}">${x[0]}</a>`).join('')}</div>
+<div class="stats">${[['Articles indexed',Object.keys(R.article).length],['Parts',D.parts.length],['Schedules',D.schedules.length],['Amendments indexed',D.amendments.length],['Verified PYQs',ver.length],['Cases',D.cases.length]].map(s=>`<div class="stat"><b>${s[1]}</b>${s[0]}</div>`).join('')}</div>
+<p class="m">Coverage: seed dataset only — not every Article or Amendment is indexed yet. Verified PYQs: ${ver.length}.</p>
+${sec('Continue revision'+(last?` <span class="m">(last session ${new Date(last).toLocaleDateString()})</span>`:''),rec.map(k=>{const[t,i]=k.split(':');return card(t,R[t][i])}).join('')||'<p class="m">Nothing opened yet.</p>')}
+${sec('Most frequently asked (verified)',top.map(a=>card('article',R.article[a],`<div class="m">${F[a].n}× · ${F[a].y.join(', ')}</div>`)).join('')||'<p class="m">No verified PYQ data yet; frequency appears here after you add verified PYQs to data.js.</p>')}
+${sec('Bookmarks',B.slice(0,6).map(k=>{const[t,i]=k.split(':');return card(t,R[t][i])}).join('')||'<p class="m">No bookmarks yet.</p>')}
+<p><a class="chip" href="#current">Current Constitutional Issues</a><a class="chip" href="#quiz">Self-test</a><a class="chip" href="#saved">All bookmarks</a></p>`)}
+function list(t){const arr=Object.values(R[t]);let h=`<h2>${t[0].toUpperCase()+t.slice(1)}s</h2>`;
+if(t==='article'){h+=modeBar()+`<div class="bar"><select id="srt"><option value="n">Article number</option><option value="most">Most asked</option><option value="recent">Recently asked</option><option value="part">Part / topic</option></select></div><div id="al"></div>`;show(h);const render=()=>{const v=$('#srt').value;let a=arr.slice();const num=x=>parseInt(x.id)||0;a.sort((x,y)=>num(x)-num(y)||x.id.localeCompare(y.id));if(v==='most')a.sort((x,y)=>(F[y.id]?F[y.id].n:0)-(F[x.id]?F[x.id].n:0));if(v==='recent')a.sort((x,y)=>(F[y.id]?F[y.id].y[0]:0)-(F[x.id]?F[x.id].y[0]:0));if(v==='part')a.sort((x,y)=>D.parts.findIndex(p=>p[0]===x.p)-D.parts.findIndex(p=>p[0]===y.p));$('#al').innerHTML=a.map(artCard).join('')};$('#srt').onchange=render;render();return}
+if(t==='part'){h+=arr.map(p=>{const as=Object.values(R.article).filter(a=>a.p===p.id);return `<details class="card"><summary><b>Part ${p.id} — ${E(p.n)}</b> <span class="m">Arts ${E(p.rg)}</span></summary><p>${E(p.d)}</p><p>${aL(as.map(a=>a.id))||'<span class="m">No Articles indexed yet</span>'}</p>${lk('part',p.id,'Open Part')}</details>`}).join('')}
+else if(t==='amendment')h+=arr.sort((a,b)=>a.y-b.y||a.id-b.id).map(a=>card('amendment',a,`<div class="m">${E(a.p)}</div>`)).join('');
+else if(t==='case')h+=arr.map(c=>card('case',c,`<div class="m">${E(c.i)}</div>`)).join('');
+else h+=arr.map(r=>card(t,r)).join('');
+show(h)}
+function artDetail(id){const a=R.article[id];if(!a)return nf();note('article:'+id);const f=F[id],am=Object.values(R.amendment).filter(x=>x.a.indexOf(id)>=0),cs=Object.values(R.case).filter(x=>x.a.indexOf(id)>=0),ts=Object.values(R.topic).filter(x=>x.a.indexOf(id)>=0),qs=PQ.filter(q=>(q.arts||[]).indexOf(id)>=0&&q.kind==='verified');
+let h=`<h2>Article ${E(a.id)} — ${E(a.t)}</h2><div class="bar"><span class="tag${a.s==='Active'?'':' warn'}">${E(a.s)}</span> <span class="tag">Part ${a.p}</span>${bmBtn('article',id)}</div>${modeBar()}`;
+if(mode==='one')h+=`<p class="big">Art ${E(a.id)} → ${E(a.t)} → Part ${a.p}</p>`;
+else{h+=sec('Constitutional provision',`<p>${E(a.d)}</p>`);if(mode==='quick')h+=a.f?`<p>→ ${E(a.f)}</p>`:'';else h+=sec('SSC CGL fact',a.f?`<p>${E(a.f)}</p>`:'')+sec('Related Articles',aL(a.r))+sec('Related amendments',am.map(x=>lk('amendment',x.id,ord(+x.id)+' Amendment')).join(''))+sec('Important cases',cs.map(x=>lk('case',x.id,x.n)).join(''))+sec('Topics',ts.map(x=>lk('topic',x.id,x.title)).join(''))+sec('PYQ history',f?`<p><b>Asked: ${f.n} verified time${f.n>1?'s':''}</b><br>Years: ${f.y.join(', ')}</p>`+qs.map(pq).join(''):'<p class="m">No verified SSC CGL PYQ is linked to this Article in the dataset yet.</p>')}
+show(h)}
+function pq(q){return `<div class="card"><span class="tag">${KL[q.kind]}</span> <span class="m">${E(q.exam||'')} ${E(q.year||'')} ${E(q.tier||'')}</span><p>${E(q.q)}</p><ol type="A">${(q.o||[]).map(o=>`<li>${E(o)}</li>`).join('')}</ol><details><summary>Answer</summary><p><b>${'ABCD'[q.a]}</b> — ${E(q.e||'')}</p></details>${aL(q.arts||[])}</div>`}
+function detail(t,id){const r=R[t]&&R[t][id];if(!r)return nf();if(t==='article')return artDetail(id);note(t+':'+id);let h=`<h2>${E(label(t,r))}</h2><div class="bar">${bmBtn(t,id)}</div>`;
+if(t==='part'){const as=Object.values(R.article).filter(a=>a.p===id);h+=`<p>Articles ${E(r.rg)}</p><p>${E(r.d)}</p>${sec('Indexed Articles',aL(as.map(a=>a.id)))}`}
+if(t==='schedule'){h+=`<p>${E(r.c)}</p>${sec('Articles',`<p>${E(r.a)}</p>`)}${sec('SSC facts',r.f?`<p>${E(r.f)}</p>`:'')}${sec('Amendments',Object.values(R.amendment).filter(x=>x.s===r.id||String(x.s).split(',').indexOf(r.id)>=0).map(x=>lk('amendment',x.id,ord(+x.id)+' Amendment')).join(''))}`}
+if(t==='amendment')h+=`<p><b>${E(r.n)}</b>, ${r.y}</p><p>${E(r.p)}</p>${sec('Changes',`<p>${E(r.f)}</p>`)}${sec('Articles',aL(r.a))}${sec('Schedules',r.s?`<p>${E(r.s)}</p>`:'')}${sec('PYQs',PQ.filter(q=>q.kind==='verified'&&q.amend==r.id).map(pq).join('')||'<p class="m">No verified PYQ linked yet.</p>')}`;
+if(t==='case')h+=`<p class="m">Issue: ${E(r.i)}</p><p>${E(r.p)}</p>${sec('Articles',aL(r.a))}${sec('Why SSC may ask',`<p>${E(r.w)}</p>`)}`;
+if(t==='topic')h+=`<ul>${r.pts.map(p=>`<li>${E(p)}</li>`).join('')}</ul>${sec('Articles',aL(r.a))}${sec('Cases',Object.values(R.case).filter(c=>c.a.some(x=>r.a.indexOf(x)>=0)).map(c=>lk('case',c.id,c.n)).join(''))}`;
+if(t==='pyq')h+=pq(r);show(h)}
+function pyqs(){const ys=[...new Set(ver.map(q=>q.year))].sort((a,b)=>b-a);show(`<h2>PYQ database</h2><p class="m">Verified: ${ver.length} · Practice: ${PQ.length-ver.length}</p><div class="bar"><select id="yf"><option value="">All years</option>${ys.map(y=>`<option>${y}</option>`).join('')}</select><select id="kf"><option value="verified">Verified only</option><option value="">All kinds</option><option value="practice">Practice</option></select></div><div id="pl"></div>`);const r=()=>{const y=$('#yf').value,k=$('#kf').value,a=PQ.filter(q=>(!y||q.year==y)&&(!k||q.kind===k));$('#pl').innerHTML=a.map(pq).join('')||'<p class="m">No records. Add verified PYQs to data.js (see schema at top of file).</p>'};$('#yf').onchange=$('#kf').onchange=r;r()}
+function nf(){show('<p>Not found. <a href="#home">Home</a></p>')}
+function saved(){const B=bm().filter(k=>{const[t,i]=k.split(':');return R[t]&&R[t][i]});show('<h2>Bookmarks</h2>'+(B.map(k=>{const[t,i]=k.split(':');return card(t,R[t][i])}).join('')||'<p class="m">None yet.</p>'))}
+function current(){const c=L('cur',[]);show(`<h2>Current Constitutional Issues</h2><p class="m">Kept separate from permanent text. Stored on this device only.</p><div class="card"><input id="ct" placeholder="Issue title"><textarea id="cn" placeholder="Note"></textarea><input id="ca" placeholder="Linked Articles e.g. 356, 246"><button class="btn" data-act="addcur">Add</button></div>`+c.map((x,i)=>`<div class="card"><b>${E(x.t)}</b><p>${E(x.n)}</p>${aL(x.a)}<button class="btn" data-act="delcur" data-i="${i}">Delete</button></div>`).join(''))}
+function quizV(){if(!quiz){show(`<h2>Self-test</h2><p class="m">Uses stored questions; the database is never modified.</p><div class="bar">${[['all','Random'],['verified','PYQs only'],['practice','Practice only']].map(x=>`<button class="btn" data-act="qs" data-m="${x[0]}">${x[1]}</button>`).join('')}</div><div class="bar"><select id="qt"><option value="">Any topic</option>${D.topics.map(t=>`<option value="${t.id}">${E(t.title)}</option>`).join('')}</select></div>`);return}
+const q=quiz.cur;if(!q)return show('<p>No questions match. <a href="#quiz" data-act="qreset">Back</a></p>');
+show(`<h2>Self-test ${quiz.n}</h2><p><span class="tag">${KL[q.kind]}</span></p><p class="big">${E(q.q)}</p>${q.o.map((o,i)=>`<button class="btn blk${quiz.sel!=null?(i===q.a?' ok':i===quiz.sel?' bad':''):''}" data-act="ans" data-i="${i}">${'ABCD'[i]}. ${E(o)}</button>`).join('')}${quiz.sel!=null?`<div class="card"><p><b>Answer: ${'ABCD'[q.a]}</b> — ${E(q.e)}</p>${aL(q.arts||[])}${q.topic&&R.topic[q.topic]?lk('topic',q.topic,R.topic[q.topic].title):''}<p class="m">${(q.arts||[]).map(a=>F[a]?'Art '+a+' asked: '+F[a].y.join(', '):'').join(' ')}</p></div><button class="btn" data-act="qnext">Next</button> <button class="btn" data-act="qreset">Exit</button>`:''}`)}
+function nextQ(m,t){let p=PQ.filter(q=>(m==='all'||q.kind===m)&&(!t||q.topic===t));quiz.cur=p[Math.floor(Math.random()*p.length)];quiz.sel=null;quiz.n=(quiz.n||0)+1}
+function flashV(){if(!flash){flash=[];Object.values(R.article).filter(a=>a.s==='Active').forEach(a=>flash.push([`Which Article deals with: ${a.t}?`,`Article ${a.id} (Part ${a.p})`]));Object.values(R.amendment).forEach(a=>flash.push([`Which Amendment: ${a.p}`,`${ord(+a.id)} Amendment (${a.y})`]));flash.sort(()=>Math.random()-.5);flash.i=0;flash.s=false}
+const c=flash[flash.i%flash.length];show(`<h2>Rapid Fire</h2><div class="card big" data-act="flip"><p>${E(c[0])}</p>${flash.s?`<p><b>→ ${E(c[1])}</b></p>`:'<p class="m">Tap to reveal</p>'}</div><button class="btn" data-act="fnext">Next</button> <span class="m">${flash.i%flash.length+1}/${flash.length}</span>`)}
+function showSearch(q){const rs=search(q);show(`<h2>Results for “${E(q)}”</h2><p class="m">${rs.length} result${rs.length===1?'':'s'}</p>`+rs.slice(0,80).map(x=>card(x.t,x.r,`<div class="m">${x.t} · matched: ${x.why.join(', ')}</div>`)).join('')||'<p>No matches.</p>')}
+// router
+function route(){const h=decodeURIComponent(location.hash.slice(1))||'home',i=h.indexOf('/'),v=i<0?h:h.slice(0,i),id=i<0?'':h.slice(i+1);
+$('#nav').classList.remove('open');S('lastView',h);
+try{if(v==='home')home();else if(v==='list')list(id);else if(v==='pyqs')pyqs();else if(v==='saved')saved();else if(v==='current')current();else if(v==='quiz'){quiz=null;quizV()}else if(v==='flash'){flash=null;flashV()}else if(v==='search')showSearch(id);else if(R[v])detail(v,id);else nf()}catch(e){console.error(e);show('<p>Error rendering view.</p>')}}
+window.addEventListener('hashchange',route);
+// events
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
+if(a==='bm'){const k=t.dataset.k,b=bm(),i=b.indexOf(k);i<0?b.push(k):b.splice(i,1);S('bm',b);t.textContent=i<0?'★ Saved':'☆ Save'}
+else if(a==='mode'){mode=t.dataset.m;S('mode',mode);route()}
+else if(a==='theme'){const d=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=d;S('theme',d)}
+else if(a==='fs'){const s=Math.max(13,Math.min(24,L('fs',17)+(+t.dataset.d)));S('fs',s);document.documentElement.style.fontSize=s+'px'}
+else if(a==='menu')$('#nav').classList.toggle('open');
+else if(a==='qs'){quiz={n:0,m:t.dataset.m,t:$('#qt').value};nextQ(quiz.m,quiz.t);quizV()}
+else if(a==='ans'){if(quiz.sel==null){quiz.sel=+t.dataset.i;quizV()}}
+else if(a==='qnext'){nextQ(quiz.m,quiz.t);quizV()}else if(a==='qreset'){quiz=null;quizV()}
+else if(a==='flip'){flash.s=!flash.s;flashV()}else if(a==='fnext'){flash.i++;flash.s=false;flashV()}
+else if(a==='addcur'){const c=L('cur',[]),ti=$('#ct').value.trim();if(!ti)return;c.unshift({t:ti,n:$('#cn').value,a:$('#ca').value.split(/[\s,]+/).filter(x=>R.article[x])});S('cur',c);current()}
+else if(a==='delcur'){const c=L('cur',[]);c.splice(+t.dataset.i,1);S('cur',c);current()}});
+$('#q').addEventListener('input',e=>{const v=e.target.value.trim();if(v)showSearch(v);else route()});
+document.documentElement.dataset.theme=L('theme','light');document.documentElement.style.fontSize=L('fs',17)+'px';
+route();
+})();
+
+</script>
+</body></html>
